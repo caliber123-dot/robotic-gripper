@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Robotic Gripper Force Estimation</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+
+    </style>
+</head>
+
+<body class="theme-light">
+    <!-- NAVBAR WITH ICONS -->
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-robot"></i> Gripper System
+            </a>
+
+            <!-- Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#input">
+                            <i class="bi bi-sliders"></i> Input
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#output">
+                            <i class="bi bi-graph-up"></i> Output
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">
+                            <i class="bi bi-info-circle"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">
+                            <i class="bi bi-lock"></i> Login
+                        </a>
+                    </li>
+                    <li>
+                        <div class="dropdown d-inline-block ms-2">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Choose theme
+                            </button>
+                            <ul class="dropdown-menu p-3">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="color-box bg-light border" onmouseover="previewTheme('theme-light')"
+                                        onclick="setTheme('theme-light')" title="Light"></div>
+
+                                    <div class="color-box" style="background: #121212"
+                                        onmouseover="previewTheme('theme-dark')" onclick="setTheme('theme-dark')"
+                                        title="Dark"></div>
+
+                                    <div class="color-box" style="background: #bcc1c9"
+                                        onmouseover="previewTheme('theme-blue')" onclick="setTheme('theme-blue')"
+                                        title="Blue"></div>
+
+                                    <div class="color-box" style="background: #89af8c"
+                                        onmouseover="previewTheme('theme-green')" onclick="setTheme('theme-green')"
+                                        title="Green"></div>
+
+                                    <div class="color-box" style="background: #a39aaf"
+                                        onmouseover="previewTheme('theme-purple')" onclick="setTheme('theme-purple')"
+                                        title="Purple"></div>
+
+                                    <div class="color-box" style="background: linear-gradient(45deg, #ff512f, #dd2476)"
+                                        onmouseover="previewTheme('theme-gradient')"
+                                        onclick="setTheme('theme-gradient')" title="Gradient"></div>
+                                </div>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4" style="min-width: 95% !important;">
+        <h2 id="home" class="text-center">
+            Spring Structural Model of Robotic Gripper
+        </h2>
+
+        <!-- THEME SELECTOR -->
+        <!-- <div class="text-end mb-3">
+            <label class="fw-bold"></label>
+
+        </div> -->
+        <div class="row g-4">
+            <!-- LEFT SIDE (Merged INPUT) -->
+            <div id="input" class="col-md-5">
+                <div class="card p-0 h-100">
+                    <div class="box">
+                        <h4>INPUT</h4>
+                        <label>Gripper Type</label>
+                        <select id="gripper" onchange="updateSpringFields()" class="form-select">
+                            <option value="1">4 Fingers</option>
+                            <option value="2">3 Fingers + 1 Thumb</option>
+                        </select>
+                        <label>Object Shape</label>
+                        <select id="shape" class="form-select" onchange="updateSelectionEvent()">
+                            <option value="1">Rectangular</option>
+                            <option value="2">Spherical</option>
+                            <option value="3">Ellipsoidal</option>
+                        </select>
+                        <label>Selection Event</label>
+                        <!-- <div id="selectionEvent"></div> -->
+                        <!-- // Ellipsoidal → Major / Minor -->
+                        <div id="ellipsEvent" style="display:none;">
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input id="rbmajor" class="form-check-input" type="radio" name="event"
+                                        group="ellipsoidal" value="major" checked>
+                                    <label class="form-check-label">Major</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="rbminor" class="form-check-input" type="radio" name="event"
+                                        group="ellipsoidal" value="minor">
+                                    <label class="form-check-label">Minor</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- // Rectangular → Length / Breadth -->
+                        <div id="rectangleEvent" style="display:none;">
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input id="rblength" class="form-check-input" type="radio" name="event"
+                                        value="length" group="rectangular" checked>
+                                    <label class="form-check-label">Length1</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="rbbreadth" class="form-check-input" type="radio" name="event"
+                                        group="rectangular" value="breadth">
+                                    <label class="form-check-label">Breadth</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label>Material</label>
+                        <select id="material" class="form-select">
+                            <option value="rubber">Rubber</option>
+                            <option value="abs">ABS</option>
+                            <option value="teflon">Teflon</option>
+                        </select>
+
+                        <label>Time t (seconds)</label>
+                        <input id="time" type="number" step="0.01" class="form-control" placeholder="eg. 1 - 5 sec" />
+
+                        <label>θ(t) Function</label>
+                        <select id="func" class="form-select">
+                            <option value="1">t/2 + t²/3</option>
+                            <option value="2">t/2 + t²/3 + t³/4</option>
+                            <option value="3">t/3 + t²/4 + t³/5</option>
+                        </select>
+
+
+
+                        <label class="mt-2">Spring Constant Mode</label>
+                        <div>
+                            <input type="radio" name="kmode" value="1" checked onclick="updateSpringFields()" />
+                            All equal<br />
+                            <input type="radio" name="kmode" value="2" onclick="updateSpringFields()" />
+                            Fingers same, Thumb different<br />
+                            <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
+                            All unequal
+                        </div>
+                        <div id="springInputs_equal" class="mt-2"><label>Common K</label>
+                            <input id="k_common" type="number" class="form-control" placeholder="Common K">
+                        </div>
+                        <div id="springInputs_samefinger" class="mt-2" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Finger K</label>
+                                    <input id="k_finger" type="number" class="form-control" placeholder="Finger K">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Thumb K</label>
+                                    <input id="k_thumb" type="number" class="form-control" placeholder="Thumb K">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
+
+                        </div>
+                        <div id="springInputs_unequal" class="mt-2" style="display: none;">
+                            <label>Finger 1 K1 &amp; K2</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input id="f1k1" class="form-control" placeholder="Spring 1" type="number">
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                </div>
+                            </div>
+                            <label>Finger 2 K1 &amp; K2</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input id="f2k1" class="form-control" placeholder="Spring 1" type="number">
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                </div>
+                            </div>
+
+                            <label>Finger 3 K1 &amp; K2</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input id="f3k1" class="form-control" placeholder="Spring 1" type="number">
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                </div>
+                            </div>
+
+                            <div id="div_Finger4">
+                                <label>Finger 4 K1 &amp; K2</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f4k1" class="form-control" placeholder="Spring 1" type="number">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f4k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div id="div_Thumb" style="display: none;">
+                                <label>Thumb K1, K2 &amp; K3</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input id="Thk1" class="form-control" placeholder="Spring 1" type="number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="Thk2" class="form-control" placeholder="Spring 2" type="number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="Thk3" class="form-control mb-2" placeholder="Spring 3" type="number">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- <div id="springInputs" class="mt-2"></div> -->
+
+                        <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
+                            Calculate Force
+                        </button>
+                        <p>Execution Time: <span id="executionTime">0</span> ms</p>
+                        <span id="loader" class="ms-2" style="display:none;">
+                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                            Loading...
+                        </span>
+                    </div>
+                    <div class="box output mt-2">
+                        <h4>OUTPUT</h4>
+                        <style>
+                            .bold {
+                                font-weight: 700;
+                            }
+
+                            .bold600 {
+                                font-weight: 600;
+                            }
+                        </style>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Volume (m³)</th>
+                                    <th>Mass (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input id="txtvolume" class="form-control bold" readonly value="0" /></td>
+                                    <td><input id="txtmass" class="form-control bold" readonly value="0" /></td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Gripper</th>
+                                    <th>Force</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td>Finger 1</td>
+                                    <td><input id="f1" class="form-control bold" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td>Finger 2</td>
+                                    <td><input id="f2" class="form-control bold" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td>Finger 3</td>
+                                    <td><input id="f3" class="form-control bold" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td>Finger 4</td>
+                                    <td><input id="f4" class="form-control bold" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td>Thumb</td>
+                                    <td><input id="ft" class="form-control bold" readonly /></td>
+                                </tr>
+                                <tr class="table-secondary">
+                                    <th>Total Force</th>
+                                    <th><input id="total" class="form-control fw-bold" readonly /></th>
+                                </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <!-- OUTPUT PANEL -->
+            <!-- RIGHT SIDE -->
+            <div class="col-md-7">
+                <div class="row g-4">
+                    <!-- OUTPUT ROW 1 -->
+                    <div id="output" class="col-12">
+                        <!-- OUTPUT PANEL 1 -->
+                        <div class="card p-3">
+                            <div class="graph-box"><label>Fig. 1: Schematic Representation of Spring structure Model for
+                                    Four
+                                    Fingers / Hand</label><img id="fig1" src="static/img/basic.avif" id="myImg"
+                                    onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- OUTPUT ROW 2 -->
+                    <div class="col-12">
+                        <div class="card p-3">
+                            <div class="graph-box"><label>Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                    Rectangular,
+                                    Spherical, Ellipsoidal
+                                </label><img id="fig2" src="static/img/basic.avif" {% autoescape off %} {% endautoescape
+                                    %} " id=" myImg" onclick="onMyPopup(this)" style="width: 100%;height: auto;"
+                                    alt="basic.avif">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ===== THEME SYSTEM =====
+        let savedTheme = localStorage.getItem("selectedTheme") || "theme-light";
+        document.body.className = savedTheme;
+
+        function previewTheme(theme) {
+            document.body.className = theme;
+        }
+
+        function setTheme(theme) {
+            document.body.className = theme;
+            localStorage.setItem("selectedTheme", theme);
+        }
+
+        document
+            .querySelector(".dropdown-menu")
+            .addEventListener("mouseleave", function () {
+                document.body.className =
+                    localStorage.getItem("selectedTheme") || "theme-light";
+            });
+
+        // ===== MATERIAL DENSITY =====
+        const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
+
+        function updateSpringFields() {
+            let gripper = document.getElementById("gripper").value;
+            let mode = document.querySelector('input[name="kmode"]:checked').value;
+            // let container = document.getElementById("springInputs");
+            let equal = document.getElementById("springInputs_equal");
+            let samefinger = document.getElementById("springInputs_samefinger");
+            let unequal = document.getElementById("springInputs_unequal");
+            let msg = document.getElementById("springInputs_msg");
+            // container.innerHTML = "";
+            let fingerCount = gripper == 1 ? 4 : 3;
+
+            if (mode == 1) {
+                equal.style.display = "block";
+                samefinger.style.display = "none";
+                unequal.style.display = "none";
+                msg.style.display = "none";
+                //                 container.innerHTML = `<label>Common K</label>
+                // <input id="k_common" type="number" class="form-control">`;
+            }
+
+            if (mode == 2) {
+
+                if (gripper == 2) {
+                    equal.style.display = "none";
+                    samefinger.style.display = "block";
+                    unequal.style.display = "none";
+                    msg.style.display = "none";
+                }
+                else {
+                    equal.style.display = "none";
+                    samefinger.style.display = "none";
+                    unequal.style.display = "none";
+                    msg.style.display = "block";
+                    msg.innerHTML = "Alert, Select Gripper Type : 3 Fingers + 1 Thumb"
+                }
+
+            }
+
+            if (mode == 3) {
+                equal.style.display = "none";
+                samefinger.style.display = "none";
+                unequal.style.display = "block";
+                msg.style.display = "none";
+                let div_Finger4 = document.getElementById("div_Finger4");
+                let div_Thumb = document.getElementById("div_Thumb");
+                if (gripper == 2) {
+                    div_Thumb.style.display = "block";
+                    div_Finger4.style.display = "none";
+                }
+                else {
+                    div_Finger4.style.display = "block";
+                    div_Thumb.style.display = "none";
+                }
+            }
+        }
+
+        updateSpringFields();
+    </script>
+    <script>
+        const sections = document.querySelectorAll("section, div[id]");
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+
+            sections.forEach((sec) => {
+                const sectionTop = sec.offsetTop - 80;
+                if (pageYOffset >= sectionTop) {
+                    current = sec.getAttribute("id");
+                }
+            });
+
+            navLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === "#" + current) {
+                    link.classList.add("active");
+                }
+            });
+        });
+
+        function updateSelectionEvent() {
+            let shape = document.getElementById("shape").value;
+            // let container = document.getElementById("selectionEvent");
+            let ellipsEvent = document.getElementById("ellipsEvent");
+            let rectangleEvent = document.getElementById("rectangleEvent");
+            // container.innerHTML = "";
+            // Hide all first
+            ellipsEvent.style.display = "none";
+            rectangleEvent.style.display = "none";
+            // Ellipsoidal → Major / Minor
+            if (shape == 3) {
+                // Ellipsoidal
+                ellipsEvent.style.display = "flex";
+                ellipsEvent.querySelectorAll("input").forEach(input => input.checked = false);
+                document.getElementById("rbmajor").checked = true; // default selection
+            }
+
+            // Rectangular → Length / Breadth
+            else if (shape == 1) {
+                // Rectangular
+                rectangleEvent.style.display = "flex";
+                rectangleEvent.querySelectorAll("input").forEach(input => input.checked = false);
+                document.getElementById("rblength").checked = true; // default selection
+            }
+
+            // Spherical
+            // else {
+            //     // container.innerHTML = `<small class="text-muted">No selection required</small>`;
+            //     ellipsEvent.style.display = "none";
+            //     rectangleEvent.style.display = "none";
+            // }
+        }
+        updateSelectionEvent();
+    </script>
+    <!-- Calculation -->
+    <script>
+        function validateInputs() {
+
+            let mode = document.querySelector('input[name="kmode"]:checked').value;
+            let gripper = document.getElementById("gripper").value;
+            let time = document.getElementById("time").value;
+            let material = document.getElementById("material").value;
+
+            if (!time) {
+                // alert("Please enter Time");
+                markInvalid("time");
+                return false;
+            }
+
+            if (!material) {
+                // alert("Please select Material");
+                markInvalid("material");
+                return false;
+            }
+
+            // Reset borders
+            document.querySelectorAll("input").forEach(el => el.style.border = "");
+
+            function invalid(id) {
+                let el = document.getElementById(id);
+                el.focus();
+                if (el) el.style.border = "2px solid red";
+            }
+
+            // ===== MODE 1: ALL EQUAL =====
+            if (mode == "1") {
+                let k = document.getElementById("k_common").value;
+
+                if (!k) {
+                    // invalid("k_common");
+                    markInvalid("k_common");
+                    // alert("Enter Common K");
+                    return false;
+                }
+            }
+
+            // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
+            if (mode == "2") {
+                let kf = document.getElementById("k_finger")?.value;
+                let kt = document.getElementById("k_thumb")?.value;
+
+                if (gripper == "2" && !kf) {
+                    // invalid("k_finger");
+                    markInvalid("k_finger");
+                    // alert("Enter Finger K");
+                    return false;
+                }
+
+                if (gripper == "2" && !kt) {
+                    // invalid("k_thumb");
+                    markInvalid("k_thumb");
+                    // alert("Enter Thumb K");
+                    return false;
+                }
+            }
+
+            // ===== MODE 3: ALL UNEQUAL =====
+            if (mode == "3") {
+
+                let fingerCount = (gripper == "1") ? 4 : 3;
+
+                for (let i = 1; i <= fingerCount; i++) {
+
+                    let k1 = document.getElementById(`f${i}k1`)?.value;
+                    let k2 = document.getElementById(`f${i}k2`)?.value;
+
+                    if (!k1) {
+                        invalid(`f${i}k1`);
+                        // alert(`Enter Finger ${i} Spring 1`);
+                        return false;
+                    }
+
+                    if (!k2) {
+                        invalid(`f${i}k2`);
+                        // alert(`Enter Finger ${i} Spring 2`);
+                        return false;
+                    }
+                }
+
+                // Thumb (only if gripper = 3+1)
+                if (gripper == "2") {
+                    let t1 = document.getElementById("Thk1")?.value;
+                    let t2 = document.getElementById("Thk2")?.value;
+                    let t3 = document.getElementById("Thk3")?.value;
+
+                    if (!t1) {
+                        invalid("Thk1");
+                        // alert("Enter Thumb K1"); 
+                        return false;
+                    }
+                    if (!t2) {
+                        invalid("Thk2");
+                        // alert("Enter Thumb K2"); 
+                        return false;
+                    }
+                    if (!t3) {
+                        invalid("Thk3");
+                        // alert("Enter Thumb K3"); 
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        function markInvalid(id) {
+            let el = document.getElementById(id);
+            el.focus();
+            el.style.border = "2px solid red";
+        }
+        async function calculate() {
+            console.log("✅ Working calculate function called");
+            // 🔥 VALIDATION FIRST
+            if (!validateInputs()) return;
+            console.log("Validation Passed ✅");
+            let loader = document.getElementById("loader");
+            let execTime = document.getElementById("executionTime");
+            // 🔥 SHOW LOADER
+            loader.style.display = "inline-block";
+            execTime.innerText = "0";
+            let shape = document.getElementById("shape").value;
+
+            // 🔥 GET SELECTION EVENT
+            let event = "";
+
+            if (shape == "3") { // Ellipsoidal
+                if (document.getElementById("rbmajor").checked) {
+                    event = "major";
+                } else if (document.getElementById("rbminor").checked) {
+                    event = "minor";
+                }
+            }
+            else if (shape == "1") { // Rectangular
+                if (document.getElementById("rblength").checked) {
+                    event = "length";
+                } else if (document.getElementById("rbbreadth").checked) {
+                    event = "breadth";
+                }
+            }
+            else {
+                event = "none"; // spherical
+            }
+
+            let data = {
+                shape: shape,
+                event: event,   // 🔥 SEND TO BACKEND
+                material: document.getElementById("material").value,
+                time: document.getElementById("time").value,
+                func: document.getElementById("func").value,
+                gripper: document.getElementById("gripper").value,
+                mode: "unequal",
+                fingers: [
+                    { k1: +f1k1.value, k2: +f1k2.value },
+                    { k1: +f2k1.value, k2: +f2k2.value },
+                    { k1: +f3k1.value, k2: +f3k2.value },
+                    { k1: +f4k1?.value || 0, k2: +f4k2?.value || 0 }
+                ],
+                thumb: [
+                    +Thk1?.value || 0,
+                    +Thk2?.value || 0,
+                    +Thk3?.value || 0
+                ]
+            };
+
+            let res = await fetch("/calculate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            let result = await res.json();
+            // ✅ Volume & Mass
+            document.getElementById("txtvolume").value = result.volume?.toFixed(4) || "";
+            document.getElementById("txtmass").value = result.mass?.toFixed(2) || "";
+
+            // ✅ Fingers
+            document.getElementById("f1").value = result.forces[0]?.toFixed(2) || "";
+            document.getElementById("f2").value = result.forces[1]?.toFixed(2) || "";
+            document.getElementById("f3").value = result.forces[2]?.toFixed(2) || "";
+            document.getElementById("f4").value = result.forces[3]?.toFixed(2) || "";
+
+            // ✅ Thumb
+            document.getElementById("ft").value = result.thumb?.toFixed(2) || "";
+
+            // ✅ Total
+            document.getElementById("total").value = result.total?.toFixed(2) || "";
+
+            // ✅ Hide loader
+            loader.style.display = "none";
+            // ✅ Show execution time
+            execTime.innerText = result.execution_time;
+            document.getElementById("fig1").src = result.fig1;
+            document.getElementById("fig2").src = result.fig2;
+
+        }
+    </script>
+</body>
+
+</html>

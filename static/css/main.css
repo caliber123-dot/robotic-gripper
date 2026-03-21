@@ -1,0 +1,183 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: 0.4s ease;
+  font-weight: 600;
+  padding-top: 40px;
+}
+
+/* ===== THEMES ===== */
+.theme-light {
+  background: #f4f6f9;
+  color: #2c3e50;
+}
+
+.theme-dark {
+  /* background: #121212; */
+  background: #222;
+  color: white;
+}
+
+.theme-dark .box {
+  background: #333;  
+  border: 1px solid #444;
+}
+
+.theme-blue {
+  background: #bcc1c9;
+  color: #0d47a1;
+}
+
+.theme-green {
+  background: #89af8c;
+  color: #1b5e20;
+}
+
+.theme-purple {
+  background: #a39aaf;
+  color: #4a148c;
+}
+
+.theme-gradient {
+  background: linear-gradient(135deg, #ff512f, #dd2476);
+  color: black;
+}
+
+/* Card Style */
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+}
+
+.output input {
+  background: #e8f0fe;
+}
+
+h2 {
+  padding: 15px;
+  border-radius: 10px;
+  background: #2c3e50;
+  color: white;
+}
+
+/* Color palette */
+.color-box {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.color-box:hover {
+  transform: scale(1.1);
+}
+
+/* Gradient Navbar */
+.custom-navbar {
+  /* background: linear-gradient(45deg, #023179, #6610f2); */
+  background: linear-gradient(45deg, #023075, #2c3e50);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon spacing */
+.nav-link i {
+  margin-right: 6px;
+  color: white;
+}
+
+.nav-link {
+  color: white;
+}
+
+/* Active link highlight */
+.nav-link.active {
+  color: #ffd700 !important;
+  font-weight: bold;
+}
+
+/* ================= DARK MODE FIX ================= */
+
+.theme-dark label,
+.theme-dark h4,
+.theme-dark p,
+.theme-dark th,
+.theme-dark td {
+  color: #ffffff !important;
+}
+
+/* Inputs */
+.theme-dark input,
+.theme-dark select,
+.theme-dark textarea {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+/* Placeholder */
+.theme-dark input::placeholder {
+  color: #bbb !important;
+}
+
+/* Table */
+.theme-dark table {
+  color: white;
+}
+
+/* Output fields */
+.theme-dark .output input {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+/* Radio & checkbox labels */
+.theme-dark .form-check-label {
+  color: #ffffff !important;
+}
+
+/* Card fix */
+.theme-dark .card {
+  /* background-color: #1e1e1e !important; */
+  background-color:  #333 !important; 
+  color: white;
+}
+
+/* ===== DARK MODE TABLE FIX ===== */
+
+.theme-dark table {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+.theme-dark .table th,
+.theme-dark .table td {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border-color: #444 !important;
+}
+
+/* Header */
+.theme-dark .table thead {
+  background-color: #2a2a2a !important;
+}
+
+/* Alternate row */
+.theme-dark .table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: #252525 !important;
+}
+
+/* Total row (table-secondary fix) */
+.theme-dark .table-secondary {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
+/* Input inside table */
+.theme-dark table input {
+  background-color: #2f2f2f !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
