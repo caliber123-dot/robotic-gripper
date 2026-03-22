@@ -114,6 +114,9 @@
                 <div class="card p-0 h-100">
                     <div class="box">
                         <h4>INPUT</h4>
+
+                        <p>According to this equation: <label style="font-size: 20px;">M * d²θ/dt² + Kθ = F(t)</label>
+                        </p>
                         <label>Gripper Type</label>
                         <select id="gripper" onchange="updateSpringFields()" class="form-select">
                             <option value="1">4 Fingers</option>
@@ -176,8 +179,6 @@
                             <option value="3">t/3 + t²/4 + t³/5</option>
                         </select>
 
-
-
                         <label class="mt-2">Spring Constant Mode</label>
                         <div>
                             <input type="radio" name="kmode" value="1" checked onclick="updateSpringFields()" />
@@ -192,18 +193,31 @@
                         </div>
                         <div id="springInputs_samefinger" class="mt-2" style="display: none;">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label>Finger K</label>
+                                <div class="col-md-12">
+                                    <label>Finger Same K</label>
                                     <input id="k_finger" type="number" class="form-control" placeholder="Finger K">
                                 </div>
-                                <div class="col-md-6">
-                                    <label>Thumb K</label>
-                                    <input id="k_thumb" type="number" class="form-control" placeholder="Thumb K">
+                                <div class="col-md-12">
+                                    <label>Thumb Different K</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input id="k_thumb" type="number" class="form-control"
+                                                placeholder="Thumb K1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input id="k_thumb2" type="number" class="form-control"
+                                                placeholder="Thumb K2">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input id="k_thumb3" type="number" class="form-control"
+                                                placeholder="Thumb K3">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
+                            <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
 
+                            </div>
                         </div>
                         <div id="springInputs_unequal" class="mt-2" style="display: none;">
                             <label>Finger 1 K1 &amp; K2</label>
@@ -297,8 +311,7 @@
                                     <td><input id="txtvolume" class="form-control bold" readonly value="0" /></td>
                                     <td><input id="txtmass" class="form-control bold" readonly value="0" /></td>
                                 </tr>
-                                 <!-- ddd  -->
-
+                                <!-- ddd  -->
                             </tbody>
                         </table>
                         <table class="table table-bordered">
@@ -322,11 +335,11 @@
                                     <td>Finger 3</td>
                                     <td><input id="f3" class="form-control bold" readonly /></td>
                                 </tr>
-                                <tr>
+                                <tr id="trFinger4">
                                     <td>Finger 4</td>
                                     <td><input id="f4" class="form-control bold" readonly /></td>
                                 </tr>
-                                <tr>
+                                <tr id="trThumb">
                                     <td>Thumb</td>
                                     <td><input id="ft" class="form-control bold" readonly /></td>
                                 </tr>
@@ -347,10 +360,11 @@
                     <div id="output" class="col-12">
                         <!-- OUTPUT PANEL 1 -->
                         <div class="card p-3">
-                            <div class="graph-box"><label>Fig. 1: Schematic Representation of Spring structure Model for
-                                    Four
-                                    Fingers / Hand</label><img id="fig1" src="static/img/basic.avif" id="myImg"
-                                    onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                            <div class="graph-box"><label>Fig. 1: Schematic Representation of Spring structure Model
+                                    for
+                                    <span id="gripper_name">-</span>
+                                </label><img id="fig1" src="static/img/basic.avif" id="myImg" onclick="onMyPopup(this)"
+                                    style="width: 100%;height: auto;" alt="basic.avif">
                             </div>
                         </div>
                     </div>
@@ -358,8 +372,7 @@
                     <div class="col-12">
                         <div class="card p-3">
                             <div class="graph-box"><label>Fig. 2: Typical Grasp Postures for Objects of Shapes:
-                                    Rectangular,
-                                    Spherical, Ellipsoidal
+                                    <span id="shape_name">-</span>
                                 </label><img id="fig2" src="static/img/basic.avif" {% autoescape off %} {% endautoescape
                                     %} " id=" myImg" onclick="onMyPopup(this)" style="width: 100%;height: auto;"
                                     alt="basic.avif">
@@ -400,6 +413,7 @@
         const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
 
         function updateSpringFields() {
+            console.log("Updating spring fields...");
             let gripper = document.getElementById("gripper").value;
             let mode = document.querySelector('input[name="kmode"]:checked').value;
             // let container = document.getElementById("springInputs");
@@ -436,7 +450,7 @@
                 }
 
             }
-
+            console.log("Mode:", mode, "Gripper:", gripper);
             if (mode == 3) {
                 equal.style.display = "none";
                 samefinger.style.display = "none";
@@ -521,6 +535,19 @@
             let gripper = document.getElementById("gripper").value;
             let time = document.getElementById("time").value;
             let material = document.getElementById("material").value;
+            let trFinger4 = document.getElementById("trFinger4");
+            let trThumb = document.getElementById("trThumb");
+            if (gripper == "1") {
+                //4 Fingers
+                trFinger4.style.display = "table-row";
+                trThumb.style.display = "none";
+
+            }
+            else if (gripper == "2") {
+                // 3 Fingers + 1 Thumb
+                trFinger4.style.display = "none";
+                trThumb.style.display = "table-row";
+            }
 
             if (!time) {
                 // alert("Please enter Time");
@@ -558,7 +585,9 @@
             // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
             if (mode == "2") {
                 let kf = document.getElementById("k_finger")?.value;
-                let kt = document.getElementById("k_thumb")?.value;
+                let kt1 = document.getElementById("k_thumb")?.value;
+                let kt2 = document.getElementById("k_thumb2")?.value;
+                let kt3 = document.getElementById("k_thumb3")?.value;
 
                 if (gripper == "2" && !kf) {
                     // invalid("k_finger");
@@ -567,10 +596,16 @@
                     return false;
                 }
 
-                if (gripper == "2" && !kt) {
-                    // invalid("k_thumb");
+                if (gripper == "2" && !kt1) {
                     markInvalid("k_thumb");
-                    // alert("Enter Thumb K");
+                    return false;
+                }
+                if (gripper == "2" && !kt2) {
+                    markInvalid("k_thumb2");
+                    return false;
+                }
+                if (gripper == "2" && !kt3) {
+                    markInvalid("k_thumb3");
                     return false;
                 }
             }
@@ -629,6 +664,7 @@
             el.focus();
             el.style.border = "2px solid red";
         }
+        // Main Logic to call backend and calculate forces
         async function calculate() {
             console.log("✅ Working calculate function called");
             // 🔥 VALIDATION FIRST
@@ -639,7 +675,7 @@
             // 🔥 SHOW LOADER
             loader.style.display = "inline-block";
             execTime.innerText = "0";
-            let shape = document.getElementById("shape").value;
+            let shape = +document.getElementById("shape").value;
 
             // 🔥 GET SELECTION EVENT
             let event = "";
@@ -661,25 +697,39 @@
             else {
                 event = "none"; // spherical
             }
-
+            // if (!event) {
+            //     alert("Please select Selection Event");
+            //     return;
+            // }
+            let mode = document.querySelector('input[name="kmode"]:checked').value;
             let data = {
-                shape: shape,
+                shape: +shape,
                 event: event,   // 🔥 SEND TO BACKEND
                 material: document.getElementById("material").value,
-                time: document.getElementById("time").value,
-                func: document.getElementById("func").value,
-                gripper: document.getElementById("gripper").value,
-                mode: "unequal",
+                time: +document.getElementById("time").value,
+                // func: document.getElementById("func").value,
+                func: +document.getElementById("func").value,
+                gripper: +document.getElementById("gripper").value,
+                mode: mode,
+                k_common: +document.getElementById("k_common")?.value || 0,
+                k_finger: +document.getElementById("k_finger")?.value || 0,
+                thumb: (mode == "2")
+                    ? [
+                        +document.getElementById("k_thumb")?.value || 0,
+                        +document.getElementById("k_thumb2")?.value || 0,
+                        +document.getElementById("k_thumb3")?.value || 0
+                    ]
+                    : [
+                        +document.getElementById("Thk1")?.value || 0,
+                        +document.getElementById("Thk2")?.value || 0,
+                        +document.getElementById("Thk3")?.value || 0
+                    ],
+
                 fingers: [
-                    { k1: +f1k1.value, k2: +f1k2.value },
-                    { k1: +f2k1.value, k2: +f2k2.value },
-                    { k1: +f3k1.value, k2: +f3k2.value },
-                    { k1: +f4k1?.value || 0, k2: +f4k2?.value || 0 }
-                ],
-                thumb: [
-                    +Thk1?.value || 0,
-                    +Thk2?.value || 0,
-                    +Thk3?.value || 0
+                    { k1: +document.getElementById("f1k1")?.value || 0, k2: +document.getElementById("f1k2")?.value || 0 },
+                    { k1: +document.getElementById("f2k1")?.value || 0, k2: +document.getElementById("f2k2")?.value || 0 },
+                    { k1: +document.getElementById("f3k1")?.value || 0, k2: +document.getElementById("f3k2")?.value || 0 },
+                    { k1: +document.getElementById("f4k1")?.value || 0, k2: +document.getElementById("f4k2")?.value || 0 }
                 ]
             };
 
@@ -712,6 +762,8 @@
             execTime.innerText = result.execution_time;
             document.getElementById("fig1").src = result.fig1;
             document.getElementById("fig2").src = result.fig2;
+            document.getElementById("gripper_name").innerText = result.gripper_name;
+            document.getElementById("shape_name").innerText = result.shape_name;
 
         }
     </script>
