@@ -1,4 +1,4 @@
-from turtle import mode
+# from turtle import mode
 
 from flask import Flask, render_template, request, jsonify
 from waitress import serve
@@ -195,3 +195,12 @@ if __name__ == '__main__':
     # app.run()
     # app.run(host="0.0.0.0", port=8000, debug=True)  
     serve(app, host="0.0.0.0", port=8000, threads=8)
+
+# Version Control Commands (Git)
+# git status
+# git add .
+# git commit -m "describe your changes"
+# git commit -m "Updated index and app"
+# # Pull latest (SAFE PRACTICE)
+# git pull origin main --rebase
+# git push
