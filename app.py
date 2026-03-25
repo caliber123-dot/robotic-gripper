@@ -177,7 +177,8 @@ def calculate():
     
 
     end_time = time.time()  # ⏱ end
-    execution_time = (end_time - start_time) * 1000  # convert to ms
+    # execution_time = (end_time - start_time) * 1000  # convert to ms
+    execution_time = (end_time - start_time) * 1000000  # microseconds (µs)
     return jsonify({
         "volume": volume,
         "mass": M,

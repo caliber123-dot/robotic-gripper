@@ -10,8 +10,31 @@
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="/static/css/main.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/model.css" />
     <style>
+        .menu {
+            position: relative;
+            border: 3px solid #2c3e50;
+            padding-top: 30px;
+            padding-left: 15px;
+            padding-right: 15px;            
+            border-radius: 0 0 10px 10px;
+        }
 
+        .menu:before {
+            content: attr(data-title);
+            background: #2c3e50;
+            position: absolute;
+            padding: 0 20px;
+            color: #fff;
+            left: 0;
+            top: 0;
+
+        }
+
+        .menu ul {
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -98,675 +121,823 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-4" style="min-width: 95% !important;">
-        <h2 id="home" class="text-center">
-            Spring Structural Model of Robotic Gripper
-        </h2>
+    
 
-        <!-- THEME SELECTOR -->
-        <!-- <div class="text-end mb-3">
-            <label class="fw-bold"></label>
+    <div class="container mt-4" style="min-width: 100% !important;">
+        
+        <!-- <h2 id="home" class="text-center">
+            Spring Structural Model of Robotic Gripper 
+        </h2> -->
+        <!-- <div style="background: #2c3e50;"> -->
+        <div style="background: #2c3e50;border-radius: 10px;padding: 10px;text-align: center;color: white;">
+            <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+            <h4>According to this equation:</h4>
+            <img src="static/img/formula_rm.png" alt="" height="60">
+        </div>
+        <style>
+            .div1 {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.23);
+                /* Multiple shadows for depth */
+                border-radius: 10px;
+            }
+            .div2{
+                border: #939da8 1px solid;
+                padding: 10px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+            }
 
-        </div> -->
-        <div class="row g-4">
-            <!-- LEFT SIDE (Merged INPUT) -->
-            <div id="input" class="col-md-5">
-                <div class="card p-0 h-100">
-                    <div class="box">
-                        <h4>INPUT</h4>
+            .bold-option {
+                font-weight: 600;
+            }
+        </style>
 
-                        <p>According to this equation: <label style="font-size: 20px;">M * d²θ/dt² + Kθ = F(t)</label>
-                        </p>
-                        <label>Gripper Type</label>
-                        <select id="gripper" onchange="updateSpringFields()" class="form-select">
-                            <option value="1">4 Fingers</option>
-                            <option value="2">3 Fingers + 1 Thumb</option>
-                        </select>
-                        <label>Object Shape</label>
-                        <select id="shape" class="form-select" onchange="updateSelectionEvent()">
-                            <option value="1">Rectangular</option>
-                            <option value="2">Spherical</option>
-                            <option value="3">Ellipsoidal</option>
-                        </select>
-                        <label>Selection Event</label>
-                        <!-- <div id="selectionEvent"></div> -->
-                        <!-- // Ellipsoidal → Major / Minor -->
-                        <div id="ellipsEvent" style="display:none;">
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input id="rbmajor" class="form-check-input" type="radio" name="event"
-                                        group="ellipsoidal" value="major" checked>
-                                    <label class="form-check-label">Major</label>
-                                </div>
-                                <div class="form-check">
-                                    <input id="rbminor" class="form-check-input" type="radio" name="event"
-                                        group="ellipsoidal" value="minor">
-                                    <label class="form-check-label">Minor</label>
+        <div class="row g-4 m-1">
+            <div class="box div1" style="margin-top: 5px;">
+                <!-- <label>Gripper Type</label> -->
+                <select id="gripper" onchange="showhidewindow()" class="form-select bold-option">
+                    <option value="" class="bold-option">Choose Gripper Type</option>
+                    <option value="1" class="bold-option">4 Fingers</option>
+                    <option value="2" class="bold-option">3 Fingers + 1 Thumb</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+        <div class="menu" id="gripper_window" data-title="-" style="display: none;">
+            <div class="row g-4">
+                <div class="col-md-3 div2 p-0">
+                   <!-- LEFT SIDE (Merged INPUT) -->
+                <div id="input" class="col-md-12">
+                    <div class="card p-0 h-100">
+                        <div class="box">
+                            <h4>INPUT</h4>
+                            <!-- <p>According to this equation: <label style="font-size: 20px;">M * d²θ/dt² + Kθ =
+                                    F(t)</label>
+                            </p> -->
+                            <!-- <label>Gripper Type</label>
+                            <select id="gripper" onchange="updateSpringFields()" class="form-select">
+                                <option value="1">4 Fingers</option>
+                                <option value="2">3 Fingers + 1 Thumb</option>
+                            </select> -->
+                            <label>Object Shape</label>
+                            <select id="shape" class="form-select" onchange="updateSelectionEvent()">
+                                <option value="1">Rectangular</option>
+                                <option value="2">Spherical</option>
+                                <option value="3">Ellipsoidal</option>
+                            </select>
+                            <label>Selection Event</label>
+                            <!-- <div id="selectionEvent"></div> -->
+                            <!-- // Ellipsoidal → Major / Minor -->
+                            <div id="ellipsEvent" style="display:none;">
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input id="rbmajor" class="form-check-input" type="radio" name="event"
+                                            group="ellipsoidal" value="major" checked>
+                                        <label class="form-check-label">Major</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input id="rbminor" class="form-check-input" type="radio" name="event"
+                                            group="ellipsoidal" value="minor">
+                                        <label class="form-check-label">Minor</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- // Rectangular → Length / Breadth -->
-                        <div id="rectangleEvent" style="display:none;">
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input id="rblength" class="form-check-input" type="radio" name="event"
-                                        value="length" group="rectangular" checked>
-                                    <label class="form-check-label">Length1</label>
-                                </div>
-                                <div class="form-check">
-                                    <input id="rbbreadth" class="form-check-input" type="radio" name="event"
-                                        group="rectangular" value="breadth">
-                                    <label class="form-check-label">Breadth</label>
+                            <!-- // Rectangular → Length / Breadth -->
+                            <div id="rectangleEvent" style="display:none;">
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input id="rblength" class="form-check-input" type="radio" name="event"
+                                            value="length" group="rectangular" checked>
+                                        <label class="form-check-label">Length1</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input id="rbbreadth" class="form-check-input" type="radio" name="event"
+                                            group="rectangular" value="breadth">
+                                        <label class="form-check-label">Breadth</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <label>Material</label>
-                        <select id="material" class="form-select">
-                            <option value="rubber">Rubber</option>
-                            <option value="abs">ABS</option>
-                            <option value="teflon">Teflon</option>
-                        </select>
+                            <label>Material</label>
+                            <select id="material" class="form-select">
+                                <option value="rubber">Rubber</option>
+                                <option value="abs">ABS</option>
+                                <option value="teflon">Teflon</option>
+                            </select>
 
-                        <label>Time t (seconds)</label>
-                        <input id="time" type="number" step="0.01" class="form-control" placeholder="eg. 1 - 5 sec" />
+                            <label>Time t (seconds)</label>
+                            <input id="time" type="number" step="0.01" class="form-control"
+                                placeholder="eg. 1 - 5 sec" />
 
-                        <label>θ(t) Function</label>
-                        <select id="func" class="form-select">
-                            <option value="1">t/2 + t²/3</option>
-                            <option value="2">t/2 + t²/3 + t³/4</option>
-                            <option value="3">t/3 + t²/4 + t³/5</option>
-                        </select>
+                            <label>θ(t) Function</label>
+                            <select id="func" class="form-select">
+                                <option value="1">t/2 + t²/3</option>
+                                <option value="2">t/2 + t²/3 + t³/4</option>
+                                <option value="3">t/3 + t²/4 + t³/5</option>
+                            </select>
 
-                        <label class="mt-2">Spring Constant Mode</label>
-                        <div>
-                            <input type="radio" name="kmode" value="1" checked onclick="updateSpringFields()" />
-                            All equal<br />
-                            <input type="radio" name="kmode" value="2" onclick="updateSpringFields()" />
-                            Fingers same, Thumb different<br />
-                            <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
-                            All unequal
-                        </div>
-                        <div id="springInputs_equal" class="mt-2"><label>Common K</label>
-                            <input id="k_common" type="number" class="form-control" placeholder="Common K">
-                        </div>
-                        <div id="springInputs_samefinger" class="mt-2" style="display: none;">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label>Finger Same K</label>
-                                    <input id="k_finger" type="number" class="form-control" placeholder="Finger K">
+                            <label class="mt-2">Spring Constant Mode</label>
+                            <div>
+                                <input type="radio" name="kmode" value="1" checked onclick="updateSpringFields()" />
+                                All equal<br />
+                                <input type="radio" name="kmode" value="2" onclick="updateSpringFields()" />
+                                Fingers same, Thumb different<br />
+                                <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
+                                All unequal
+                            </div>
+                            <div id="springInputs_equal" class="mt-2"><label>Common K</label>
+                                <input id="k_common" type="number" class="form-control" placeholder="Common K">
+                            </div>
+                            <div id="springInputs_samefinger" class="mt-2" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Finger Same K</label>
+                                        <input id="k_finger" type="number" class="form-control" placeholder="Finger K">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Thumb Different K</label>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <input id="k_thumb" type="number" class="form-control"
+                                                    placeholder="Thumb K1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input id="k_thumb2" type="number" class="form-control"
+                                                    placeholder="Thumb K2">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input id="k_thumb3" type="number" class="form-control"
+                                                    placeholder="Thumb K3">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <label>Thumb Different K</label>
+                                <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
+
+                                </div>
+                            </div>
+                            <div id="springInputs_unequal" class="mt-2" style="display: none;">
+                                <label>Finger 1 K1 &amp; K2</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f1k1" class="form-control" placeholder="Spring 1" type="number">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                    </div>
+                                </div>
+                                <label>Finger 2 K1 &amp; K2</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f2k1" class="form-control" placeholder="Spring 1" type="number">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                    </div>
+                                </div>
+
+                                <label>Finger 3 K1 &amp; K2</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f3k1" class="form-control" placeholder="Spring 1" type="number">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                    </div>
+                                </div>
+
+                                <div id="div_Finger4" style="display: none;">
+                                    <label>Finger 4 K1 &amp; K2</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input id="f4k1" class="form-control" placeholder="Spring 1" type="number">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input id="f4k2" class="form-control mb-2" placeholder="Spring 2"
+                                                type="number">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div id="div_Thumb" style="display: none;">
+                                    <label>Thumb K1, K2 &amp; K3</label>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <input id="k_thumb" type="number" class="form-control"
-                                                placeholder="Thumb K1">
+                                            <input id="Thk1" class="form-control" placeholder="Spring 1" type="number">
                                         </div>
                                         <div class="col-md-4">
-                                            <input id="k_thumb2" type="number" class="form-control"
-                                                placeholder="Thumb K2">
+                                            <input id="Thk2" class="form-control" placeholder="Spring 2" type="number">
                                         </div>
                                         <div class="col-md-4">
-                                            <input id="k_thumb3" type="number" class="form-control"
-                                                placeholder="Thumb K3">
+                                            <input id="Thk3" class="form-control mb-2" placeholder="Spring 3"
+                                                type="number">
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
 
                             </div>
-                        </div>
-                        <div id="springInputs_unequal" class="mt-2" style="display: none;">
-                            <label>Finger 1 K1 &amp; K2</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input id="f1k1" class="form-control" placeholder="Spring 1" type="number">
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number">
-                                </div>
-                            </div>
-                            <label>Finger 2 K1 &amp; K2</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input id="f2k1" class="form-control" placeholder="Spring 1" type="number">
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number">
-                                </div>
-                            </div>
+                            <!-- <div id="springInputs" class="mt-2"></div> -->
 
-                            <label>Finger 3 K1 &amp; K2</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input id="f3k1" class="form-control" placeholder="Spring 1" type="number">
-                                </div>
-                                <div class="col-md-6">
-                                    <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number">
-                                </div>
-                            </div>
-
-                            <div id="div_Finger4">
-                                <label>Finger 4 K1 &amp; K2</label>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <input id="f4k1" class="form-control" placeholder="Spring 1" type="number">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input id="f4k2" class="form-control mb-2" placeholder="Spring 2" type="number">
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div id="div_Thumb" style="display: none;">
-                                <label>Thumb K1, K2 &amp; K3</label>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <input id="Thk1" class="form-control" placeholder="Spring 1" type="number">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input id="Thk2" class="form-control" placeholder="Spring 2" type="number">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input id="Thk3" class="form-control mb-2" placeholder="Spring 3" type="number">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- <div id="springInputs" class="mt-2"></div> -->
-
-                        <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
-                            Calculate Force
-                        </button>
-                        <p>Execution Time: <span id="executionTime">0</span> ms</p>
-                        <span id="loader" class="ms-2" style="display:none;">
-                            <span class="spinner-border spinner-border-sm text-primary"></span>
-                            Loading...
-                        </span>
-                    </div>
-                    <div class="box output mt-2">
-                        <h4>OUTPUT</h4>
-                        <style>
-                            .bold {
-                                font-weight: 700;
-                            }
-
-                            .bold600 {
-                                font-weight: 600;
-                            }
-                        </style>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Volume (m³)</th>
-                                    <th>Mass (kg)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input id="txtvolume" class="form-control bold" readonly value="0" /></td>
-                                    <td><input id="txtmass" class="form-control bold" readonly value="0" /></td>
-                                </tr>
-                                <!-- ddd  -->
-                            </tbody>
-                        </table>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Gripper</th>
-                                    <th>Force (N)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                <tr>
-                                    <td>Finger 1</td>
-                                    <td><input id="f1" class="form-control bold" readonly /></td>
-                                </tr>
-                                <tr>
-                                    <td>Finger 2</td>
-                                    <td><input id="f2" class="form-control bold" readonly /></td>
-                                </tr>
-                                <tr>
-                                    <td>Finger 3</td>
-                                    <td><input id="f3" class="form-control bold" readonly /></td>
-                                </tr>
-                                <tr id="trFinger4">
-                                    <td>Finger 4</td>
-                                    <td><input id="f4" class="form-control bold" readonly /></td>
-                                </tr>
-                                <tr id="trThumb">
-                                    <td>Thumb</td>
-                                    <td><input id="ft" class="form-control bold" readonly /></td>
-                                </tr>
-                                <tr class="table-secondary">
-                                    <th>Total Force</th>
-                                    <th><input id="total" class="form-control fw-bold" readonly /></th>
-                                </tr>
-                        </table>
-
+                            <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
+                                Calculate Force
+                            </button>
+                            <p>Execution Time: <span id="executionTime">0</span> µs</p>
+                            <span id="loader" class="ms-2" style="display:none;">
+                                <span class="spinner-border spinner-border-sm text-primary"></span>
+                                Loading...
+                            </span>
+                        </div>                        
                     </div>
                 </div>
-            </div>
-            <!-- OUTPUT PANEL -->
-            <!-- RIGHT SIDE -->
-            <div class="col-md-7">
-                <div class="row g-4">
-                    <!-- OUTPUT ROW 1 -->
-                    <div id="output" class="col-12">
-                        <!-- OUTPUT PANEL 1 -->
-                        <div class="card p-3">
-                            <div class="graph-box"><label>Fig. 1: Schematic Representation of Spring structure Model
-                                    for
-                                    <span id="gripper_name">-</span>
-                                </label><img id="fig1" src="static/img/basic.avif" id="myImg" onclick="onMyPopup(this)"
-                                    style="width: 100%;height: auto;" alt="basic.avif">
+                </div>
+                <div class="col-md-9 div2">
+                    <div class="row g-4">
+                        <div class="col-md-4 div2 p-0">
+                            <!-- OUTPUT PANEL 1 -->
+                            <div class="card p-3">
+                                <div class="graph-box"><label style="font-size: 14px;">Fig. 1: Schematic Representation of Spring structure Model
+                                        for
+                                        <span id="gripper_name">-</span>
+                                    </label><img id="fig1" src="static/img/basic.avif" id="myImg"
+                                        onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 div2 p-0">
+                            <div class="card p-3">
+                                <div class="graph-box"><label style="font-size: 14px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                        <span id="shape_name">-</span>
+                                    </label><img id="fig2" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                        style="width: 100%;height: auto;" alt="basic.avif">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 div2 p-0">
+                           <div class="card p-3">
+                                <div class="graph-box"><label style="font-size: 14px;">Fig. 3: Schematic Representation of Spring structure Model for Industrial Image:
+                                        <span id="shape_name">-</span>
+                                    </label><img id="fig3" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                        style="width: 100%;height: auto;" alt="basic.avif">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- OUTPUT ROW 2 -->
-                    <div class="col-12">
-                        <div class="card p-3">
-                            <div class="graph-box"><label>Fig. 2: Typical Grasp Postures for Objects of Shapes:
-                                    <span id="shape_name">-</span>
-                                </label><img id="fig2" src="static/img/basic.avif" {% autoescape off %} {% endautoescape
-                                    %} " id=" myImg" onclick="onMyPopup(this)" style="width: 100%;height: auto;"
-                                    alt="basic.avif">
+                    <div class="row div2 p-0">
+                        <div id="output" class="col-md-12 div2 p-0">
+                            <div class="card p-0 h-100">
+                                <div class="box output mt-2">
+                            <h4>OUTPUT</h4>
+                            <style>
+                                .bold {
+                                    font-weight: 700;
+                                }
+
+                                .bold600 {
+                                    font-weight: 600;
+                                }
+                            </style>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Volume (m³)</th>
+                                        <th>Mass (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input id="txtvolume" class="form-control bold" readonly value="0" /></td>
+                                        <td><input id="txtmass" class="form-control bold" readonly value="0" /></td>
+                                    </tr>
+                                    <!-- ddd  -->
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Gripper</th>
+                                        <th>Force (N)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        <td>Finger 1</td>
+                                        <td><input id="f1" class="form-control bold" readonly /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Finger 2</td>
+                                        <td><input id="f2" class="form-control bold" readonly /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Finger 3</td>
+                                        <td><input id="f3" class="form-control bold" readonly /></td>
+                                    </tr>
+                                    <tr id="trFinger4">
+                                        <td>Finger 4</td>
+                                        <td><input id="f4" class="form-control bold" readonly /></td>
+                                    </tr>
+                                    <tr id="trThumb">
+                                        <td>Thumb</td>
+                                        <td><input id="ft" class="form-control bold" readonly /></td>
+                                    </tr>
+                                    <tr class="table-secondary">
+                                        <th>Total Force</th>
+                                        <th><input id="total" class="form-control fw-bold" readonly /></th>
+                                    </tr>
+                            </table>
+
+                        </div>
                             </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            
+        </div>
+        <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <span class="close" style="float: right;">&times;</span>
+                <!-- <button type="button" onclick="onDownload()" class="close2">Save Img</button>
+                <button type="button" onclick="onDownloadPdf2()" class="close22">Save Pdf</button> -->
+                <img class="modal-content" id="img01" style="margin-bottom: 50px;">              
+
+            </div>
+        <div>
+            <div class="row g-4">                
+                <!-- OUTPUT PANEL -->
+                <!-- RIGHT SIDE -->
+                <div class="col-md-7">
+                    <div class="row g-4">
+                        <!-- OUTPUT ROW 1 -->
+                        <div  class="col-12">
+                            
+                        </div>
+                        <!-- OUTPUT ROW 2 -->
+                        <div class="col-12">
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
+    
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // ===== THEME SYSTEM =====
+            let savedTheme = localStorage.getItem("selectedTheme") || "theme-light";
+            document.body.className = savedTheme;
 
-    <script>
-        // ===== THEME SYSTEM =====
-        let savedTheme = localStorage.getItem("selectedTheme") || "theme-light";
-        document.body.className = savedTheme;
-
-        function previewTheme(theme) {
-            document.body.className = theme;
-        }
-
-        function setTheme(theme) {
-            document.body.className = theme;
-            localStorage.setItem("selectedTheme", theme);
-        }
-
-        document
-            .querySelector(".dropdown-menu")
-            .addEventListener("mouseleave", function () {
-                document.body.className =
-                    localStorage.getItem("selectedTheme") || "theme-light";
-            });
-
-        // ===== MATERIAL DENSITY =====
-        const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
-
-        function updateSpringFields() {
-            console.log("Updating spring fields...");
-            let gripper = document.getElementById("gripper").value;
-            let mode = document.querySelector('input[name="kmode"]:checked').value;
-            // let container = document.getElementById("springInputs");
-            let equal = document.getElementById("springInputs_equal");
-            let samefinger = document.getElementById("springInputs_samefinger");
-            let unequal = document.getElementById("springInputs_unequal");
-            let msg = document.getElementById("springInputs_msg");
-            // container.innerHTML = "";
-            let fingerCount = gripper == 1 ? 4 : 3;
-
-            if (mode == 1) {
-                equal.style.display = "block";
-                samefinger.style.display = "none";
-                unequal.style.display = "none";
-                msg.style.display = "none";
-                //                 container.innerHTML = `<label>Common K</label>
-                // <input id="k_common" type="number" class="form-control">`;
+            function previewTheme(theme) {
+                document.body.className = theme;
             }
 
-            if (mode == 2) {
+            function setTheme(theme) {
+                document.body.className = theme;
+                localStorage.setItem("selectedTheme", theme);
+            }
 
-                if (gripper == 2) {
-                    equal.style.display = "none";
-                    samefinger.style.display = "block";
-                    unequal.style.display = "none";
-                    msg.style.display = "none";
+            document
+                .querySelector(".dropdown-menu")
+                .addEventListener("mouseleave", function () {
+                    document.body.className =
+                        localStorage.getItem("selectedTheme") || "theme-light";
+                });
+
+            // ===== MATERIAL DENSITY =====
+            const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
+            function showhidewindow() {
+                let gripper = document.getElementById("gripper").value;
+                let gripper_window = document.getElementById("gripper_window");
+                let trFinger4 = document.getElementById("trFinger4");
+                let trThumb = document.getElementById("trThumb");
+                let fig1 = document.getElementById("fig1");
+                let fig2 = document.getElementById("fig2");
+                let fig3 = document.getElementById("fig3");
+                let txtvolume = document.getElementById("txtvolume");
+                let txtmass = document.getElementById("txtmass");
+                let f1 = document.getElementById("f1");
+                let f2 = document.getElementById("f2");
+                let f3 = document.getElementById("f3");
+                let f4 = document.getElementById("f4");
+                let ft = document.getElementById("ft");
+                let total = document.getElementById("total");
+                let gripper_name = document.getElementById("gripper_name");
+                               
+                txtvolume.value = "0";
+                txtmass.value = "0";
+                f1.value = "";
+                f2.value = "";
+                f3.value = "";
+                f4.value = "";
+                ft.value = "";
+                total.value = "";
+                fig1.src = "static/img/basic.avif";
+                fig2.src = "static/img/basic.avif";
+                fig3.src = "static/img/basic.avif";
+
+                if(gripper == ""){
+                    gripper_window.setAttribute("data-title", "-");
+                    gripper_window.style.display = "none";
+                    trFinger4.style.display = "none";
+                    trThumb.style.display = "none";
+                    // alert("Please select Gripper Type 0");
                 }
-                else {
-                    equal.style.display = "none";
+                else if (gripper == "1") {
+                    gripper_window.setAttribute("data-title", "4 Fingers");
+                    gripper_window.style.display = "block";
+                    trFinger4.style.display = "table-row";
+                    trThumb.style.display = "none";
+                    gripper_name.innerText = "4 Fingers";
+                    // alert("4 Fingers Gripper Selected");
+                }
+                else if (gripper == "2") {
+                    gripper_window.setAttribute("data-title", "3 Fingers + 1 Thumb");
+                    gripper_window.style.display = "block";
+                    trFinger4.style.display = "none";
+                    trThumb.style.display = "table-row";
+                    gripper_name.innerText = "3 Fingers + 1 Thumb";
+                    // alert("3 Fingers + 1 Thumb Gripper Selected");
+                }
+                updateSpringFields();
+            }
+            
+            function updateSpringFields() {
+                // alert("Update spring fields called");
+                console.log("Updating spring fields...");
+                let gripper = document.getElementById("gripper").value;                
+                let mode = document.querySelector('input[name="kmode"]:checked').value;
+                // let container = document.getElementById("springInputs");
+                let equal = document.getElementById("springInputs_equal");
+                let samefinger = document.getElementById("springInputs_samefinger");
+                let unequal = document.getElementById("springInputs_unequal");
+                let msg = document.getElementById("springInputs_msg");              
+                                
+                let fingerCount = gripper == 1 ? 4 : 3;
+
+                if (mode == 1) {
+                    equal.style.display = "block";
                     samefinger.style.display = "none";
                     unequal.style.display = "none";
-                    msg.style.display = "block";
-                    msg.innerHTML = "Alert, Select Gripper Type : 3 Fingers + 1 Thumb"
+                    msg.style.display = "none";                   
                 }
 
-            }
-            console.log("Mode:", mode, "Gripper:", gripper);
-            if (mode == 3) {
-                equal.style.display = "none";
-                samefinger.style.display = "none";
-                unequal.style.display = "block";
-                msg.style.display = "none";
-                let div_Finger4 = document.getElementById("div_Finger4");
-                let div_Thumb = document.getElementById("div_Thumb");
-                if (gripper == 2) {
-                    div_Thumb.style.display = "block";
-                    div_Finger4.style.display = "none";
+                if (mode == 2) {
+
+                    if (gripper == 2) {
+                        equal.style.display = "none";
+                        samefinger.style.display = "block";
+                        unequal.style.display = "none";
+                        msg.style.display = "none";
+                    }
+                    else {
+                        equal.style.display = "none";
+                        samefinger.style.display = "none";
+                        unequal.style.display = "none";
+                        msg.style.display = "block";
+                        msg.innerHTML = "Alert, Select Gripper Type : 3 Fingers + 1 Thumb"
+                    }
+
                 }
-                else {
-                    div_Finger4.style.display = "block";
-                    div_Thumb.style.display = "none";
+                console.log("Mode:", mode, "Gripper:", gripper);
+                if (mode == 3) {
+                    equal.style.display = "none";
+                    samefinger.style.display = "none";
+                    unequal.style.display = "block";
+                    msg.style.display = "none";
+                    let div_Finger4 = document.getElementById("div_Finger4");
+                    let div_Thumb = document.getElementById("div_Thumb");
+                    if (gripper == 2) {
+                        div_Thumb.style.display = "block";
+                        div_Finger4.style.display = "none";
+                    }
+                    else {
+                        div_Finger4.style.display = "block";
+                        div_Thumb.style.display = "none";
+                    }
                 }
             }
+
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("img01");
+            function onMyPopup(ctrl) {
+            modal.style.display = "block";
+            modalImg.src = ctrl.src;
+            modalImg.alt = ctrl.alt;
+            // captionText.innerHTML = ctrl.alt;
         }
+            var span = document.getElementsByClassName("close")[0];
 
-        updateSpringFields();
-    </script>
-    <script>
-        const sections = document.querySelectorAll("section, div[id]");
-        const navLinks = document.querySelectorAll(".nav-link");
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+            updateSpringFields();
+        </script>
+        <script>
+            const sections = document.querySelectorAll("section, div[id]");
+            const navLinks = document.querySelectorAll(".nav-link");
 
-        window.addEventListener("scroll", () => {
-            let current = "";
+            window.addEventListener("scroll", () => {
+                let current = "";
 
-            sections.forEach((sec) => {
-                const sectionTop = sec.offsetTop - 80;
-                if (pageYOffset >= sectionTop) {
-                    current = sec.getAttribute("id");
-                }
+                sections.forEach((sec) => {
+                    const sectionTop = sec.offsetTop - 80;
+                    if (pageYOffset >= sectionTop) {
+                        current = sec.getAttribute("id");
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === "#" + current) {
+                        link.classList.add("active");
+                    }
+                });
             });
 
-            navLinks.forEach((link) => {
-                link.classList.remove("active");
-                if (link.getAttribute("href") === "#" + current) {
-                    link.classList.add("active");
+            function updateSelectionEvent() {
+                let shape = document.getElementById("shape").value;
+                // let container = document.getElementById("selectionEvent");
+                let ellipsEvent = document.getElementById("ellipsEvent");
+                let rectangleEvent = document.getElementById("rectangleEvent");
+                // container.innerHTML = "";
+                // Hide all first
+                ellipsEvent.style.display = "none";
+                rectangleEvent.style.display = "none";
+                // Ellipsoidal → Major / Minor
+                if (shape == 3) {
+                    // Ellipsoidal
+                    ellipsEvent.style.display = "flex";
+                    ellipsEvent.querySelectorAll("input").forEach(input => input.checked = false);
+                    document.getElementById("rbmajor").checked = true; // default selection
                 }
-            });
-        });
 
-        function updateSelectionEvent() {
-            let shape = document.getElementById("shape").value;
-            // let container = document.getElementById("selectionEvent");
-            let ellipsEvent = document.getElementById("ellipsEvent");
-            let rectangleEvent = document.getElementById("rectangleEvent");
-            // container.innerHTML = "";
-            // Hide all first
-            ellipsEvent.style.display = "none";
-            rectangleEvent.style.display = "none";
-            // Ellipsoidal → Major / Minor
-            if (shape == 3) {
-                // Ellipsoidal
-                ellipsEvent.style.display = "flex";
-                ellipsEvent.querySelectorAll("input").forEach(input => input.checked = false);
-                document.getElementById("rbmajor").checked = true; // default selection
+                // Rectangular → Length / Breadth
+                else if (shape == 1) {
+                    // Rectangular
+                    rectangleEvent.style.display = "flex";
+                    rectangleEvent.querySelectorAll("input").forEach(input => input.checked = false);
+                    document.getElementById("rblength").checked = true; // default selection
+                }
+
+                // Spherical
+                // else {
+                //     // container.innerHTML = `<small class="text-muted">No selection required</small>`;
+                //     ellipsEvent.style.display = "none";
+                //     rectangleEvent.style.display = "none";
+                // }
             }
+            updateSelectionEvent();
+        </script>
+        <!-- Calculation -->
+        <script>
+            function validateInputs() {
+                // alert("Validating inputs...");
+                let mode = document.querySelector('input[name="kmode"]:checked').value;
+                let gripper = document.getElementById("gripper").value;
+                let time = document.getElementById("time").value;
+                let material = document.getElementById("material").value;
+                let trFinger4 = document.getElementById("trFinger4");
+                let trThumb = document.getElementById("trThumb");
+                if(gripper == "") {
+                    markInvalid("gripper");
+                    return false;
+                }
+                if (gripper == "1") {
+                    //4 Fingers
+                    trFinger4.style.display = "table-row";
+                    trThumb.style.display = "none";
 
-            // Rectangular → Length / Breadth
-            else if (shape == 1) {
-                // Rectangular
-                rectangleEvent.style.display = "flex";
-                rectangleEvent.querySelectorAll("input").forEach(input => input.checked = false);
-                document.getElementById("rblength").checked = true; // default selection
+                }
+                else if (gripper == "2") {
+                    // 3 Fingers + 1 Thumb
+                    trFinger4.style.display = "none";
+                    trThumb.style.display = "table-row";
+                }
+
+                if (!time) {
+                    // alert("Please enter Time");
+                    markInvalid("time");
+                    return false;
+                }
+
+                if (!material) {
+                    // alert("Please select Material");
+                    markInvalid("material");
+                    return false;
+                }
+
+                // Reset borders
+                document.querySelectorAll("input").forEach(el => el.style.border = "");
+
+                function invalid(id) {
+                    let el = document.getElementById(id);
+                    el.focus();
+                    if (el) el.style.border = "2px solid red";
+                }
+
+                // ===== MODE 1: ALL EQUAL =====
+                if (mode == "1") {
+                    let k = document.getElementById("k_common").value;
+
+                    if (!k) {
+                        // invalid("k_common");
+                        markInvalid("k_common");
+                        // alert("Enter Common K");
+                        return false;
+                    }
+                }
+
+                // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
+                if (mode == "2") {
+                    let kf = document.getElementById("k_finger")?.value;
+                    let kt1 = document.getElementById("k_thumb")?.value;
+                    let kt2 = document.getElementById("k_thumb2")?.value;
+                    let kt3 = document.getElementById("k_thumb3")?.value;
+
+                    if (gripper == "2" && !kf) {
+                        // invalid("k_finger");
+                        markInvalid("k_finger");
+                        // alert("Enter Finger K");
+                        return false;
+                    }
+
+                    if (gripper == "2" && !kt1) {
+                        markInvalid("k_thumb");
+                        return false;
+                    }
+                    if (gripper == "2" && !kt2) {
+                        markInvalid("k_thumb2");
+                        return false;
+                    }
+                    if (gripper == "2" && !kt3) {
+                        markInvalid("k_thumb3");
+                        return false;
+                    }
+                }
+
+                // ===== MODE 3: ALL UNEQUAL =====
+                if (mode == "3") {
+
+                    let fingerCount = (gripper == "1") ? 4 : 3;
+
+                    for (let i = 1; i <= fingerCount; i++) {
+
+                        let k1 = document.getElementById(`f${i}k1`)?.value;
+                        let k2 = document.getElementById(`f${i}k2`)?.value;
+
+                        if (!k1) {
+                            invalid(`f${i}k1`);
+                            // alert(`Enter Finger ${i} Spring 1`);
+                            return false;
+                        }
+
+                        if (!k2) {
+                            invalid(`f${i}k2`);
+                            // alert(`Enter Finger ${i} Spring 2`);
+                            return false;
+                        }
+                    }
+
+                    // Thumb (only if gripper = 3+1)
+                    if (gripper == "2") {
+                        let t1 = document.getElementById("Thk1")?.value;
+                        let t2 = document.getElementById("Thk2")?.value;
+                        let t3 = document.getElementById("Thk3")?.value;
+
+                        if (!t1) {
+                            invalid("Thk1");
+                            // alert("Enter Thumb K1"); 
+                            return false;
+                        }
+                        if (!t2) {
+                            invalid("Thk2");
+                            // alert("Enter Thumb K2"); 
+                            return false;
+                        }
+                        if (!t3) {
+                            invalid("Thk3");
+                            // alert("Enter Thumb K3"); 
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
             }
-
-            // Spherical
-            // else {
-            //     // container.innerHTML = `<small class="text-muted">No selection required</small>`;
-            //     ellipsEvent.style.display = "none";
-            //     rectangleEvent.style.display = "none";
-            // }
-        }
-        updateSelectionEvent();
-    </script>
-    <!-- Calculation -->
-    <script>
-        function validateInputs() {
-
-            let mode = document.querySelector('input[name="kmode"]:checked').value;
-            let gripper = document.getElementById("gripper").value;
-            let time = document.getElementById("time").value;
-            let material = document.getElementById("material").value;
-            let trFinger4 = document.getElementById("trFinger4");
-            let trThumb = document.getElementById("trThumb");
-            if (gripper == "1") {
-                //4 Fingers
-                trFinger4.style.display = "table-row";
-                trThumb.style.display = "none";
-
-            }
-            else if (gripper == "2") {
-                // 3 Fingers + 1 Thumb
-                trFinger4.style.display = "none";
-                trThumb.style.display = "table-row";
-            }
-
-            if (!time) {
-                // alert("Please enter Time");
-                markInvalid("time");
-                return false;
-            }
-
-            if (!material) {
-                // alert("Please select Material");
-                markInvalid("material");
-                return false;
-            }
-
-            // Reset borders
-            document.querySelectorAll("input").forEach(el => el.style.border = "");
-
-            function invalid(id) {
+            function markInvalid(id) {
                 let el = document.getElementById(id);
                 el.focus();
-                if (el) el.style.border = "2px solid red";
+                el.style.border = "2px solid red";
             }
+            // Main Logic to call backend and calculate forces
+            async function calculate() {
+                console.log("✅ Working calculate function called");
+                // 🔥 VALIDATION FIRST
+                if (!validateInputs()) return;
+                console.log("Validation Passed ✅");
+                let loader = document.getElementById("loader");
+                let execTime = document.getElementById("executionTime");
+                // 🔥 SHOW LOADER
+                loader.style.display = "inline-block";
+                execTime.innerText = "0";
+                let shape = +document.getElementById("shape").value;
 
-            // ===== MODE 1: ALL EQUAL =====
-            if (mode == "1") {
-                let k = document.getElementById("k_common").value;
+                // 🔥 GET SELECTION EVENT
+                let event = "";
 
-                if (!k) {
-                    // invalid("k_common");
-                    markInvalid("k_common");
-                    // alert("Enter Common K");
-                    return false;
-                }
-            }
-
-            // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
-            if (mode == "2") {
-                let kf = document.getElementById("k_finger")?.value;
-                let kt1 = document.getElementById("k_thumb")?.value;
-                let kt2 = document.getElementById("k_thumb2")?.value;
-                let kt3 = document.getElementById("k_thumb3")?.value;
-
-                if (gripper == "2" && !kf) {
-                    // invalid("k_finger");
-                    markInvalid("k_finger");
-                    // alert("Enter Finger K");
-                    return false;
-                }
-
-                if (gripper == "2" && !kt1) {
-                    markInvalid("k_thumb");
-                    return false;
-                }
-                if (gripper == "2" && !kt2) {
-                    markInvalid("k_thumb2");
-                    return false;
-                }
-                if (gripper == "2" && !kt3) {
-                    markInvalid("k_thumb3");
-                    return false;
-                }
-            }
-
-            // ===== MODE 3: ALL UNEQUAL =====
-            if (mode == "3") {
-
-                let fingerCount = (gripper == "1") ? 4 : 3;
-
-                for (let i = 1; i <= fingerCount; i++) {
-
-                    let k1 = document.getElementById(`f${i}k1`)?.value;
-                    let k2 = document.getElementById(`f${i}k2`)?.value;
-
-                    if (!k1) {
-                        invalid(`f${i}k1`);
-                        // alert(`Enter Finger ${i} Spring 1`);
-                        return false;
-                    }
-
-                    if (!k2) {
-                        invalid(`f${i}k2`);
-                        // alert(`Enter Finger ${i} Spring 2`);
-                        return false;
+                if (shape == "3") { // Ellipsoidal
+                    if (document.getElementById("rbmajor").checked) {
+                        event = "major";
+                    } else if (document.getElementById("rbminor").checked) {
+                        event = "minor";
                     }
                 }
-
-                // Thumb (only if gripper = 3+1)
-                if (gripper == "2") {
-                    let t1 = document.getElementById("Thk1")?.value;
-                    let t2 = document.getElementById("Thk2")?.value;
-                    let t3 = document.getElementById("Thk3")?.value;
-
-                    if (!t1) {
-                        invalid("Thk1");
-                        // alert("Enter Thumb K1"); 
-                        return false;
-                    }
-                    if (!t2) {
-                        invalid("Thk2");
-                        // alert("Enter Thumb K2"); 
-                        return false;
-                    }
-                    if (!t3) {
-                        invalid("Thk3");
-                        // alert("Enter Thumb K3"); 
-                        return false;
+                else if (shape == "1") { // Rectangular
+                    if (document.getElementById("rblength").checked) {
+                        event = "length";
+                    } else if (document.getElementById("rbbreadth").checked) {
+                        event = "breadth";
                     }
                 }
-            }
-
-            return true;
-        }
-        function markInvalid(id) {
-            let el = document.getElementById(id);
-            el.focus();
-            el.style.border = "2px solid red";
-        }
-        // Main Logic to call backend and calculate forces
-        async function calculate() {
-            console.log("✅ Working calculate function called");
-            // 🔥 VALIDATION FIRST
-            if (!validateInputs()) return;
-            console.log("Validation Passed ✅");
-            let loader = document.getElementById("loader");
-            let execTime = document.getElementById("executionTime");
-            // 🔥 SHOW LOADER
-            loader.style.display = "inline-block";
-            execTime.innerText = "0";
-            let shape = +document.getElementById("shape").value;
-
-            // 🔥 GET SELECTION EVENT
-            let event = "";
-
-            if (shape == "3") { // Ellipsoidal
-                if (document.getElementById("rbmajor").checked) {
-                    event = "major";
-                } else if (document.getElementById("rbminor").checked) {
-                    event = "minor";
+                else {
+                    event = "none"; // spherical
                 }
-            }
-            else if (shape == "1") { // Rectangular
-                if (document.getElementById("rblength").checked) {
-                    event = "length";
-                } else if (document.getElementById("rbbreadth").checked) {
-                    event = "breadth";
-                }
-            }
-            else {
-                event = "none"; // spherical
-            }
-            // if (!event) {
-            //     alert("Please select Selection Event");
-            //     return;
-            // }
-            let mode = document.querySelector('input[name="kmode"]:checked').value;
-            let data = {
-                shape: +shape,
-                event: event,   // 🔥 SEND TO BACKEND
-                material: document.getElementById("material").value,
-                time: +document.getElementById("time").value,
-                // func: document.getElementById("func").value,
-                func: +document.getElementById("func").value,
-                gripper: +document.getElementById("gripper").value,
-                mode: mode,
-                k_common: +document.getElementById("k_common")?.value || 0,
-                k_finger: +document.getElementById("k_finger")?.value || 0,
-                thumb: (mode == "2")
-                    ? [
-                        +document.getElementById("k_thumb")?.value || 0,
-                        +document.getElementById("k_thumb2")?.value || 0,
-                        +document.getElementById("k_thumb3")?.value || 0
+                // if (!event) {
+                //     alert("Please select Selection Event");
+                //     return;
+                // }
+                let mode = document.querySelector('input[name="kmode"]:checked').value;
+                let data = {
+                    shape: +shape,
+                    event: event,   // 🔥 SEND TO BACKEND
+                    material: document.getElementById("material").value,
+                    time: +document.getElementById("time").value,
+                    // func: document.getElementById("func").value,
+                    func: +document.getElementById("func").value,
+                    gripper: +document.getElementById("gripper").value,
+                    mode: mode,
+                    k_common: +document.getElementById("k_common")?.value || 0,
+                    k_finger: +document.getElementById("k_finger")?.value || 0,
+                    thumb: (mode == "2")
+                        ? [
+                            +document.getElementById("k_thumb")?.value || 0,
+                            +document.getElementById("k_thumb2")?.value || 0,
+                            +document.getElementById("k_thumb3")?.value || 0
+                        ]
+                        : [
+                            +document.getElementById("Thk1")?.value || 0,
+                            +document.getElementById("Thk2")?.value || 0,
+                            +document.getElementById("Thk3")?.value || 0
+                        ],
+
+                    fingers: [
+                        { k1: +document.getElementById("f1k1")?.value || 0, k2: +document.getElementById("f1k2")?.value || 0 },
+                        { k1: +document.getElementById("f2k1")?.value || 0, k2: +document.getElementById("f2k2")?.value || 0 },
+                        { k1: +document.getElementById("f3k1")?.value || 0, k2: +document.getElementById("f3k2")?.value || 0 },
+                        { k1: +document.getElementById("f4k1")?.value || 0, k2: +document.getElementById("f4k2")?.value || 0 }
                     ]
-                    : [
-                        +document.getElementById("Thk1")?.value || 0,
-                        +document.getElementById("Thk2")?.value || 0,
-                        +document.getElementById("Thk3")?.value || 0
-                    ],
+                };
 
-                fingers: [
-                    { k1: +document.getElementById("f1k1")?.value || 0, k2: +document.getElementById("f1k2")?.value || 0 },
-                    { k1: +document.getElementById("f2k1")?.value || 0, k2: +document.getElementById("f2k2")?.value || 0 },
-                    { k1: +document.getElementById("f3k1")?.value || 0, k2: +document.getElementById("f3k2")?.value || 0 },
-                    { k1: +document.getElementById("f4k1")?.value || 0, k2: +document.getElementById("f4k2")?.value || 0 }
-                ]
-            };
+                let res = await fetch("/calculate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
 
-            let res = await fetch("/calculate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
+                let result = await res.json();
+                // ✅ Volume & Mass
+                document.getElementById("txtvolume").value = result.volume?.toFixed(4) || "";
+                document.getElementById("txtmass").value = result.mass?.toFixed(2) || "";
 
-            let result = await res.json();
-            // ✅ Volume & Mass
-            document.getElementById("txtvolume").value = result.volume?.toFixed(4) || "";
-            document.getElementById("txtmass").value = result.mass?.toFixed(2) || "";
+                // ✅ Fingers
+                document.getElementById("f1").value = result.forces[0]?.toFixed(2) || "";
+                document.getElementById("f2").value = result.forces[1]?.toFixed(2) || "";
+                document.getElementById("f3").value = result.forces[2]?.toFixed(2) || "";
+                document.getElementById("f4").value = result.forces[3]?.toFixed(2) || "";
 
-            // ✅ Fingers
-            document.getElementById("f1").value = result.forces[0]?.toFixed(2) || "";
-            document.getElementById("f2").value = result.forces[1]?.toFixed(2) || "";
-            document.getElementById("f3").value = result.forces[2]?.toFixed(2) || "";
-            document.getElementById("f4").value = result.forces[3]?.toFixed(2) || "";
+                // ✅ Thumb
+                document.getElementById("ft").value = result.thumb?.toFixed(2) || "";
 
-            // ✅ Thumb
-            document.getElementById("ft").value = result.thumb?.toFixed(2) || "";
+                // ✅ Total
+                document.getElementById("total").value = result.total?.toFixed(2) || "";
 
-            // ✅ Total
-            document.getElementById("total").value = result.total?.toFixed(2) || "";
+                // ✅ Hide loader
+                loader.style.display = "none";
+                // ✅ Show execution time
+                execTime.innerText = result.execution_time;
+                document.getElementById("fig1").src = result.fig1;
+                console.log("Fig1 URL:", result.fig1);
+                document.getElementById("fig2").src = result.fig2;
+                document.getElementById("gripper_name").innerText = result.gripper_name;
+                document.getElementById("shape_name").innerText = result.shape_name;
 
-            // ✅ Hide loader
-            loader.style.display = "none";
-            // ✅ Show execution time
-            execTime.innerText = result.execution_time;
-            document.getElementById("fig1").src = result.fig1;
-            document.getElementById("fig2").src = result.fig2;
-            document.getElementById("gripper_name").innerText = result.gripper_name;
-            document.getElementById("shape_name").innerText = result.shape_name;
-
-        }
-    </script>
+            }
+        </script>
 </body>
 
 </html>
