@@ -1,5 +1,5 @@
 # from turtle import mode
-
+import os
 from flask import Flask, render_template, request, jsonify
 from waitress import serve
 import datetime
@@ -195,7 +195,8 @@ def calculate():
 if __name__ == '__main__':
     # app.run()
     # app.run(host="0.0.0.0", port=8000, debug=True)  
-    serve(app, host="0.0.0.0", port=8000, threads=8)
+    port = int(os.environ.get("PORT", 5000))
+    serve(app, host="0.0.0.0", port=port, threads=8)
 
 # Version Control Commands (Git)
 # git status
