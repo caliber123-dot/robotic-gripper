@@ -195,8 +195,9 @@ def calculate():
 if __name__ == '__main__':
     # app.run()
     # app.run(host="0.0.0.0", port=8000, debug=True)  
-    port = int(os.environ.get("PORT", 5000))
-    serve(app, host="0.0.0.0", port=port, threads=8)
+    # port = int(os.environ.get("PORT", 5000))
+    # serve(app, host="0.0.0.0", port=port, threads=8)
+    app.run(host="0.0.0.0", port=5000)
 
 # Version Control Commands (Git)
 # git status
