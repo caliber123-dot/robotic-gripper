@@ -195,9 +195,9 @@ def calculate():
 if __name__ == '__main__':
     # app.run()
     # app.run(host="0.0.0.0", port=8000, debug=True)  
-    # port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5000))
     # serve(app, host="0.0.0.0", port=port, threads=8)
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=port)
 
 # Version Control Commands (Git)
 # git status
@@ -207,3 +207,5 @@ if __name__ == '__main__':
 # # Pull latest (SAFE PRACTICE)
 # git pull origin main --rebase
 # git push
+# Faster Version (Important) Start Command::
+# gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 8
