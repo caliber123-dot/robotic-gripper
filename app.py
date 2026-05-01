@@ -346,5 +346,7 @@ if __name__ == '__main__':
 # # Pull latest (SAFE PRACTICE)
 # git pull origin main --rebase
 # git push
+# git push -f origin main
+
 # Faster Version (Important) Start Command::
 # gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 8
