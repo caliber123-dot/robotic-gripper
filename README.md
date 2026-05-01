@@ -6,13 +6,14 @@ An **interactive web application** to simulate and visualize a **robotic gripper
 
 ## 📌 Overview
 
-This project models a **3-finger + 1 thumb robotic gripper** using spring mechanics and differential equations.
+This project models different configurations of a robotic gripper using **spring mechanics and differential equations**.
 
-It allows users to:
+It supports:
 
-- Input physical parameters (spring constant, mode, geometry, etc.)
-- Compute grip force, displacement, and volume
-- Visualize system behavior dynamically
+- 🖐️ **3-Finger + 1 Thumb Gripper**
+- ✋ **4-Finger Gripper**
+
+The system also considers different **object shapes** and **material properties** to simulate realistic gripping behavior.
 
 ---
 
@@ -20,13 +21,20 @@ It allows users to:
 
 The system is governed by the following equation:
 
-\[
-(mg)_i - r_i \sin\theta_i \frac{d\theta_i}{dt}
-+ r \cos\theta_i \frac{d^2\theta_i}{dt^2}
-+ K_i \left[r_i \left(\theta_i - \frac{\theta_i^3}{3!} + \frac{\theta_i^5}{5!} \right)\right]
+```
+(mg)_i - r_i sin(θ_i) (dθ_i/dt)
++ r cos(θ_i) (d²θ_i/dt²)
++ K_i [ r_i ( θ_i - (θ_i³/3!) + (θ_i⁵/5!) ) ]
 = F_i(t)
-\]
+```
 
+### 📘 Where:
+- \( m \) = Mass  
+- \( g \) = Gravity  
+- \( r_i \) = Radius of finger  
+- \( \theta_i \) = Angular displacement  
+- \( K_i \) = Spring constant  
+- \( F_i(t) \) = Applied force  
 ---
 
 ## 🚀 Live Demo
@@ -39,11 +47,25 @@ Your application is live here:
 
 ## ⚙️ Features
 
-- 🖐️ 3 Fingers + 1 Thumb spring model  
-- 🔧 Multiple modes (Spring Constant Mode, Gripper Mode)  
-- 📊 Real-time calculations (Force, Volume, etc.)  
-- 🌐 Web-based interactive UI  
-- 🧠 Based on physics + mathematical modeling  
+### 🖐️ Gripper Configurations
+- 3 Fingers + 1 Thumb  
+- 4 Fingers  
+
+### 📦 Object Shapes
+- Rectangular  
+- Spherical  
+- Ellipsoidal  
+
+### 🧱 Material Types
+- Rubber  
+- ABS (Acrylonitrile Butadiene Styrene)  
+- Teflon  
+
+### 🔧 Functional Features
+- Multiple modes (Spring Constant Mode, Gripper Mode)  
+- Real-time calculations (Force, Volume, etc.)  
+- Dynamic parameter input  
+- Interactive web interface  
 
 ---
 
