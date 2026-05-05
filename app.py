@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    # print("############# Rendering index.html")
     return render_template('index.html')
 
 # Material density
@@ -102,6 +103,7 @@ def cal_force_eq14(M, K, func, t):
     # return A + K * B
     return A, B, K   # ✅ RETURN SEPARATE VALUES
 
+
 @app.route("/calculate", methods=["POST"])
 def calculate():    
     start_time = time.time()  # ⏱ start
@@ -128,7 +130,7 @@ def calculate():
     material = data["material"]
     t = float(data["time"])
     func = int(data["func"])
-    gripper = int(data["gripper"])
+    gripper = int(data["gripper"]) # 1 or 2
 
     if shape == 1:  # Rectangular
         if event == "length":
@@ -175,7 +177,7 @@ def calculate():
     tA = 0
     tB = 0
     finger_count = 4 if gripper == 1 else 3
-    mode = data["mode"]
+    mode = data["mode"] # get string constant values eg 1, 2, 3
 
     # print("\n===== CALCULATION MODE =====")    
     
@@ -336,7 +338,7 @@ if __name__ == '__main__':
     # app.run()
     # print("# Start App on", "http://localhost:8000")
     # app.run(host="0.0.0.0", port=8000, debug=True) 
-    waitress_serve(app, host="0.0.0.0", port=8000)
+    waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
 
 # Version Control Commands (Git)
 # git status

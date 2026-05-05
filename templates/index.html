@@ -116,6 +116,30 @@
                                     <div class="color-box" style="background: linear-gradient(45deg, #ff512f, #dd2476)"
                                         onmouseover="previewTheme('theme-gradient')"
                                         onclick="setTheme('theme-gradient')" title="Gradient"></div>
+                                    <style>
+                                        .color-panel {
+                                            width: 60px;
+                                            height: 30px;
+                                            padding: 3px;                                            
+                                            margin-right: 15px;
+                                            cursor: pointer;
+                                            margin-right: 0px;
+                                            
+                                        }
+                                        .color-box2 {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px; /* spacing between input and button */
+                                        
+                                    }
+                                    </style>
+                                    <div class="color-box2">                                        
+                                        <input type="color" class="color-panel" id="startColor" value="#f1f1f1">
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
+                                            Apply
+                                        </button>
+                                    </div>
+                                    
                                 </div>
                             </ul>
                         </div>
@@ -397,13 +421,12 @@
                 </div>
                 </div>
                 <div class="col-md-9 div2">
-                    <div class="row g-4">
+                    <div class="row g-4" id="row4fingers" style="display: none;">
                         <div class="col-md-4 div2 p-0">
-                            <!-- OUTPUT PANEL 1 -->
+                            <!-- OUTPUT PANEL 4fingers -->
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px;">Fig. 1: Schematic Representation of Spring structure Model
-                                        for
-                                        <span id="gripper_name">-</span>
+                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
+                                        for 4 Fingers                                        
                                     </label><img id="fig1" src="static/img/basic.avif" id="myImg"
                                         onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
                                 </div>
@@ -411,7 +434,7 @@
                         </div>
                         <div class="col-md-4 div2 p-0">
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                <div class="graph-box"><label style="font-size: 14px; height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
                                         <span id="shape_name">-</span>
                                     </label><img id="fig2" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: auto;" alt="basic.avif">
@@ -420,13 +443,34 @@
                         </div>
                         <div class="col-md-4 div2 p-0">
                            <div class="card p-3">
-                                <div class="graph-box" style="text-align: center;"><label style="font-size: 14px;">Fig. 3: Schematic Representation of Spring structure Model for Industrial Image:
+                                <div class="graph-box" style="text-align: center;"><label style="font-size: 14px;height: 50px;">Fig. 3: Schematic Representation of Spring structure Model for Industrial Image:
                                         <span id="shape_name">-</span>
                                     </label><img id="fig3" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: 200px;" alt="basic.avif">
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row g-4" id="row3fingers" style="display: none;">
+                        <div class="col-md-6 div2 p-0">
+                            <!-- OUTPUT PANEL 3 Fingers and 1 Thumb -->
+                            <div class="card p-3">
+                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
+                                        for 3 Fingers + 1 Thumb
+                                    </label><img id="fig11" src="static/img/basic.avif" id="myImg"
+                                        onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 div2 p-0">
+                            <div class="card p-3">
+                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                        <span id="shape_name2">-</span>
+                                    </label><img id="fig22" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                        style="width: 100%;height: auto;" alt="basic.avif">
+                                </div>
+                            </div>
+                        </div>                        
                     </div>
                     <div class="row div2 p-0">
                         <div id="output" class="col-md-12 div2 p-0">
@@ -650,9 +694,27 @@
         <script src="/static/js/bootstrap.bundle.min.js"></script>
         <script>
             // ===== THEME SYSTEM =====
-            let savedTheme = localStorage.getItem("selectedTheme") || "theme-light";
-            document.body.className = savedTheme;
+            let savedTheme = localStorage.getItem("selectedTheme");
+            let savedColor = localStorage.getItem("selectedTheme2");
+            if(savedTheme){
+                localStorage.removeItem("selectedTheme2");
+                document.body.style.backgroundColor = ""; // clear inline color 
+                document.body.className = savedTheme;  
+            }   
+            else if (savedColor) {
+                localStorage.removeItem("selectedTheme");
+                document.body.className = ""; // remove theme class
+                document.body.style.backgroundColor = savedColor;
+            } 
+            else {
+                document.body.className = "theme-light";
+            }           
 
+            function changeBackground() {
+                let selectedColor = document.getElementById("startColor").value;
+                document.body.style.backgroundColor = selectedColor;
+                localStorage.setItem("selectedTheme2", selectedColor);
+            }
             function previewTheme(theme) {
                 document.body.className = theme;
             }
@@ -678,6 +740,8 @@
                 let trThumb = document.getElementById("trThumb");
                 let fig1 = document.getElementById("fig1");
                 let fig2 = document.getElementById("fig2");
+                let fig11 = document.getElementById("fig11");
+                let fig22 = document.getElementById("fig22");
                 let fig3 = document.getElementById("fig3");
                 let txtvolume = document.getElementById("txtvolume");
                 let txtmass = document.getElementById("txtmass");
@@ -687,7 +751,7 @@
                 let f4 = document.getElementById("f4");
                 let ft = document.getElementById("ft");
                 let total = document.getElementById("total");
-                let gripper_name = document.getElementById("gripper_name");
+                // let gripper_name = document.getElementById("gripper_name");
                 let length = document.getElementById("length");
                 let breadth = document.getElementById("breadth");
                 let width = document.getElementById("width");
@@ -741,12 +805,12 @@
                 b3.value = "";
                 b4.value = "";
                 tb.value = "";
-                length.value = "";
-                breadth.value = "";
-                width.value = "";
-                radius.value = "";
-                Rmajor.value = "";
-                Rminor.value = "";
+                length.value = "100";
+                breadth.value = "40";
+                width.value = "20";
+                radius.value = "50";
+                Rmajor.value = "50";
+                Rminor.value = "30";
                 time.value = "";
                 k_common.value = "";
                 k_finger.value = "";
@@ -773,15 +837,20 @@
                 f4.value = "";
                 ft.value = "";
                 total.value = "";
-                fig1.src = "static/img/basic.avif";
-                fig2.src = "static/img/basic.avif";
+                document.getElementById("shape_name").innerText = "-";
+                fig1.src = fig11.src = "static/img/basic.avif";
+                fig2.src = fig22.src = "static/img/basic.avif";
                 fig3.src = "static/img/basic.avif";
+                let row4fingers = document.getElementById("row4fingers");
+                let row3fingers = document.getElementById("row3fingers");
 
-                if(gripper == ""){
+                if (gripper == "") {
                     gripper_window.setAttribute("data-title", "-");
                     gripper_window.style.display = "none";
                     trFinger4.style.display = "none";
                     trThumb.style.display = "none";
+                    row4fingers.style.display = "none";
+                    row3fingers.style.display = "none";
                     // alert("Please select Gripper Type 0");
                 }
                 else if (gripper == "1") {
@@ -789,7 +858,9 @@
                     gripper_window.style.display = "block";
                     trFinger4.style.display = "table-row";
                     trThumb.style.display = "none";
-                    gripper_name.innerText = "4 Fingers";
+                    row4fingers.style.display = "flex";
+                    row3fingers.style.display = "none";
+                    // gripper_name.innerText = "4 Fingers";
                     // alert("4 Fingers Gripper Selected");
                 }
                 else if (gripper == "2") {
@@ -797,30 +868,32 @@
                     gripper_window.style.display = "block";
                     trFinger4.style.display = "none";
                     trThumb.style.display = "table-row";
-                    gripper_name.innerText = "3 Fingers + 1 Thumb";
+                    row4fingers.style.display = "none";
+                    row3fingers.style.display = "flex";
+                    // gripper_name.innerText = "3 Fingers + 1 Thumb";
                     // alert("3 Fingers + 1 Thumb Gripper Selected");
                 }
                 updateSpringFields();
             }
-            
+
             function updateSpringFields() {
                 // alert("Update spring fields called");
                 console.log("Updating spring fields...");
-                let gripper = document.getElementById("gripper").value;                
+                let gripper = document.getElementById("gripper").value;
                 let mode = document.querySelector('input[name="kmode"]:checked').value;
                 // let container = document.getElementById("springInputs");
                 let equal = document.getElementById("springInputs_equal");
                 let samefinger = document.getElementById("springInputs_samefinger");
                 let unequal = document.getElementById("springInputs_unequal");
-                let msg = document.getElementById("springInputs_msg");              
-                                
+                let msg = document.getElementById("springInputs_msg");
+
                 let fingerCount = gripper == 1 ? 4 : 3;
 
                 if (mode == 1) {
                     equal.style.display = "block";
                     samefinger.style.display = "none";
                     unequal.style.display = "none";
-                    msg.style.display = "none";                   
+                    msg.style.display = "none";
                 }
 
                 if (mode == 2) {
@@ -867,11 +940,11 @@
             }
 
             function onMyPopup(ctrl) {
-            modal.style.display = "block";
-            modalImg.src = ctrl.src;
-            modalImg.alt = ctrl.alt;
-            // captionText.innerHTML = ctrl.alt;
-        }
+                modal.style.display = "block";
+                modalImg.src = ctrl.src;
+                modalImg.alt = ctrl.alt;
+                // captionText.innerHTML = ctrl.alt;
+            }
             var span = document.getElementsByClassName("close")[0];
             var span2 = document.getElementsByClassName("close")[1];
 
@@ -1140,7 +1213,7 @@
                 // 🔥 SHOW LOADER
                 loader.style.display = "inline-block";
                 execTime.innerText = "0";
-                let shape = +document.getElementById("shape").value;
+                let shape = +document.getElementById("shape").value;                
 
                 // 🔥 GET SELECTION EVENT
                 let event = "";
@@ -1248,18 +1321,24 @@
                 document.getElementById("ta").value = result.thumbA?.toFixed(4) || "";
                 document.getElementById("tb").value = result.thumbB?.toFixed(4) || "";
 
-
-
                 // ✅ Hide loader
                 loader.style.display = "none";
                 // ✅ Show execution time
                 execTime.innerText = result.execution_time;
-                document.getElementById("fig1").src = result.fig1;
-                document.getElementById("fig3").src = result.fig3;
-                console.log("Fig1 URL:", result.fig1);
-                document.getElementById("fig2").src = result.fig2;
-                document.getElementById("gripper_name").innerText = result.gripper_name;
-                document.getElementById("shape_name").innerText = result.shape_name;
+                let gripper = document.getElementById("gripper").value;
+                // alert("gripper: " + gripper + " mode: " + mode);
+                if(gripper == "1") {
+                    document.getElementById("fig1").src = result.fig1;
+                    document.getElementById("fig2").src = result.fig2;
+                    document.getElementById("fig3").src = result.fig3;
+                    document.getElementById("shape_name").innerText = result.shape_name;
+                }
+                else if(gripper == "2") {
+                    document.getElementById("fig11").src = result.fig1;
+                    document.getElementById("fig22").src = result.fig2;
+                    document.getElementById("shape_name2").innerText = result.shape_name;
+                }                
+                console.log("Fig1 URL:", result.fig1);            
 
             }
         </script>
