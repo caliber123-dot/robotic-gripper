@@ -816,7 +816,8 @@ window.addEventListener("load", () => {
                                 <option value="2">3 Fingers + 1 Thumb</option>
                             </select> -->
                             <label>Object Shape</label>
-                            <select id="shape" class="form-select" onchange="updateSelectionEvent()">
+                            <select id="shape" class="form-select"  onchange="updateSelectionEvent()">
+                                <option value="">Select Shape</option>
                                 <option value="1">Rectangular</option>
                                 <option value="2">Spherical</option>
                                 <option value="3">Ellipsoidal</option>
@@ -891,6 +892,7 @@ window.addEventListener("load", () => {
 
                             <label>Material</label>
                             <select id="material" class="form-select">
+                                <option value="">Select Material</option>
                                 <option value="rubber">Rubber</option>
                                 <option value="abs">ABS</option>
                                 <option value="teflon">Teflon</option>
@@ -1188,6 +1190,12 @@ window.addEventListener("load", () => {
                                         <th colspan="4">Total Force</th>
                                         <th><input id="total" class="form-control fw-bold" readonly /></th>
                                     </tr>
+                                    <tr class="table-secondary">
+                                        <th colspan="5">
+                                           <button type="button" class="btn btn-success w-100 fw-bold" onclick="downloadResultsExcel()"> <i class="bi bi-download me-2"></i> Download Results in Excel</button>
+                                        </th>
+                                      
+                                    </tr>
                             </table>
 
                         </div>
@@ -1223,7 +1231,9 @@ window.addEventListener("load", () => {
 
     flex-wrap: nowrap;
 }
-
+#thirdTermGroup{
+    display: none;
+}
 .eq-block{
     width: 100px;
 
@@ -1287,6 +1297,35 @@ window.addEventListener("load", () => {
         <div id="myModalFun" class="modal"> <span class="close" style="float:right;">&times;</span>
             <div class="container box" style="width:40% !important;">
                 <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
+                <!-- TERM SELECTION -->
+<div class="d-flex justify-content-center gap-4 mb-3">
+
+    <div class="form-check">
+        <input class="form-check-input"
+               type="radio"
+               name="termCount"
+               id="twoTerms"
+               checked
+               onchange="toggleTerms(2)">
+
+        <label class="form-check-label fw-bold">
+            2 Terms
+        </label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input"
+               type="radio"
+               name="termCount"
+               id="threeTerms"
+               onchange="toggleTerms(3)">
+
+        <label class="form-check-label fw-bold">
+            3 Terms
+        </label>
+    </div>
+
+</div>
                 <div class="equation-builder"> <!-- TERM 1 -->
                     <div class="eq-block"> <select id="cfunc1" class="form-select eq-select">
                             <option value="">select</option>
@@ -1320,23 +1359,34 @@ window.addEventListener("load", () => {
                             <option value="5">5</option>
                         </select>
                     </div> <!-- PLUS / MINUS -->
-                    <div class="eq-operator"> <select id="operator2" class="form-select operator-select">
-                            <option value="+">+</option>
-                            <option value="-">−</option>
-                        </select> </div> <!-- TERM 3 -->
-                    <div class="eq-block"> <select id="cfunc5" class="form-select eq-select">
-                            <option value="">select</option>
-                            <option value="t">t</option>
-                            <option value="t²">t²</option>
-                            <option value="t³">t³</option>
-                        </select>
-                        <hr class="eq-line"> <select id="cfunc6" class="form-select eq-select">
-                            <option value="">select</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
+                    <!-- <div class="eq-operator">  -->
+                    <!-- THIRD TERM GROUP -->
+                    <div id="thirdTermGroup" class="align-items-center gap-3">
+                        <!-- OPERATOR 2 -->
+                        <div class="eq-operator">
+                            <select id="operator2" class="form-select operator-select">
+                                <option value="+">+</option>
+                                <option value="-">−</option>
+                            </select>
+                        </div>
+
+                        <!-- TERM 3 -->
+                        <div class="eq-block">
+                            <select id="cfunc5" class="form-select eq-select">
+                                <option value="">select</option>
+                                <option value="t">t</option>
+                                <option value="t²">t²</option>
+                                <option value="t³">t³</option>
+                            </select>
+                            <hr class="eq-line">
+                            <select id="cfunc6" class="form-select eq-select">
+                                <option value="">select</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
                     </div>
                 </div> <!-- BUTTON -->
                 <div class="mt-4"> <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
@@ -1623,6 +1673,8 @@ window.addEventListener("load", () => {
             var modalImg = document.getElementById("img01");
             function onMyPopupFun(ctrl) {
                 myModalFun.style.display = "block";
+                document.getElementById("twoTerms").checked = true;
+                toggleTerms(2);
             }
 
             function onMyPopup(ctrl) {
@@ -1642,6 +1694,34 @@ window.addEventListener("load", () => {
                 myModalFun.style.display = "none";
             }
             updateSpringFields();
+        </script>
+        <script>
+            function toggleTerms(count) {
+
+                let thirdGroup =
+                    document.getElementById("thirdTermGroup");
+
+                if (count == 2) {
+
+                    thirdGroup.style.display = "none";
+
+                }
+                else {
+
+                    // thirdGroup.style.display = "flex";
+                    thirdGroup.style.display = "inline-flex";
+                }
+            }
+
+            /* default load */
+            window.addEventListener("load", () => {
+
+                document.getElementById("twoTerms").checked = true;
+
+                toggleTerms(2);
+
+            });
+
         </script>
         <script>
             const sections = document.querySelectorAll("section, div[id]");
@@ -1734,6 +1814,15 @@ window.addEventListener("load", () => {
                     // 3 Fingers + 1 Thumb
                     trFinger4.style.display = "none";
                     trThumb.style.display = "table-row";
+                }
+                // if Select Shape then validate shape parameters
+                if (!shape) {
+                    markInvalid("shape");
+                    return false;
+                }
+                if(material == "") {
+                    markInvalid("material");
+                    return false;
                 }
                 if(shape == 1) {
                     let length = document.getElementById("length").value;

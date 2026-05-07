@@ -3,3 +3,4 @@ __pycache__
 .env
 app1.py
 README.md
+gripper_results.xlsx

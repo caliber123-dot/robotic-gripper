@@ -1,10 +1,15 @@
 # from turtle import mode
 import math
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from waitress import serve as waitress_serve
 import datetime
 import time
+# from openpyxl import Workbook
+# from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.utils import get_column_letter
 
 app = Flask(__name__)
 
@@ -344,6 +349,162 @@ def calculate():
         "ktt": ktt,
         "fig3": fig3
     })
+
+@app.route("/download_excel", methods=["POST"])
+def download_excel():
+
+    data = request.json
+
+    wb = Workbook()
+
+    ws = wb.active
+
+    if ws is None:
+        raise Exception("Worksheet not created")
+
+    ws.title = "Gripper Results"
+
+    # =========================
+    # HEADER DETAILS
+    # =========================
+
+    header_font = Font(bold=True)
+    Grippertype= data.get("gripper_name", "")
+
+    ws["A1"] = "Gripper type:"
+    ws["B1"] = Grippertype
+
+    ws["A2"] = "Object Shape"
+    ws["B2"] = data.get("shape_name", "")
+
+    ws["A3"] = "Material"
+    ws["B3"] = data.get("material", "")
+
+    ws["A4"] = "Time"
+    ws["B4"] = str(data.get("time", "")) + " sec"
+
+    ws["A5"] = "θ(t) Function"
+    ws["B5"] = data.get("func", "")
+
+    ws["A6"] = "Spring Constant"
+    ws["B6"] = data.get("mode_name", "")
+
+    # Bold left labels
+    for row in range(1, 7):
+
+        ws[f"A{row}"].font = header_font
+
+    # =========================
+    # TABLE HEADER
+    # =========================
+
+    ws["A8"] = "Finger"
+    ws["B8"] = "A"
+    ws["C8"] = "K"
+    ws["D8"] = "B"
+    ws["E8"] = "Force"
+
+    for cell in ["A8", "B8", "C8", "D8", "E8"]:
+
+        ws[cell].font = header_font
+        ws[cell].alignment = Alignment(horizontal="center")
+
+    # =========================
+    # DATA ROWS
+    # =========================
+
+    rows = [
+
+        ["Finger 1",
+            data.get("a1"),
+            data.get("k1"),
+            data.get("b1"),
+            data.get("f1")],
+
+        ["Finger 2",
+            data.get("a2"),
+            data.get("k2"),
+            data.get("b2"),
+            data.get("f2")],
+
+        ["Finger 3",
+            data.get("a3"),
+            data.get("k3"),
+            data.get("b3"),
+            data.get("f3")]
+    ]
+
+    # =========================
+    # 4 Finger Gripper
+    # =========================
+
+    if "4" in str(data.get("gripper_name", "")):
+
+        rows.append([
+            "Finger 4",
+            data.get("a4"),
+            data.get("k4"),
+            data.get("b4"),
+            data.get("f4")
+        ])
+
+    # =========================
+    # 3 Finger + Thumb
+    # =========================
+
+    if "Thumb" in str(data.get("gripper_name", "")):
+
+        rows.append([
+            "Thumb",
+            data.get("ta"),
+            data.get("tk"),
+            data.get("tb"),
+            data.get("ft")
+        ])
+
+    start_row = 9
+
+    for row_data in rows:
+
+        ws.append(row_data)
+
+    # =========================
+    # TOTAL
+    # =========================
+
+    ws["A15"] = "TOTAL"
+    ws["E15"] = data.get("total")
+
+    ws["A15"].font = Font(bold=True)
+    ws["E15"].font = Font(bold=True)
+
+    # =========================
+    # COLUMN WIDTH
+    # =========================
+
+    for col_num, column_cells in enumerate(ws.columns, 1):
+
+        length = max(
+            len(str(cell.value or ""))
+            for cell in column_cells
+        )
+
+        column_letter = get_column_letter(col_num)
+
+        ws.column_dimensions[column_letter].width = length + 5
+
+    # =========================
+    # SAVE FILE
+    # =========================
+
+    file_name = "gripper_results.xlsx"
+
+    wb.save(file_name)
+
+    return send_file(
+        file_name,
+        as_attachment=True
+    )
 
 if __name__ == '__main__':
     # app.run()

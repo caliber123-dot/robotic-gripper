@@ -228,3 +228,88 @@ function reloadDropdown() {
         addFunctionToDropdown(func);
     });
 }
+
+// Download results as Excel >>>
+async function downloadResultsExcel() {
+
+    let data = {
+
+        a1: document.getElementById("a1")?.value || "",
+        k1: document.getElementById("k1")?.value || "",
+        b1: document.getElementById("b1")?.value || "",
+        f1: document.getElementById("f1")?.value || "",
+
+        a2: document.getElementById("a2")?.value || "",
+        k2: document.getElementById("k2")?.value || "",
+        b2: document.getElementById("b2")?.value || "",
+        f2: document.getElementById("f2")?.value || "",
+
+        a3: document.getElementById("a3")?.value || "",
+        k3: document.getElementById("k3")?.value || "",
+        b3: document.getElementById("b3")?.value || "",
+        f3: document.getElementById("f3")?.value || "",
+
+        a4: document.getElementById("a4")?.value || "",
+        k4: document.getElementById("k4")?.value || "",
+        b4: document.getElementById("b4")?.value || "",
+        f4: document.getElementById("f4")?.value || "",
+
+        ta: document.getElementById("ta")?.value || "",
+        tk: document.getElementById("tk")?.value || "",
+        tb: document.getElementById("tb")?.value || "",
+        ft: document.getElementById("ft")?.value || "",
+
+        total: document.getElementById("total")?.value || "",
+        gripper_name: document.getElementById("gripper") ?.selectedOptions[0]?.text || "",
+
+        shape_name: document.getElementById("shape") ?.selectedOptions[0]?.text || "",
+
+        material: document.getElementById("material")?.selectedOptions[0]?.text || "",
+
+        time: document.getElementById("time").value,
+
+        func: document.getElementById("func")?.selectedOptions[0]?.text || "",
+
+        mode_name: document.querySelector('input[name="kmode"]:checked')
+           ?.nextSibling?.textContent.trim() || "",
+    };
+
+    console.log(data);
+
+    let response = await fetch("/download_excel", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+
+        alert("Excel download failed");
+
+        return;
+    }
+
+    let blob = await response.blob();
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = "gripper_results.xlsx";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+}
+
