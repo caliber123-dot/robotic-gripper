@@ -77,7 +77,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#about">
                             <i class="bi bi-info-circle"></i> About
                         </a>
@@ -86,7 +86,21 @@
                         <a class="nav-link" href="#about">
                             <i class="bi bi-lock"></i> Login
                         </a>
-                    </li>
+                    </li> -->
+                    <li class="nav-item ms-3 d-flex align-items-center">
+
+    <i class="bi bi-sun-fill theme-icon-light"></i>
+
+    <div class="form-check form-switch mx-2">
+        <input class="form-check-input custom-theme-switch"
+               type="checkbox"
+               id="themeToggle"
+               onchange="toggleTheme()">
+    </div>
+
+    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+
+</li>
                     <li>
                         <div class="dropdown d-inline-block ms-2">
                             <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -94,7 +108,7 @@
                             </button>
                             <ul class="dropdown-menu p-3">
                                 <div class="d-flex flex-wrap gap-2">
-                                    <div class="color-box bg-light border" onmouseover="previewTheme('theme-light')"
+                                    <!-- <div class="color-box bg-light border" onmouseover="previewTheme('theme-light')"
                                         onclick="setTheme('theme-light')" title="Light"></div>
 
                                     <div class="color-box" style="background: #121212"
@@ -111,33 +125,140 @@
 
                                     <div class="color-box" style="background: #a39aaf"
                                         onmouseover="previewTheme('theme-purple')" onclick="setTheme('theme-purple')"
-                                        title="Purple"></div>
+                                        title="Purple"></div> 
 
                                     <div class="color-box" style="background: linear-gradient(45deg, #ff512f, #dd2476)"
                                         onmouseover="previewTheme('theme-gradient')"
                                         onclick="setTheme('theme-gradient')" title="Gradient"></div>
+                                    -->
+
                                     <style>
-                                        .color-panel {
-                                            width: 60px;
+                                        .custom-theme-switch {
+                                            width: 58px !important;
                                             height: 30px;
-                                            padding: 3px;                                            
+                                    
+                                            border-radius: 50px !important;
+                                    
+                                            cursor: pointer;
+                                    
+                                            border: none !important;
+                                    
+                                            background-color: #f8f9fa;
+                                    
+                                            transition: all 0.3s ease;
+                                    
+                                            box-shadow:
+                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
+                                                0 0 10px rgba(0, 212, 255, 0.3);
+                                        }
+                                    
+                                        /* LIGHT MODE circle = black */
+                                        .custom-theme-switch:not(:checked) {
+                                            background-color: #e9ecef;
+                                    
+                                            background-image:
+                                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='black'/%3E%3C/svg%3E");
+                                        }
+                                    
+                                        /* DARK MODE circle = white */
+                                        .custom-theme-switch:checked {
+                                            background-color: #121212;
+                                        }
+                                    
+                                        /* remove bootstrap glow */
+                                        .custom-theme-switch:focus {
+                                            box-shadow:
+                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
+                                                0 0 12px rgba(0, 212, 255, 0.5);
+                                        }
+                                    
+                                        .custom-theme-switch:checked {
+                                            background-color: #121212;
+                                        }
+                                    
+                                        .custom-theme-switch:focus {
+                                            box-shadow:
+                                                0 0 12px rgba(0, 212, 255, 0.7);
+                                        }
+                                    
+                                        .theme-icon-light {
+                                            color: #ffd43b;
+                                            font-size: 18px;
+                                    
+                                            filter: drop-shadow(0 0 5px rgba(255, 212, 59, 0.8));
+                                        }
+                                    
+                                        .theme-icon-dark {
+                                            color: #d0d7ff;
+                                            font-size: 18px;
+                                    
+                                            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+                                        }
+                                    
+                                        .color-panel1 {
+                                            width: 100px;
+                                            height: 30px;
+                                            padding: 3px;
                                             margin-right: 15px;
                                             cursor: pointer;
                                             margin-right: 0px;
-                                            
+                                    
                                         }
+                                        .color-panel{
+    width: 100px;
+    height: 35px;
+
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    padding: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            red,
+            orange,
+            yellow,
+            lime,
+            cyan,
+            blue,
+            violet,
+            red
+        );
+
+    box-shadow:
+        0 0 10px rgba(0,0,0,0.15);
+
+    overflow: hidden;
+}
+
+/* hide default browser color UI */
+.color-panel::-webkit-color-swatch-wrapper{
+    padding: 0;
+}
+
+.color-panel::-webkit-color-swatch{
+    border: none;
+    border-radius: 6px;
+
+    opacity: 0; /* hide solid selected color */
+}
+                                    
                                         .color-box2 {
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 10px; /* spacing between input and button */
-                                        
-                                    }
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 10px;
+                                            /* spacing between input and button */
+                                    
+                                        }
                                     </style>
                                     <div class="color-box2">                                        
-                                        <input type="color" class="color-panel" id="startColor" value="#f1f1f1">
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
+                                        <input type="color" class="color-panel" id="startColor" value="#f1f1f1" onchange="changeBackground()">
+                                        <!-- <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
                                             Apply
-                                        </button>
+                                        </button> -->
                                     </div>
                                     
                                 </div>
@@ -156,86 +277,372 @@
             Spring Structural Model of Robotic Gripper 
         </h2> -->
         <!-- <div style="background: #2c3e50;"> -->
-        <div style="background: #2c3e50;border-radius: 10px;padding: 10px;text-align: center;color: white;">
+        <style>
+            .hero-ai-bg{
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(135deg,
+        #16222a,
+        #203a43,
+        #2c5364);
+
+    border-radius: 14px;
+    padding: 18px;
+
+    text-align: center;
+    color: white;
+
+    border: 2px solid rgba(0,212,255,0.25);
+
+    box-shadow:
+        0 0 20px rgba(0,212,255,0.15),
+        0 0 40px rgba(0,212,255,0.08);
+
+    z-index: 1;
+}
+
+/* animated glowing grid */
+.hero-ai-bg::before{
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(rgba(0,212,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.08) 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    animation: gridMove 8s linear infinite;
+
+    z-index: -2;
+}
+
+/* glowing AI orb */
+.hero-ai-bg::after{
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    background:
+        radial-gradient(circle,
+        rgba(0,212,255,0.22) 0%,
+        transparent 70%);
+
+    top: -180px;
+    right: -120px;
+
+    animation: glowPulse 6s ease-in-out infinite alternate;
+
+    z-index: -1;
+}
+
+/* moving grid */
+@keyframes gridMove{
+    from{
+        transform: translateY(0px);
+    }
+
+    to{
+        transform: translateY(40px);
+    }
+}
+
+/* glow pulse */
+@keyframes glowPulse{
+    from{
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    to{
+        transform: scale(1.25);
+        opacity: 1;
+    }
+}
+
+/* BIG highlighted title */
+.hero-ai-bg h2{
+    font-size: 2.5rem;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.4),
+        0 0 20px rgba(0,212,255,0.7),
+        0 0 40px rgba(0,212,255,0.5);
+
+    animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+/* highlighted subtitle */
+.hero-ai-bg h4{
+    font-weight: 700;
+
+    color: #dff6ff;
+
+    text-shadow:
+        0 0 10px rgba(0,212,255,0.5);
+}
+
+/* formula highlight */
+.hero-ai-bg img{
+    filter:
+        drop-shadow(0 0 10px rgba(255,215,0,0.5))
+        drop-shadow(0 0 20px rgba(255,215,0,0.3));
+
+    animation: formulaFloat 3s ease-in-out infinite;
+}
+
+/* title glow animation */
+@keyframes titleGlow{
+    from{
+        text-shadow:
+            0 0 10px rgba(255,255,255,0.4),
+            0 0 20px rgba(0,212,255,0.5);
+    }
+
+    to{
+        text-shadow:
+            0 0 20px rgba(255,255,255,0.7),
+            0 0 40px rgba(0,212,255,1),
+            0 0 60px rgba(0,212,255,0.8);
+    }
+}
+
+/* floating formula */
+@keyframes formulaFloat{
+    0%{
+        transform: translateY(0px);
+    }
+
+    50%{
+        transform: translateY(-5px);
+    }
+
+    100%{
+        transform: translateY(0px);
+    }
+}
+.hero-ai-bg{
+    position: relative;
+    overflow: hidden;
+
+    background: linear-gradient(135deg,#1e2f45,#243b55,#1b2735);
+
+    border-radius: 14px;
+    padding: 18px;
+
+    text-align: center;
+    color: white;
+}
+
+/* particles container */
+.particles{
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* particle circles */
+.particles span{
+    position: absolute;
+    display: block;
+
+    width: 12px;
+    height: 12px;
+
+    background: rgba(0,212,255,0.35);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 10px rgba(0,212,255,0.8),
+        0 0 20px rgba(0,212,255,0.5);
+
+    animation: floatParticle linear infinite;
+}
+
+/* different particle positions */
+.particles span:nth-child(1){
+    left: 10%;
+    animation-duration: 10s;
+    animation-delay: 0s;
+}
+
+.particles span:nth-child(2){
+    left: 25%;
+    width: 18px;
+    height: 18px;
+    animation-duration: 14s;
+}
+
+.particles span:nth-child(3){
+    left: 40%;
+    animation-duration: 12s;
+}
+
+.particles span:nth-child(4){
+    left: 55%;
+    width: 8px;
+    height: 8px;
+    animation-duration: 9s;
+}
+
+.particles span:nth-child(5){
+    left: 70%;
+    animation-duration: 15s;
+}
+
+.particles span:nth-child(6){
+    left: 82%;
+    width: 16px;
+    height: 16px;
+    animation-duration: 11s;
+}
+
+.particles span:nth-child(7){
+    left: 92%;
+    animation-duration: 13s;
+}
+
+.particles span:nth-child(8){
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    animation-duration: 18s;
+}
+
+/* floating animation */
+@keyframes floatParticle{
+
+    0%{
+        transform: translateY(100%) scale(0.5);
+        opacity: 0;
+    }
+
+    20%{
+        opacity: 1;
+    }
+
+    80%{
+        opacity: 1;
+    }
+
+    100%{
+        transform: translateY(-900%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* keep content above particles */
+.hero-ai-bg h2,
+.hero-ai-bg h4,
+.hero-ai-bg img,
+.formula-details-container{
+    position: relative;
+    z-index: 2;
+}
+        </style>
+        <div class="hero-ai-bg" style="border-radius: 10px;padding: 10px;text-align: center;color: white;">
+            <div class="particles">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
             <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
             <h4>According to this equation:</h4>
             <img src="static/img/formula_14.png" alt="" height="80">
             <!-- Formula Details -->
-<div class="formula-details-container mt-3">
-
-    <div class="formula-details collapsed" id="formulaDetails">
-
-        <div class="detail-item">
-             <i class="bi bi-box-seam formula-icon"></i>
-            <b>m</b> = mass of the object
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-globe2 formula-icon"></i>
-            <b>g</b> = acceleration due to gravity = 9.8 m/s²
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-arrows-angle-expand formula-icon"></i>
-            <b>r</b> = distance of finger from joint to contact point
-        </div>
-
-        <div class="detail-item">
-             <i class="bi bi-compass formula-icon"></i>
-            <b>θ</b> = angle of contact
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-diagram-3 formula-icon"></i>
-            <b>k</b> = spring constant
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-graph-up-arrow formula-icon"></i>
-            <b>dθ/dt</b> = first derivative
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-activity formula-icon"></i>
-            <b>d²θ/dt²</b> = second derivative
-        </div>
-
-        <div class="detail-item">
-            <i class="bi bi-arrow-left-right formula-icon"></i>
-            <b>r sinθ</b> = linear deflection
-        </div>
-
-        <div class="detail-item">
-             <i class="bi bi-calculator formula-icon"></i>
-            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
-        </div>
-
-        <div class="detail-item">
-             <i class="bi bi-hand-index-thumb formula-icon"></i>
-            <b>Fᵢ(t)</b> = Grasp Force
-        </div>
-
-    </div>
-
-   <button class="formula-toggle-btn mt-2"
-    id="toggleFormulaBtn"
-    onclick="toggleFormulaDetails()">
-
-    <span>
-        <i class="bi bi-journal-richtext me-1"></i>
-        More Details
-    </span>
-
-    <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
-
-</button>
-
-</div>
-
+            <div class="w-100 text-center d-flex justify-content-center">
+                <div class="formula-details-container mt-3">
+        
+                    <div class="formula-details collapsed" id="formulaDetails">
+        
+                        <div class="detail-item">
+                            <i class="bi bi-box-seam formula-icon"></i>
+                            <b>m</b> = mass of the object
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-globe2 formula-icon"></i>
+                            <b>g</b> = acceleration due to gravity = 9.8 m/s²
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-arrows-angle-expand formula-icon"></i>
+                            <b>r</b> = distance of finger from joint to contact point
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-compass formula-icon"></i>
+                            <b>θ</b> = angle of contact
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-diagram-3 formula-icon"></i>
+                            <b>k</b> = spring constant
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-graph-up-arrow formula-icon"></i>
+                            <b>dθ/dt</b> = first derivative
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-activity formula-icon"></i>
+                            <b>d²θ/dt²</b> = second derivative
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-arrow-left-right formula-icon"></i>
+                            <b>r sinθ</b> = linear deflection
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-calculator formula-icon"></i>
+                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-hand-index-thumb formula-icon"></i>
+                            <b>Fᵢ(t)</b> = Grasp Force
+                        </div>
+        
+                    </div>
+        
+                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()">
+        
+                        <span>
+                            <i class="bi bi-journal-richtext me-1"></i>
+                            More Details
+                        </span>
+        
+                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
+        
+                    </button>
+        
+                </div>
+            </div>
         </div>
         <style>
             .formula-details-container {
-                width: 100%;
+                width: 70%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -325,6 +732,33 @@
             }
         </style>
         <script>
+            function toggleTheme(){
+
+    let toggle = document.getElementById("themeToggle");
+
+    if(toggle.checked){
+
+        setTheme("theme-dark");
+
+    }else{
+
+        setTheme("theme-light");
+    }
+}
+
+/* restore toggle state on reload */
+window.addEventListener("load", () => {
+
+    let savedTheme = localStorage.getItem("selectedTheme");
+
+    let toggle = document.getElementById("themeToggle");
+
+    if(savedTheme === "theme-dark"){
+        toggle.checked = true;
+    }else{
+        toggle.checked = false;
+    }
+});
             function toggleFormulaDetails() {
 
                 let details = document.getElementById("formulaDetails");
@@ -470,9 +904,9 @@
                             <div class="row">
                                 <div class="col-md-9">
                                     <select id="func" class="form-select">
-                                        <option value="1">t/2 + t²/3</option>
-                                        <option value="2">t/2 + t²/3 + t³/4</option>
-                                        <option value="3">t/3 + t²/4 + t³/5</option>
+                                        <option value="t/2 + t^2/3">t/2 + t²/3</option>
+                                        <option value="t/2 + t^2/3 + t^3/4">t/2 + t²/3 + t³/4</option>
+                                        <option value="t/3 + t^2/4 + t^3/5">t/3 + t²/4 + t³/5</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3" >
@@ -771,86 +1205,155 @@
                 <button type="button" onclick="onDownloadPdf2()" class="close22">Save Pdf</button> -->
                 <img class="modal-content" id="img01" style="margin-bottom: 50px;">             
             </div>
+<style>
 
-            <div id="myModalFun" class="modal">
-                <span class="close" style="float: right;">&times;</span>
-                <div class="container box" style="width: 30% !important;">
-                    <h5>Add θ(t) Function:</h5>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <select id="cfunc1" class="form-select">
-                                <option value="">select</option>
-                                <option value="t">t</option>                                
-                                <option value="t²">t²</option>                                
-                                <option value="t³">t³</option>                                
-                            </select>
-                            <hr class="border border-dark border-1 opacity-100">
-                            <select id="cfunc2" class="form-select">
-                                <option value="">select</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>                                
-                                <option value="4">4</option>                               
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select id="cfunc3" class="form-select">
-                                <option value="">select</option>
-                                <option value="t">t</option>                                
-                                <option value="t²">t²</option>                                
-                                <option value="t³">t³</option>
-                            </select>
-                            <hr class="border border-dark border-1 opacity-100">
-                            <select id="cfunc4" class="form-select">
-                                <option value="">select</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>                                
-                                <option value="4">4</option>                               
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select id="cfunc5" class="form-select">
-                                <option value="">select</option>
-                                <option value="t">t</option>                                
-                                <option value="t²">t²</option>                                
-                                <option value="t³">t³</option>
-                            </select>
-                            <hr class="border border-dark border-1 opacity-100">
-                            <select id="cfunc6" class="form-select">
-                                <option value="">select</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>                                
-                                <option value="4">4</option>                               
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 mt-3 bold600">
-                                Add Function
-                            </button>
-                        </div>
-                    </div>
-                    <hr>
-                    <h6>Saved Functions</h6>
-                    
-                    <table class="table table-bordered table-sm mt-2">
-                        <thead>
-                            <tr>
-                                <th style="width: 80%;">Function</th>
-                                <th style="width: 20%;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="functionTableBody">
-                        </tbody>
-                    </table>
-                    
-                </div>
-                <!-- <img class="modal-content" id="img01" style="margin-bottom: 50px;">               -->
+.equation-builder{
+    display: flex;
 
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    flex-wrap: nowrap;
+}
+
+.eq-block{
+    width: 100px;
+
+    min-width: 100px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+}
+
+.eq-select{
+    width: 100%;
+
+    text-align: center;
+
+    font-weight: 600;
+
+    border-radius: 10px;
+
+    /* padding: 5px; */
+}
+
+.eq-line{
+    width: 100%;
+
+    border: 2px solid #2c3e50;
+
+    opacity: 1;
+
+    margin: 8px 0;
+}
+
+.eq-operator{
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.operator-select{
+    width: 65px;
+
+    min-width: 65px;
+
+    text-align: center;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    border-radius: 12px;
+
+    /* background: #2c3e50; */
+    /* color: white; */
+
+    /* border: none; */
+}
+
+
+</style>
+        <div id="myModalFun" class="modal"> <span class="close" style="float:right;">&times;</span>
+            <div class="container box" style="width:40% !important;">
+                <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
+                <div class="equation-builder"> <!-- TERM 1 -->
+                    <div class="eq-block"> <select id="cfunc1" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="t">t</option>
+                            <option value="t²">t²</option>
+                            <option value="t³">t³</option>
+                        </select>
+                        <hr class="eq-line"> <select id="cfunc2" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div> <!-- PLUS / MINUS -->
+                    <div class="eq-operator"> <select id="operator1" class="form-select operator-select">
+                            <option value="+">+</option>
+                            <option value="-">−</option>
+                        </select> </div> <!-- TERM 2 -->
+                    <div class="eq-block"> <select id="cfunc3" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="t">t</option>
+                            <option value="t²">t²</option>
+                            <option value="t³">t³</option>
+                        </select>
+                        <hr class="eq-line"> <select id="cfunc4" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div> <!-- PLUS / MINUS -->
+                    <div class="eq-operator"> <select id="operator2" class="form-select operator-select">
+                            <option value="+">+</option>
+                            <option value="-">−</option>
+                        </select> </div> <!-- TERM 3 -->
+                    <div class="eq-block"> <select id="cfunc5" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="t">t</option>
+                            <option value="t²">t²</option>
+                            <option value="t³">t³</option>
+                        </select>
+                        <hr class="eq-line"> <select id="cfunc6" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div> <!-- BUTTON -->
+                <div class="mt-4"> <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
+                        Add Function </button> </div>
+                <hr> <!-- SAVED FUNCTIONS -->
+                <h6>Saved Functions</h6>
+                <table class="table table-bordered table-sm mt-2">
+                    <thead>
+                        <tr>
+                            <th style="width:80%;">Function</th>
+                            <th style="width:20%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="functionTableBody"> </tbody>
+                </table>
             </div>
+        </div>
         <div>
             <div class="row g-4">                
                 <!-- OUTPUT PANEL -->
@@ -1436,7 +1939,7 @@
                     material: document.getElementById("material").value,
                     time: +document.getElementById("time").value,
                     // func: document.getElementById("func").value,
-                    func: +document.getElementById("func").value,
+                    func: document.getElementById("func").value,
                     gripper: +document.getElementById("gripper").value,
                     mode: mode,
                     k_common: +document.getElementById("k_common")?.value || 0,

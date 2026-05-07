@@ -107,6 +107,7 @@ def cal_force_eq14(M, K, func, t):
 @app.route("/calculate", methods=["POST"])
 def calculate():    
     start_time = time.time()  # ⏱ start
+    # print(request.json)
     data = request.json
     # shape = int(data["shape"])
     shape = int(data.get("shape", 0))
@@ -129,7 +130,17 @@ def calculate():
 
     material = data["material"]
     t = float(data["time"])
-    func = int(data["func"])
+    # func = int(data["func"])
+    func = (data["func"])    
+    print("func Data:", func)  # Debugging: Print received data
+    if func== "t/2 + t^2/3":
+        func = 1
+    elif func == "t/2 + t^2/3 + t^3/4":
+        func = 2
+    elif func == "t/3 + t^2/4 + t^3/5":
+        func = 3
+    else:
+        func = 1  # default to 1 if not matched
     gripper = int(data["gripper"]) # 1 or 2
 
     if shape == 1:  # Rectangular
