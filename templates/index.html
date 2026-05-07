@@ -160,24 +160,199 @@
             <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
             <h4>According to this equation:</h4>
             <img src="static/img/formula_14.png" alt="" height="80">
+            <!-- Formula Details -->
+<div class="formula-details-container mt-3">
+
+    <div class="formula-details collapsed" id="formulaDetails">
+
+        <div class="detail-item">
+             <i class="bi bi-box-seam formula-icon"></i>
+            <b>m</b> = mass of the object
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-globe2 formula-icon"></i>
+            <b>g</b> = acceleration due to gravity = 9.8 m/s²
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-arrows-angle-expand formula-icon"></i>
+            <b>r</b> = distance of finger from joint to contact point
+        </div>
+
+        <div class="detail-item">
+             <i class="bi bi-compass formula-icon"></i>
+            <b>θ</b> = angle of contact
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-diagram-3 formula-icon"></i>
+            <b>k</b> = spring constant
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-graph-up-arrow formula-icon"></i>
+            <b>dθ/dt</b> = first derivative
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-activity formula-icon"></i>
+            <b>d²θ/dt²</b> = second derivative
+        </div>
+
+        <div class="detail-item">
+            <i class="bi bi-arrow-left-right formula-icon"></i>
+            <b>r sinθ</b> = linear deflection
+        </div>
+
+        <div class="detail-item">
+             <i class="bi bi-calculator formula-icon"></i>
+            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
+        </div>
+
+        <div class="detail-item">
+             <i class="bi bi-hand-index-thumb formula-icon"></i>
+            <b>Fᵢ(t)</b> = Grasp Force
+        </div>
+
+    </div>
+
+   <button class="formula-toggle-btn mt-2"
+    id="toggleFormulaBtn"
+    onclick="toggleFormulaDetails()">
+
+    <span>
+        <i class="bi bi-journal-richtext me-1"></i>
+        More Details
+    </span>
+
+    <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
+
+</button>
+
+</div>
+
         </div>
         <style>
+            .formula-details-container {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .formula-details {
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                color: white;
+                width: 90%;
+                overflow: hidden;
+                transition: all 0.4s ease;
+            }
+        
+            .formula-details.collapsed {
+                max-height: 90px;
+                /* show only 2-3 items */
+            }
+        
+            .formula-details.expanded {
+                max-height: 1000px;
+            }
+        
+            .detail-item {
+                padding: 6px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+                text-align: left;
+                font-size: 15px;
+            }
+        
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+        
+            .formula-toggle-btn {
+                border: none;
+                background: white;
+                color: #2c3e50;
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-weight: 600;
+        
+                display: flex;
+                align-items: center;
+                gap: 12px;
+        
+                transition: all 0.3s ease;
+            }
+        
+            .formula-toggle-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+        
+            .arrow-icon {
+                transition: transform 0.4s ease;
+            }
+        
+            .arrow-icon.rotate {
+                transform: rotate(180deg);
+            }
+        
+            .formula-icon {
+                margin-right: 10px;
+                color: #90caf9;
+                font-size: 16px;
+                width: 20px;
+            }
+        
             .div1 {
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.23);
                 /* Multiple shadows for depth */
                 border-radius: 10px;
             }
-            .div2{
+        
+            .div2 {
                 border: #939da8 1px solid;
                 padding: 10px;
                 padding-top: 0px;
                 padding-bottom: 0px;
             }
-
+        
             .bold-option {
                 font-weight: 600;
             }
         </style>
+        <script>
+            function toggleFormulaDetails() {
+
+                let details = document.getElementById("formulaDetails");
+                let btn = document.getElementById("toggleFormulaBtn");
+                let arrow = document.getElementById("formulaArrow");
+
+                if (details.classList.contains("collapsed")) {
+
+                    details.classList.remove("collapsed");
+                    details.classList.add("expanded");
+
+                    arrow.classList.add("rotate");
+
+                    btn.querySelector("span").innerHTML =
+                        '<i class="bi bi-journal-richtext me-1"></i> Show Less';
+
+                } else {
+
+                    details.classList.remove("expanded");
+                    details.classList.add("collapsed");
+
+                    arrow.classList.remove("rotate");
+
+                    btn.querySelector("span").innerHTML =
+                        '<i class="bi bi-journal-richtext me-1"></i> More Details';
+                }
+            }
+        </script>
 
         <div class="row g-4 m-1">
             <div class="box div1" style="margin-top: 5px;">
@@ -232,12 +407,12 @@
                              <!-- User i/p for Ellipsoidal -->
                              <div class="row g-2" id="ellipsInput" style="display:none;">
                                 <div class="col-md-6">
-                                    <label>Rmajor</label>
-                                    <input id="Rmajor" type="number" class="form-control" placeholder="50 mm">
+                                    <label>Rmajor (mm)</label>
+                                    <input id="Rmajor" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
                                 </div>
                                 <div class="col-md-6">
-                                    <label>Rminor</label>
-                                    <input id="Rminor" type="number" class="form-control" placeholder="30 mm">
+                                    <label>Rminor (mm)</label>
+                                    <input id="Rminor" type="number" class="form-control" placeholder="30 mm" min="1" step="1">
                                 </div>                                
                             </div>
 
@@ -261,22 +436,22 @@
                             <!-- User i/p for Rectangular -->
                             <div class="row g-2" id="rectangleInput" style="display:none;">
                                 <div class="col-md-4">
-                                    <label>Length</label>
-                                    <input id="length" type="number" class="form-control" placeholder="100 mm">
+                                    <label style="font-size: 15px;">Length(mm)</label>
+                                    <input id="length" type="number" class="form-control" placeholder="100 mm" min="1" step="1">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Breadth</label>
-                                    <input id="breadth" type="number" class="form-control" placeholder="40 mm">
+                                    <label style="font-size: 15px;">Breadth(mm)</label>
+                                    <input id="breadth" type="number" class="form-control" placeholder="40 mm" min="1" step="1">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Width</label>
-                                    <input id="width" type="number" class="form-control" placeholder="20 mm">
+                                    <label style="font-size: 15px;">Width(mm)</label>
+                                    <input id="width" type="number" class="form-control" placeholder="20 mm" min="1" step="1">
                                 </div>
                             </div>
                              <div class="row g-2" id="sphericalInput" style="display:none;">
                                      <div class="col-md-12">
-                                    <label>Radius</label>
-                                    <input id="radius" type="number" class="form-control" placeholder="50 mm">
+                                    <label>Radius (mm)</label>
+                                    <input id="radius" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
                                 </div>
                              </div>
 
@@ -288,8 +463,8 @@
                             </select>
 
                             <label>Time t (seconds)</label>
-                            <input id="time" type="number" step="0.01" class="form-control"
-                                placeholder="eg. 1 - 5 sec" />
+                            <input id="time" type="number"  class="form-control"
+                                placeholder="eg. 1 - 5 sec" min="1" max="10" step="1"/>
 
                             <label>θ(t) Function</label>
                             <div class="row">
@@ -315,29 +490,29 @@
                                 <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
                                 All unequal
                             </div>
-                            <div id="springInputs_equal" class="mt-2"><label>Common K</label>
-                                <input id="k_common" type="number" class="form-control" placeholder="Common K">
+                            <div id="springInputs_equal" class="mt-2"><label>Common K (N/m)</label>
+                                <input id="k_common" type="number" class="form-control" placeholder="Common K" min="1" step="1">
                             </div>
                             <div id="springInputs_samefinger" class="mt-2" style="display: none;">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <label>Finger Same K</label>
-                                        <input id="k_finger" type="number" class="form-control" placeholder="Finger K">
+                                        <label>Finger Same K (N/m)</label>
+                                        <input id="k_finger" type="number" class="form-control" placeholder="Finger K" min="1" step="1">
                                     </div>
                                     <div class="col-md-12">
-                                        <label>Thumb Different K</label>
+                                        <label>Thumb Different K (N/m)</label>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <input id="k_thumb" type="number" class="form-control"
-                                                    placeholder="K1">
+                                                    placeholder="K1" min="1" step="1">
                                             </div>
                                             <div class="col-md-4">
                                                 <input id="k_thumb2" type="number" class="form-control"
-                                                    placeholder="K2">
+                                                    placeholder="K2" min="1" step="1">
                                             </div>
                                             <div class="col-md-4">
                                                 <input id="k_thumb3" type="number" class="form-control"
-                                                    placeholder="K3">
+                                                    placeholder="K3" min="1" step="1">
                                             </div>
                                         </div>
                                     </div>
@@ -347,60 +522,60 @@
                                 </div>
                             </div>
                             <div id="springInputs_unequal" class="mt-2" style="display: none;">
-                                <label>Finger 1 K1 &amp; K2</label>
+                                <label>Finger 1 K1 &amp; K2 (N/m)</label>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input id="f1k1" class="form-control" placeholder="Spring 1" type="number">
+                                        <input id="f1k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
                                     </div>
                                     <div class="col-md-6">
-                                        <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                        <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
                                     </div>
                                 </div>
-                                <label>Finger 2 K1 &amp; K2</label>
+                                <label>Finger 2 K1 &amp; K2 (N/m)</label>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input id="f2k1" class="form-control" placeholder="Spring 1" type="number">
+                                        <input id="f2k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
                                     </div>
                                     <div class="col-md-6">
-                                        <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                        <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
                                     </div>
                                 </div>
 
-                                <label>Finger 3 K1 &amp; K2</label>
+                                <label>Finger 3 K1 &amp; K2 (N/m)</label>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input id="f3k1" class="form-control" placeholder="Spring 1" type="number">
+                                        <input id="f3k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
                                     </div>
                                     <div class="col-md-6">
-                                        <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number">
+                                        <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
                                     </div>
                                 </div>
 
                                 <div id="div_Finger4" style="display: none;">
-                                    <label>Finger 4 K1 &amp; K2</label>
+                                    <label>Finger 4 K1 &amp; K2 (N/m)</label>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input id="f4k1" class="form-control" placeholder="Spring 1" type="number">
+                                            <input id="f4k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
                                         </div>
                                         <div class="col-md-6">
                                             <input id="f4k2" class="form-control mb-2" placeholder="Spring 2"
-                                                type="number">
+                                                type="number" min="1" step="1">
                                         </div>
                                     </div>
 
                                 </div>
                                 <div id="div_Thumb" style="display: none;">
-                                    <label>Thumb K1, K2 &amp; K3</label>
+                                    <label>Thumb K1, K2 &amp; K3 (N/m)</label>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <input id="Thk1" class="form-control" placeholder="Spring 1" type="number">
+                                            <input id="Thk1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
                                         </div>
                                         <div class="col-md-4">
-                                            <input id="Thk2" class="form-control" placeholder="Spring 2" type="number">
+                                            <input id="Thk2" class="form-control" placeholder="Spring 2" type="number" min="1" step="1">
                                         </div>
                                         <div class="col-md-4">
                                             <input id="Thk3" class="form-control mb-2" placeholder="Spring 3"
-                                                type="number">
+                                                type="number" min="1" step="1">
                                         </div>
                                     </div>
                                 </div>
@@ -508,7 +683,14 @@
                             </style>
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <tr>
+                                    <tr class="fw-bold text-center table-secondary">
+                                        <td></td>
+                                        <td>A</td>
+                                        <td>K</td>
+                                        <td>B</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="fw-bold text-center align-middle table-secondary">
                                         <th style="vertical-align: middle;">Gripper</th>
                                         <th>\[
                                             \boldsymbol{
@@ -516,7 +698,7 @@
                                             \right]
                                             }
                                             \]</th>
-                                        <th style="vertical-align: middle;">+ K</th>
+                                        <th class="fw-bold text-center" style="vertical-align: middle;">+ K</th>
                                         <th>
                                             \[
                                             \boldsymbol{
@@ -529,6 +711,7 @@
                                             \]</th>
                                         <th style="vertical-align: middle;">= F(t) (N)</th>
                                     </tr>
+                                    
                                 </thead>
                                 <tbody>
 
