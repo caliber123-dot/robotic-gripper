@@ -398,11 +398,11 @@ def download_excel():
     # TABLE HEADER
     # =========================
 
-    ws["A8"] = "Finger"
+    ws["A8"] = "Gripper"
     ws["B8"] = "A"
     ws["C8"] = "K"
     ws["D8"] = "B"
-    ws["E8"] = "Force"
+    ws["E8"] = "F(t) (N)"
 
     for cell in ["A8", "B8", "C8", "D8", "E8"]:
 
