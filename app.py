@@ -40,7 +40,7 @@ def calculate_volume(shape):
     else:
         return 0   # 🔥 VERY IMPORTANT
 
-# θ(t)
+# θ(t) and c = func
 def theta(c, t):
     if c == 1:
         return t/2 + (t*t)/3
@@ -207,9 +207,10 @@ def calculate():
             #🔥 forces.append(round(calculate_force(M, k_finger_total, func, t), 3))
             kf_total.append(kf)
             A, B, K = cal_force_eq14(M, kf, func, t)
-            F = A + K * B
-            forcesA.append(round(A, 4))
-            forcesB.append(round(B, 4))
+            # F = A + K * B
+            F = abs(A) + K * abs(B)  # ✅ Use absolute values to avoid negative forces
+            forcesA.append(round(abs(A), 4))
+            forcesB.append(round(abs(B), 4))
             forces.append(round(F, 4))
 
         # Thumb (only if exists)
@@ -217,9 +218,9 @@ def calculate():
             # thumb = round(calculate_force(M, k_thumb_total, func, t), 3)            
             ktt = 1/((1/k) + (1/k) + (1/k))  # Parallel spring formula
             A, B, K = cal_force_eq14(M, ktt, func, t)
-            F = A + K * B
-            tA = round(A, 4)
-            tB = round(B, 4)
+            F = abs(A) + K * abs(B)
+            tA = round(abs(A), 4)
+            tB = round(abs(B), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
@@ -238,9 +239,9 @@ def calculate():
             # cal_force_eq14(M, K, func, t)
             kf_total.append(kf)
             A, B, K = cal_force_eq14(M, kf, func, t)
-            F = A + K * B
-            forcesA.append(round(A, 4))
-            forcesB.append(round(B, 4))
+            F = abs(A) + K * abs(B)
+            forcesA.append(round(abs(A), 4))
+            forcesB.append(round(abs(B), 4))
             forces.append(round(F, 4))
             
             # forces.append(round(cal_force_eq14(M, kf_total, func, t), 4))
@@ -251,9 +252,9 @@ def calculate():
                 ktt = 1/((1/kt[0]) + (1/kt[1]) + (1/kt[2]))  # Parallel spring formula
                 # print("ktt:", ktt)
             A, B, K = cal_force_eq14(M, ktt, func, t)
-            F = A + K * B
-            tA = round(A, 4)
-            tB = round(B, 4)
+            F = abs(A) + K * abs(B)
+            tA = round(abs(A), 4)
+            tB = round(abs(B), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
@@ -272,9 +273,9 @@ def calculate():
             kf_total.append(kf)
             # forces.append(round(calculate_force(M, k, func, t), 2))
             A, B, K = cal_force_eq14(M, kf, func, t)
-            F = A + K * B            
-            forcesA.append(round(A, 4))
-            forcesB.append(round(B, 4))
+            F = abs(A) + K * abs(B)
+            forcesA.append(round(abs(A), 4))
+            forcesB.append(round(abs(B), 4))
             forces.append(round(F, 4))
 
         if gripper == 2:
@@ -283,9 +284,9 @@ def calculate():
             if len(kt) >= 3:
                 ktt = 1/((1/kt[0]) + (1/kt[1]) + (1/kt[2]))  # Parallel spring formula
             A, B, K = cal_force_eq14(M, ktt, func, t)
-            F = A + K * B
-            tA = round(A, 4)
-            tB = round(B, 4)
+            F = abs(A) + K * abs(B)
+            tA = round(abs(A), 4)
+            tB = round(abs(B), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
