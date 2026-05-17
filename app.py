@@ -2,7 +2,7 @@
 import math
 # import os
 from flask import Flask, render_template, request, jsonify, send_file
-from waitress import serve as waitress_serve
+# from waitress import serve as waitress_serve
 import datetime
 import time
 # from openpyxl import Workbook
@@ -555,10 +555,10 @@ def download_excel():
     )
 
 if __name__ == '__main__':
-    # app.run()
+    app.run()
     # print("# Start App on", "http://localhost:8000")
     # app.run(host="0.0.0.0", port=8000, debug=True) 
-    waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
+    # waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
 
 # Version Control Commands (Git)
 # git status

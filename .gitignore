@@ -4,3 +4,5 @@ __pycache__
 app1.py
 README.md
 gripper_results.xlsx
+static/generated/
+static/templates/
