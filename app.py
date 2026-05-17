@@ -1,6 +1,6 @@
 # from turtle import mode
 import math
-import os
+# import os
 from flask import Flask, render_template, request, jsonify, send_file
 from waitress import serve as waitress_serve
 import datetime
@@ -12,6 +12,11 @@ from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 from sympy import symbols, diff, sympify, N
 from sympy.core.expr import Expr
+from shape_drawer import (
+    generate_sphere,
+    generate_rectangle,
+    generate_ellipsoid
+)
 
 app = Flask(__name__)
 
@@ -323,21 +328,52 @@ def calculate():
         fig1= "static/img/model_3Fingers_Thumb.png"
         fig3 = "static/img/basic.avif"
         gripper_name = "3-Finger Gripper with Thumb"
+    # if shape == 1:
+    #     shape_name = "Rectangular"
+    #     if event == "length":
+    #         fig2 = "static/img/shape_rectangle.png"
+    #     elif event == "breadth":
+    #         fig2 = "static/img/shape_rectangle_breadth.png"        
+    # elif shape == 2:
+    #     shape_name = "Spherical"
+    #     fig2 = "static/img/shape_sphere.png"
+    # elif shape == 3:
+    #     shape_name = "Ellipsoidal"
+    #     if event == "major":
+    #         fig2 = "static/img/shape_ellipsoid.png"
+    #     elif event == "minor":
+    #         fig2 = "static/img/shape_ellips_minor.png"
+    # ================= DYNAMIC FIGURE =================
+
+   # =====================================
+# DYNAMIC ENGINEERING FIGURES
+# =====================================
+
     if shape == 1:
+
         shape_name = "Rectangular"
-        if event == "length":
-            fig2 = "static/img/shape_rectangle.png"
-        elif event == "breadth":
-            fig2 = "static/img/shape_rectangle_breadth.png"        
+
+        fig2 = generate_rectangle(
+            length * 1000,
+            breadth * 1000
+        )
+
     elif shape == 2:
+
         shape_name = "Spherical"
-        fig2 = "static/img/shape_sphere.png"
+
+        fig2 = generate_sphere(
+            radius * 1000
+        )
+
     elif shape == 3:
+
         shape_name = "Ellipsoidal"
-        if event == "major":
-            fig2 = "static/img/shape_ellipsoid.png"
-        elif event == "minor":
-            fig2 = "static/img/shape_ellips_minor.png"
+
+        fig2 = generate_ellipsoid(
+            Rmajor * 1000,
+            Rminor * 1000
+        )
     
     end_time = time.time()  # ⏱ end
     # execution_time = (end_time - start_time) * 1000  # convert to ms
