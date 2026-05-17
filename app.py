@@ -10,6 +10,8 @@ import time
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
+from sympy import symbols, diff, sympify, N
+from sympy.core.expr import Expr
 
 app = Flask(__name__)
 
@@ -40,235 +42,35 @@ def calculate_volume(shape):
     else:
         return 0   # 🔥 VERY IMPORTANT
 
+def parse_theta_function(func_str, t_value):
+
+    # normalize input
+    func_str = (
+        func_str
+        .replace("^", "**")
+        .replace(" ", "")
+    )
+
+    t = symbols('t')
+
+    # symbolic expression
+    expr: Expr = sympify(func_str)
+
+    # derivatives
+    d1: Expr = diff(expr, t)
+    d2: Expr = diff(d1, t)
+
+    # numerical evaluation
+    th = float(N(expr.subs(t, t_value)))
+    dth = float(N(d1.subs(t, t_value)))
+    d2th = float(N(d2.subs(t, t_value)))
+
+    return th, dth, d2th
+
 # ============================================
 # AUTO GENERATE θ(t) FUNCTIONS
 # 2-TERM + 3-TERM ALL VARIATIONS
 # ============================================
-
-theta_functions = {}
-
-func_id = 1
-
-# Base terms
-terms = [
-
-    # =========================
-    # LINEAR TERMS
-    # =========================
-
-    ("t/2",
-        lambda t: t/2,
-        lambda t: 1/2,
-        lambda t: 0),
-
-    ("t/3",
-        lambda t: t/3,
-        lambda t: 1/3,
-        lambda t: 0),
-
-    ("t/4",
-        lambda t: t/4,
-        lambda t: 1/4,
-        lambda t: 0),
-
-    ("t/5",
-        lambda t: t/5,
-        lambda t: 1/5,
-        lambda t: 0),
-
-    # =========================
-    # QUADRATIC TERMS
-    # =========================
-
-    ("t^2/2",
-        lambda t: (t**2)/2,
-        lambda t: t,
-        lambda t: 1),
-
-    ("t^2/3",
-        lambda t: (t**2)/3,
-        lambda t: (2*t)/3,
-        lambda t: 2/3),
-
-    ("t^2/4",
-        lambda t: (t**2)/4,
-        lambda t: (2*t)/4,
-        lambda t: 1/2),
-
-    ("t^2/5",
-        lambda t: (t**2)/5,
-        lambda t: (2*t)/5,
-        lambda t: 2/5),
-
-    ("t^2/6",
-        lambda t: (t**2)/6,
-        lambda t: (2*t)/6,
-        lambda t: 1/3),
-
-    # =========================
-    # CUBIC TERMS
-    # =========================
-
-    ("t^3/2",
-        lambda t: (t**3)/2,
-        lambda t: (3*t**2)/2,
-        lambda t: 3*t),
-
-    ("t^3/3",
-        lambda t: (t**3)/3,
-        lambda t: t**2,
-        lambda t: 2*t),
-
-    ("t^3/4",
-        lambda t: (t**3)/4,
-        lambda t: (3*t**2)/4,
-        lambda t: (3*t)/2),
-
-    ("t^3/5",
-        lambda t: (t**3)/5,
-        lambda t: (3*t**2)/5,
-        lambda t: (6*t)/5),
-
-    ("t^3/6",
-        lambda t: (t**3)/6,
-        lambda t: (3*t**2)/6,
-        lambda t: t)
-]   
-
-# ============================================
-# 2 TERM FUNCTIONS
-# ============================================
-
-for i in range(len(terms)):
-
-    for j in range(i + 1, len(terms)):
-
-        for s1 in [1, -1]:
-
-            for s2 in [1, -1]:
-
-                t1, e1, d11, d21 = terms[i]
-                t2, e2, d12, d22 = terms[j]
-
-                sign1 = "+" if s1 == 1 else "-"
-                sign2 = "+" if s2 == 1 else "-"
-
-                formula = f"{sign1} {t1} {sign2} {t2}"
-
-                formula = formula.replace("+ -", "- ").strip()
-                # ✅ remove leading "+"
-                if formula.startswith("+ "):
-                    formula = formula[2:]
-
-                # ✅ normalize spaces
-                formula = formula.replace(" ", "")
-
-                theta_functions[func_id] = {
-
-                    "formula": formula,
-
-                    "expr": lambda t,
-                        e1=e1,
-                        e2=e2,
-                        s1=s1,
-                        s2=s2:
-                        s1 * e1(t) + s2 * e2(t),
-
-                    "d1": lambda t,
-                        d11=d11,
-                        d12=d12,
-                        s1=s1,
-                        s2=s2:
-                        s1 * d11(t) + s2 * d12(t),
-
-                    "d2": lambda t,
-                        d21=d21,
-                        d22=d22,
-                        s1=s1,
-                        s2=s2:
-                        s1 * d21(t) + s2 * d22(t)
-                }
-
-                func_id += 1
-
-# ============================================
-# 3 TERM FUNCTIONS
-# ============================================
-
-for i in range(len(terms)):
-
-    for j in range(i + 1, len(terms)):
-
-        for k in range(j + 1, len(terms)):
-
-            for s1 in [1, -1]:
-
-                for s2 in [1, -1]:
-
-                    for s3 in [1, -1]:
-
-                        t1, e1, d11, d21 = terms[i]
-                        t2, e2, d12, d22 = terms[j]
-                        t3, e3, d13, d23 = terms[k]
-
-                        sign1 = "+" if s1 == 1 else "-"
-                        sign2 = "+" if s2 == 1 else "-"
-                        sign3 = "+" if s3 == 1 else "-"
-
-                        formula = (
-                            f"{sign1} {t1} "
-                            f"{sign2} {t2} "
-                            f"{sign3} {t3}"
-                        )
-
-                        formula = formula.replace("+ -", "- ").strip()
-                        # ✅ remove leading "+"
-                        if formula.startswith("+ "):
-                            formula = formula[2:]
-
-                        # ✅ normalize spaces
-                        formula = formula.replace(" ", "")
-
-                        theta_functions[func_id] = {
-
-                            "formula": formula,
-
-                            "expr": lambda t,
-                                e1=e1,
-                                e2=e2,
-                                e3=e3,
-                                s1=s1,
-                                s2=s2,
-                                s3=s3:
-                                s1 * e1(t) +
-                                s2 * e2(t) +
-                                s3 * e3(t),
-
-                            "d1": lambda t,
-                                d11=d11,
-                                d12=d12,
-                                d13=d13,
-                                s1=s1,
-                                s2=s2,
-                                s3=s3:
-                                s1 * d11(t) +
-                                s2 * d12(t) +
-                                s3 * d13(t),
-
-                            "d2": lambda t,
-                                d21=d21,
-                                d22=d22,
-                                d23=d23,
-                                s1=s1,
-                                s2=s2,
-                                s3=s3:
-                                s1 * d21(t) +
-                                s2 * d22(t) +
-                                s3 * d23(t)
-                        }
-
-                        func_id += 1
-
 
 
 # θ(t) and c = func
@@ -322,28 +124,14 @@ def compute_B(th):
 #     return (M * d2theta(c, t)) + (K * theta(c, t))
 
 # F = A + K * B
-def cal_force_eq14(M, K, func, t):
-    # th = theta(func, t)
-    # dth = dtheta(func, t)
-    # d2th = d2theta(func, t) 
-
-    # th = theta_functions[func]["expr"](t)
-    # dth = theta_functions[func]["d1"](t)
-    # d2th = theta_functions[func]["d2"](t)   
-    th = func["expr"](t)
-    dth = func["d1"](t)
-    d2th = func["d2"](t)
-    # print("th:", th)
-    # print("dth:", dth)
-    # print("d2th:", d2th)
-    # print("M:", M)
-    # print("mgr:", M * g * r)
+def cal_force_eq14(M, K, func, t):  
+    # CALL DYNAMIC FUNCTION PARSER
+    # θ(t), θ′(t), θ″(t)
+    th, dth, d2th = parse_theta_function(func, t)
+    
     A = compute_A(M, th, dth, d2th)    
     B = compute_B(th)    
-    # print("A:", A)
-    # print("B:", B)
-    # print("K:", K)
-    # return A + K * B
+    
     return A, B, K   # ✅ RETURN SEPARATE VALUES
 
 
@@ -356,12 +144,6 @@ def calculate():
     shape = int(data.get("shape", 0))
     event = data["event"]  # 🔥 GET EVENT TYPE string value
 
-    # length = float(data.get("length", 0))
-    # breadth = float(data.get("breadth", 0))
-    # width = float(data.get("width", 0))
-    # radius = float(data.get("radius", 0))
-    # Rmajor = float(data.get("Rmajor", 0))
-    # Rminor = float(data.get("Rminor", 0))
     length = float(data.get("length", 0)) * 0.001
     breadth = float(data.get("breadth", 0)) * 0.001
     width = float(data.get("width", 0)) * 0.001
@@ -373,46 +155,11 @@ def calculate():
 
     material = data["material"]
     t = float(data["time"])
-    # func = int(data["func"])
-    # func = (data["func"])  
-    func_input = data["func"]  
-    print("func Data 1:", func_input)
-    # func_input = (
-    # func_input
-    # .replace("−", "-")
-    # .replace("²", "^2")
-    # .replace("³", "^3")
-    # .replace("+ ", "+")
-    # .replace("- ", "-")
-    # .strip()
-    # )
-    print("func Data 2:", func_input)
-
-    # 🔥 Find matching function ID from dictionary
-    # func = next(
-    #     (
-    #         key for key, value in theta_functions.items()
-    #         if value["formula"] == func_input
-    #     ),
-    #     1  # default
-    # )
-    func = next(
-    (
-        value for key, value in theta_functions.items()
-        if value["formula"].replace(" ", "") ==
-           func_input.replace(" ", "")
-    ),
-    None
-    )
-    print("Selected Function ID:", func)
-    # if func== "t/2 + t^2/3":
-    #     func = 1
-    # elif func == "t/2 + t^2/3 + t^3/4":
-    #     func = 2
-    # elif func == "t/3 + t^2/4 + t^3/5":
-    #     func = 3
-    # else:
-    #     func = 1  # default to 1 if not matched
+    func = data["func"]
+    print("Function:", func)  
+    
+    # print("Selected Function ID:", func)
+    
     gripper = int(data["gripper"]) # 1 or 2
 
     if shape == 1:  # Rectangular
@@ -463,7 +210,6 @@ def calculate():
     mode = data["mode"] # get string constant values eg 1, 2, 3
 
     # print("\n===== CALCULATION MODE =====")    
-    
     # ================= MODE 1 All equal =================
     if mode == "1":  # All equal
         k = float(data.get("k_common", 0))
@@ -528,7 +274,6 @@ def calculate():
             thumb = round(F, 4)
             # thumb = round(cal_force_eq14(M, ktt, func, t), 4)
             
-
     # ================= MODE 3 All unequal=================
     elif mode == "3":
         # kfinger = []
@@ -594,7 +339,6 @@ def calculate():
         elif event == "minor":
             fig2 = "static/img/shape_ellips_minor.png"
     
-
     end_time = time.time()  # ⏱ end
     # execution_time = (end_time - start_time) * 1000  # convert to ms
     execution_time = (end_time - start_time) * 1000000  # microseconds (µs)
@@ -776,7 +520,7 @@ def download_excel():
 
 if __name__ == '__main__':
     # app.run()
-    print("# Start App on", "http://localhost:8000")
+    # print("# Start App on", "http://localhost:8000")
     # app.run(host="0.0.0.0", port=8000, debug=True) 
     waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
 
