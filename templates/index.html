@@ -60,11 +60,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home">
+                        <a class="nav-link active" href="/">
                             <i class="bi bi-house-door"></i> Home
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="/graph">
+                            <i class="bi bi-graph-up"></i> Graph
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#input">
                             <i class="bi bi-sliders"></i> Input
@@ -1737,12 +1741,12 @@ window.addEventListener("load", () => {
                     }
                 });
 
-                navLinks.forEach((link) => {
-                    link.classList.remove("active");
-                    if (link.getAttribute("href") === "#" + current) {
-                        link.classList.add("active");
-                    }
-                });
+                // navLinks.forEach((link) => {
+                //     link.classList.remove("active");
+                //     if (link.getAttribute("href") === "#" + current) {
+                //         link.classList.add("active");
+                //     }
+                // });
             });
 
             function updateSelectionEvent() {
@@ -2104,13 +2108,15 @@ window.addEventListener("load", () => {
                 // alert("gripper: " + gripper + " mode: " + mode);
                 if(gripper == "1") {
                     document.getElementById("fig1").src = result.fig1;
-                    document.getElementById("fig2").src = result.fig2;
+                    // document.getElementById("fig2").src = result.fig2;
+                    document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
                     document.getElementById("fig3").src = result.fig3;
                     document.getElementById("shape_name").innerText = result.shape_name;
                 }
                 else if(gripper == "2") {
                     document.getElementById("fig11").src = result.fig1;
-                    document.getElementById("fig22").src = result.fig2;
+                    // document.getElementById("fig22").src = result.fig2;
+                    document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
                     document.getElementById("shape_name2").innerText = result.shape_name;
                 }                
                 console.log("Fig1 URL:", result.fig1);            

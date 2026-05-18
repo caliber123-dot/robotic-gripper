@@ -270,7 +270,8 @@ def generate_sphere(R):
 
     os.makedirs("static/generated",exist_ok=True)
 
-    fname = f"sphere_{time.time()}.png"
+    # fname = f"sphere_{time.time()}.png"
+    fname = "sphere.png"
 
     path = os.path.join(
         "static/generated",
@@ -438,7 +439,8 @@ def generate_rectangle(L,B):
 
     os.makedirs("static/generated",exist_ok=True)
 
-    fname = f"rect_{time.time()}.png"
+    # fname = f"rect_{time.time()}.png"
+    fname = "rectangle.png"
 
     path = os.path.join(
         "static/generated",
@@ -598,7 +600,8 @@ def generate_ellipsoid(a,b):
 
     os.makedirs("static/generated",exist_ok=True)
 
-    fname = f"ellipse_{time.time()}.png"
+    # fname = f"ellipse_{time.time()}.png"
+    fname = "ellipse.png"
 
     path = os.path.join(
         "static/generated",

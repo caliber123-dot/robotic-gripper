@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Robotic Gripper Force Estimation</title>
+
+    <!-- Bootstrap CSS -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="/static/css/bootstrap-icons.css" />
+    <link rel="stylesheet" href="/static/css/model.css" />
+    <style>
+        .menu {
+            position: relative;
+            border: 3px solid #2c3e50;
+            padding-top: 30px;
+            padding-left: 15px;
+            padding-right: 15px;            
+            border-radius: 0 0 10px 10px;
+        }
+
+        .menu:before {
+            content: attr(data-title);
+            background: #2c3e50;
+            position: absolute;
+            padding: 0 20px;
+            color: #fff;
+            left: 0;
+            top: 0;
+
+        }
+
+        .menu ul {
+            margin: 0;
+        }
+    </style>
+    <script src="/static/js/chart.js"></script>
+    <script src="/static/js/chart-plugin.js"></script>
+   <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script> -->
+</head>
+
+<body class="theme-light">
+    <!-- NAVBAR WITH ICONS -->
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-robot"></i> Gripper System
+            </a>
+
+            <!-- Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/graph">
+                            <i class="bi bi-graph-up"></i> Graph
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#input">
+                            <i class="bi bi-sliders"></i> Input
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#output">
+                            <i class="bi bi-graph-up"></i> Output
+                        </a>
+                    </li>
+
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#about">
+                            <i class="bi bi-info-circle"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">
+                            <i class="bi bi-lock"></i> Login
+                        </a>
+                    </li> -->
+                    <li class="nav-item ms-3 d-flex align-items-center">
+
+    <i class="bi bi-sun-fill theme-icon-light"></i>
+
+    <div class="form-check form-switch mx-2">
+        <input class="form-check-input custom-theme-switch"
+               type="checkbox"
+               id="themeToggle"
+               onchange="toggleTheme()">
+    </div>
+
+    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+
+</li>
+                    <li>
+                        <div class="dropdown d-inline-block ms-2">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Choose theme
+                            </button>
+                            <ul class="dropdown-menu p-3">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <!-- <div class="color-box bg-light border" onmouseover="previewTheme('theme-light')"
+                                        onclick="setTheme('theme-light')" title="Light"></div>
+
+                                    <div class="color-box" style="background: #121212"
+                                        onmouseover="previewTheme('theme-dark')" onclick="setTheme('theme-dark')"
+                                        title="Dark"></div>
+
+                                    <div class="color-box" style="background: #bcc1c9"
+                                        onmouseover="previewTheme('theme-blue')" onclick="setTheme('theme-blue')"
+                                        title="Blue"></div>
+
+                                    <div class="color-box" style="background: #89af8c"
+                                        onmouseover="previewTheme('theme-green')" onclick="setTheme('theme-green')"
+                                        title="Green"></div>
+
+                                    <div class="color-box" style="background: #a39aaf"
+                                        onmouseover="previewTheme('theme-purple')" onclick="setTheme('theme-purple')"
+                                        title="Purple"></div> 
+
+                                    <div class="color-box" style="background: linear-gradient(45deg, #ff512f, #dd2476)"
+                                        onmouseover="previewTheme('theme-gradient')"
+                                        onclick="setTheme('theme-gradient')" title="Gradient"></div>
+                                    -->
+
+                                    <style>
+                                        .custom-theme-switch {
+                                            width: 58px !important;
+                                            height: 30px;
+                                    
+                                            border-radius: 50px !important;
+                                    
+                                            cursor: pointer;
+                                    
+                                            border: none !important;
+                                    
+                                            background-color: #f8f9fa;
+                                    
+                                            transition: all 0.3s ease;
+                                    
+                                            box-shadow:
+                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
+                                                0 0 10px rgba(0, 212, 255, 0.3);
+                                        }
+                                    
+                                        /* LIGHT MODE circle = black */
+                                        .custom-theme-switch:not(:checked) {
+                                            background-color: #e9ecef;
+                                    
+                                            background-image:
+                                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='rgba(0%2C0%2C0%2C0.75)'/%3E%3C/svg%3E");
+                                        }
+                                    
+                                        /* DARK MODE circle = white */
+                                        .custom-theme-switch:checked {
+                                            background-color: #121212;
+                                        }
+                                    
+                                        /* remove bootstrap glow */
+                                        .custom-theme-switch:focus {
+                                            box-shadow:
+                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
+                                                0 0 12px rgba(0, 212, 255, 0.5);
+                                        }
+                                    
+                                        .custom-theme-switch:checked {
+                                            background-color: #121212;
+                                        }
+                                    
+                                        .custom-theme-switch:focus {
+                                            box-shadow:
+                                                0 0 12px rgba(0, 212, 255, 0.7);
+                                        }
+                                    
+                                        .theme-icon-light {
+                                            color: #ffd43b;
+                                            font-size: 18px;
+                                    
+                                            filter: drop-shadow(0 0 5px rgba(255, 212, 59, 0.8));
+                                        }
+                                    
+                                        .theme-icon-dark {
+                                            color: #d0d7ff;
+                                            font-size: 18px;
+                                    
+                                            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+                                        }
+                                    
+                                        .color-panel1 {
+                                            width: 100px;
+                                            height: 30px;
+                                            padding: 3px;
+                                            margin-right: 15px;
+                                            cursor: pointer;
+                                            margin-right: 0px;
+                                    
+                                        }
+                                        .color-panel{
+    width: 100px;
+    height: 35px;
+
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    padding: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            red,
+            orange,
+            yellow,
+            lime,
+            cyan,
+            blue,
+            violet,
+            red
+        );
+
+    box-shadow:
+        0 0 10px rgba(0,0,0,0.15);
+
+    overflow: hidden;
+}
+
+/* hide default browser color UI */
+.color-panel::-webkit-color-swatch-wrapper{
+    padding: 0;
+}
+
+.color-panel::-webkit-color-swatch{
+    border: none;
+    border-radius: 6px;
+
+    opacity: 0; /* hide solid selected color */
+}
+                                    
+                                        .color-box2 {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 10px;
+                                            /* spacing between input and button */
+                                    
+                                        }
+                                    </style>
+                                    <div class="color-box2">                                        
+                                        <input type="color" class="color-panel" id="startColor" value="#f1f1f1" onchange="changeBackground()">
+                                        <!-- <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
+                                            Apply
+                                        </button> -->
+                                    </div>
+                                    
+                                </div>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <div class="container mt-4" style="min-width: 100% !important;">
+                
+        <style>
+            .hero-ai-bg {
+                position: relative;
+                overflow: hidden;
+        
+                background:
+                    linear-gradient(135deg,
+                        #16222a,
+                        #203a43,
+                        #2c5364);
+        
+                border-radius: 14px;
+                padding: 18px;
+        
+                text-align: center;
+                color: white;
+        
+                border: 2px solid rgba(0, 212, 255, 0.25);
+        
+                box-shadow:
+                    0 0 20px rgba(0, 212, 255, 0.15),
+                    0 0 40px rgba(0, 212, 255, 0.08);
+        
+                z-index: 1;
+            }
+        
+            /* animated glowing grid */
+            .hero-ai-bg::before {
+                content: "";
+        
+                position: absolute;
+                inset: 0;
+        
+                background-image:
+                    linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
+        
+                background-size: 40px 40px;
+        
+                animation: gridMove 8s linear infinite;
+        
+                z-index: -2;
+            }
+        
+            /* glowing AI orb */
+            .hero-ai-bg::after {
+                content: "";
+        
+                position: absolute;
+        
+                width: 500px;
+                height: 500px;
+        
+                background:
+                    radial-gradient(circle,
+                        rgba(0, 212, 255, 0.22) 0%,
+                        transparent 70%);
+        
+                top: -180px;
+                right: -120px;
+        
+                animation: glowPulse 6s ease-in-out infinite alternate;
+        
+                z-index: -1;
+            }
+        
+            /* moving grid */
+            @keyframes gridMove {
+                from {
+                    transform: translateY(0px);
+                }
+        
+                to {
+                    transform: translateY(40px);
+                }
+            }
+        
+            /* glow pulse */
+            @keyframes glowPulse {
+                from {
+                    transform: scale(1);
+                    opacity: 0.5;
+                }
+        
+                to {
+                    transform: scale(1.25);
+                    opacity: 1;
+                }
+            }
+        
+            /* BIG highlighted title */
+            .hero-ai-bg h2 {
+                font-size: 2.5rem;
+                font-weight: 800;
+        
+                letter-spacing: 1px;
+        
+                color: #ffffff;
+        
+                text-shadow:
+                    0 0 10px rgba(255, 255, 255, 0.4),
+                    0 0 20px rgba(0, 212, 255, 0.7),
+                    0 0 40px rgba(0, 212, 255, 0.5);
+        
+                animation: titleGlow 3s ease-in-out infinite alternate;
+            }
+        
+            /* highlighted subtitle */
+            .hero-ai-bg h4 {
+                font-weight: 700;
+        
+                color: #dff6ff;
+        
+                text-shadow:
+                    0 0 10px rgba(0, 212, 255, 0.5);
+            }
+        
+            /* formula highlight */
+            .hero-ai-bg img {
+                filter:
+                    drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        
+                animation: formulaFloat 3s ease-in-out infinite;
+            }
+        
+            /* title glow animation */
+            @keyframes titleGlow {
+                from {
+                    text-shadow:
+                        0 0 10px rgba(255, 255, 255, 0.4),
+                        0 0 20px rgba(0, 212, 255, 0.5);
+                }
+        
+                to {
+                    text-shadow:
+                        0 0 20px rgba(255, 255, 255, 0.7),
+                        0 0 40px rgba(0, 212, 255, 1),
+                        0 0 60px rgba(0, 212, 255, 0.8);
+                }
+            }
+        
+            /* floating formula */
+            @keyframes formulaFloat {
+                0% {
+                    transform: translateY(0px);
+                }
+        
+                50% {
+                    transform: translateY(-5px);
+                }
+        
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+        
+            .hero-ai-bg {
+                position: relative;
+                overflow: hidden;
+        
+                background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735);
+        
+                border-radius: 14px;
+                padding: 18px;
+        
+                text-align: center;
+                color: white;
+            }
+        
+            /* particles container */
+            .particles {
+                position: absolute;
+                inset: 0;
+                overflow: hidden;
+                z-index: 0;
+            }
+        
+            /* particle circles */
+            .particles span {
+                position: absolute;
+                display: block;
+        
+                width: 12px;
+                height: 12px;
+        
+                background: rgba(0, 212, 255, 0.35);
+        
+                border-radius: 50%;
+        
+                box-shadow:
+                    0 0 10px rgba(0, 212, 255, 0.8),
+                    0 0 20px rgba(0, 212, 255, 0.5);
+        
+                animation: floatParticle linear infinite;
+            }
+        
+            /* different particle positions */
+            .particles span:nth-child(1) {
+                left: 10%;
+                animation-duration: 10s;
+                animation-delay: 0s;
+            }
+        
+            .particles span:nth-child(2) {
+                left: 25%;
+                width: 18px;
+                height: 18px;
+                animation-duration: 14s;
+            }
+        
+            .particles span:nth-child(3) {
+                left: 40%;
+                animation-duration: 12s;
+            }
+        
+            .particles span:nth-child(4) {
+                left: 55%;
+                width: 8px;
+                height: 8px;
+                animation-duration: 9s;
+            }
+        
+            .particles span:nth-child(5) {
+                left: 70%;
+                animation-duration: 15s;
+            }
+        
+            .particles span:nth-child(6) {
+                left: 82%;
+                width: 16px;
+                height: 16px;
+                animation-duration: 11s;
+            }
+        
+            .particles span:nth-child(7) {
+                left: 92%;
+                animation-duration: 13s;
+            }
+        
+            .particles span:nth-child(8) {
+                left: 50%;
+                width: 20px;
+                height: 20px;
+                animation-duration: 18s;
+            }
+        
+            /* floating animation */
+            @keyframes floatParticle {
+        
+                0% {
+                    transform: translateY(100%) scale(0.5);
+                    opacity: 0;
+                }
+        
+                20% {
+                    opacity: 1;
+                }
+        
+                80% {
+                    opacity: 1;
+                }
+        
+                100% {
+                    transform: translateY(-900%) scale(1.2);
+                    opacity: 0;
+                }
+            }
+        
+            /* keep content above particles */
+            .hero-ai-bg h2,
+            .hero-ai-bg h4,
+            .hero-ai-bg img,
+            .formula-details-container {
+                position: relative;
+                z-index: 2;
+            }
+        </style>
+        <div class="hero-ai-bg" style="border-radius: 10px;padding: 10px;text-align: center;color: white;">
+            <div class="particles">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+            <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+            <h4>According to this equation:</h4>
+            <img src="static/img/formula_14.png" alt="" height="80">
+            <!-- Formula Details -->
+            <div class="w-100 text-center d-flex justify-content-center">
+                <div class="formula-details-container mt-3">
+        
+                    <div class="formula-details collapsed" id="formulaDetails">
+        
+                        <div class="detail-item">
+                            <i class="bi bi-box-seam formula-icon"></i>
+                            <b>m</b> = mass of the object
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-globe2 formula-icon"></i>
+                            <b>g</b> = acceleration due to gravity = 9.8 m/s²
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-arrows-angle-expand formula-icon"></i>
+                            <b>r</b> = distance of finger from joint to contact point
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-compass formula-icon"></i>
+                            <b>θ</b> = angle of contact
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-diagram-3 formula-icon"></i>
+                            <b>k</b> = spring constant
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-graph-up-arrow formula-icon"></i>
+                            <b>dθ/dt</b> = first derivative
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-activity formula-icon"></i>
+                            <b>d²θ/dt²</b> = second derivative
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-arrow-left-right formula-icon"></i>
+                            <b>r sinθ</b> = linear deflection
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-calculator formula-icon"></i>
+                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
+                        </div>
+        
+                        <div class="detail-item">
+                            <i class="bi bi-hand-index-thumb formula-icon"></i>
+                            <b>Fᵢ(t)</b> = Grasp Force
+                        </div>
+        
+                    </div>
+        
+                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()">
+        
+                        <span>
+                            <i class="bi bi-journal-richtext me-1"></i>
+                            More Details
+                        </span>
+        
+                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
+        
+                    </button>
+        
+                </div>
+            </div>
+        </div>
+        <style>
+            .formula-details-container {
+                width: 70%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .formula-details {
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                color: white;
+                width: 90%;
+                overflow: hidden;
+                transition: all 0.4s ease;
+            }
+        
+            .formula-details.collapsed {
+                max-height: 90px;
+                /* show only 2-3 items */
+            }
+        
+            .formula-details.expanded {
+                max-height: 1000px;
+            }
+        
+            .detail-item {
+                padding: 6px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+                text-align: left;
+                font-size: 15px;
+            }
+        
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+        
+            .formula-toggle-btn {
+                border: none;
+                background: white;
+                color: #2c3e50;
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-weight: 600;
+        
+                display: flex;
+                align-items: center;
+                gap: 12px;
+        
+                transition: all 0.3s ease;
+            }
+        
+            .formula-toggle-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+        
+            .arrow-icon {
+                transition: transform 0.4s ease;
+            }
+        
+            .arrow-icon.rotate {
+                transform: rotate(180deg);
+            }
+        
+            .formula-icon {
+                margin-right: 10px;
+                color: #90caf9;
+                font-size: 16px;
+                width: 20px;
+            }
+        
+            .div1 {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.23);
+                /* Multiple shadows for depth */
+                border-radius: 10px;
+            }
+        
+            .div2 {
+                border: #939da8 1px solid;
+                padding: 10px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+            }
+        
+            .bold-option {
+                font-weight: 600;
+            }
+        </style>
+        <script>
+            function toggleTheme() {
+
+                let toggle = document.getElementById("themeToggle");
+
+                if (toggle.checked) {
+
+                    setTheme("theme-dark");
+
+                } else {
+
+                    setTheme("theme-light");
+                }
+            }
+
+            /* restore toggle state on reload */
+            window.addEventListener("load", () => {
+
+                let savedTheme = localStorage.getItem("selectedTheme");
+
+                let toggle = document.getElementById("themeToggle");
+
+                if (savedTheme === "theme-dark") {
+                    toggle.checked = true;
+                } else {
+                    toggle.checked = false;
+                }
+            });
+            function toggleFormulaDetails() {
+
+                let details = document.getElementById("formulaDetails");
+                let btn = document.getElementById("toggleFormulaBtn");
+                let arrow = document.getElementById("formulaArrow");
+
+                if (details.classList.contains("collapsed")) {
+
+                    details.classList.remove("collapsed");
+                    details.classList.add("expanded");
+
+                    arrow.classList.add("rotate");
+
+                    btn.querySelector("span").innerHTML =
+                        '<i class="bi bi-journal-richtext me-1"></i> Show Less';
+
+                } else {
+
+                    details.classList.remove("expanded");
+                    details.classList.add("collapsed");
+
+                    arrow.classList.remove("rotate");
+
+                    btn.querySelector("span").innerHTML =
+                        '<i class="bi bi-journal-richtext me-1"></i> More Details';
+                }
+            }
+        </script>
+
+        <div class="row g-4 m-1">
+            <div class="box div1" style="margin-top: 5px;">
+                <!-- <label>Gripper Type</label> -->
+                <select id="gripper" onchange="showhidewindow()" class="form-select bold-option">
+                    <option value="" class="bold-option">Choose Gripper Type</option>
+                    <option value="1" class="bold-option">4 Fingers</option>
+                    <option value="2" class="bold-option">3 Fingers + 1 Thumb</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+        <div class="menu" id="gripper_window" data-title="-" style="display: none;">
+            <div class="row g-4">
+                <div class="col-md-3 div2 p-0">
+                   <!-- LEFT SIDE (Merged INPUT) -->
+                <div id="input" class="col-md-12">
+                    <div class="card p-0 h-100">
+                        <div class="box">
+                            <h4>INPUT</h4>
+                            
+                            <label>Object Shape</label>
+                            <select id="shape" class="form-select"  onchange="updateSelectionEvent()">
+                                <option value="">Select Shape</option>
+                                <option value="1">Rectangular</option>
+                                <option value="2">Spherical</option>
+                                <option value="3">Ellipsoidal</option>
+                            </select>
+                            <label id="selectevt">Selection Event</label>
+                            <!-- <div id="selectionEvent"></div> -->
+                            <!-- // Ellipsoidal → Major / Minor -->
+                            <div id="ellipsEvent" style="display:none;">
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input id="rbmajor" class="form-check-input" type="radio" name="event"
+                                            group="ellipsoidal" value="major" checked>
+                                        <label class="form-check-label">Major</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input id="rbminor" class="form-check-input" type="radio" name="event"
+                                            group="ellipsoidal" value="minor">
+                                        <label class="form-check-label">Minor</label>
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- User i/p for Ellipsoidal -->
+                             <div class="row g-2" id="ellipsInput" style="display:none;">
+                                <div class="col-md-6">
+                                    <label>Rmajor (mm)</label>
+                                    <input id="Rmajor" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Rminor (mm)</label>
+                                    <input id="Rminor" type="number" class="form-control" placeholder="30 mm" min="1" step="1">
+                                </div>                                
+                            </div>
+
+                            <!-- // Rectangular → Length / Breadth -->
+                            <div id="rectangleEvent" style="display:none;">
+                                <div class="row mb-2">
+                                    <div class="col-md-12 d-flex align-items-center gap-4">
+                                        <div class="form-check">
+                                            <input id="rblength" class="form-check-input" type="radio" name="event" value="length" group="rectangular"
+                                                checked>
+                                            <label class="form-check-label">Length</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input id="rbbreadth" class="form-check-input" type="radio" name="event" group="rectangular"
+                                                value="breadth">
+                                            <label class="form-check-label">Breadth</label>
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- User i/p for Rectangular -->
+                            <div class="row g-2" id="rectangleInput" style="display:none;">
+                                <div class="col-md-4">
+                                    <label style="font-size: 15px;">Length(mm)</label>
+                                    <input id="length" type="number" class="form-control" placeholder="100 mm" min="1" step="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label style="font-size: 15px;">Breadth(mm)</label>
+                                    <input id="breadth" type="number" class="form-control" placeholder="40 mm" min="1" step="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label style="font-size: 15px;">Width(mm)</label>
+                                    <input id="width" type="number" class="form-control" placeholder="20 mm" min="1" step="1">
+                                </div>
+                            </div>
+                             <div class="row g-2" id="sphericalInput" style="display:none;">
+                                     <div class="col-md-12">
+                                    <label>Radius (mm)</label>
+                                    <input id="radius" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
+                                </div>
+                             </div>
+
+                            <label>Material</label>
+                            <select id="material" class="form-select">
+                                <option value="">Select Material</option>
+                                <option value="rubber">Rubber</option>
+                                <option value="abs">ABS</option>
+                                <option value="teflon">Teflon</option>
+                            </select>
+
+                            <label>Time t (seconds)</label>
+                            <div class="form-control bg-light fw-bold text-secondary">1 - 5 sec </div>
+                            <!-- <input id="time" type="number"  class="form-control"
+                                placeholder="eg. 1 - 5 sec" min="1" max="10" step="1"/> -->
+
+                            <label>θ(t) Function</label>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <select id="func" class="form-select">
+                                        <option value="t/2 + t^2/3">t/2 + t²/3</option>
+                                        <option value="t/2 + t^2/3 + t^3/4">t/2 + t²/3 + t³/4</option>
+                                        <option value="t/3 + t^2/4 + t^3/5">t/3 + t²/4 + t³/5</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" >
+                                    <button type="button"  class="btn btn-dark" style="font-weight: 600;" onclick="onMyPopupFun()">Add</button>
+                                </div>
+                            </div>
+                           
+                           
+                            <label class="mt-2">Spring Constant Mode</label>
+                            <div>
+                                <input type="radio" name="kmode" value="1" checked onclick="updateSpringFields()" />
+                                All equal<br />
+                                <input type="radio" name="kmode" value="2" onclick="updateSpringFields()" />
+                                Fingers same, Thumb different<br />
+                                <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
+                                All unequal
+                            </div>
+                            <div id="springInputs_equal" class="mt-2"><label>Common K (N/m)</label>
+                                <input id="k_common" type="number" class="form-control" placeholder="Common K" min="1" step="1">
+                            </div>
+                            <div id="springInputs_samefinger" class="mt-2" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Finger Same K (N/m)</label>
+                                        <input id="k_finger" type="number" class="form-control" placeholder="Finger K" min="1" step="1">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Thumb Different K (N/m)</label>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <input id="k_thumb" type="number" class="form-control"
+                                                    placeholder="K1" min="1" step="1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input id="k_thumb2" type="number" class="form-control"
+                                                    placeholder="K2" min="1" step="1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input id="k_thumb3" type="number" class="form-control"
+                                                    placeholder="K3" min="1" step="1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
+
+                                </div>
+                            </div>
+                            <div id="springInputs_unequal" class="mt-2" style="display: none;">
+                                <label>Finger 1 K1 &amp; K2 (N/m)</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f1k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f1k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
+                                    </div>
+                                </div>
+                                <label>Finger 2 K1 &amp; K2 (N/m)</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f2k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f2k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
+                                    </div>
+                                </div>
+
+                                <label>Finger 3 K1 &amp; K2 (N/m)</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input id="f3k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="f3k2" class="form-control mb-2" placeholder="Spring 2" type="number" min="1" step="1">
+                                    </div>
+                                </div>
+
+                                <div id="div_Finger4" style="display: none;">
+                                    <label>Finger 4 K1 &amp; K2 (N/m)</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input id="f4k1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input id="f4k2" class="form-control mb-2" placeholder="Spring 2"
+                                                type="number" min="1" step="1">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div id="div_Thumb" style="display: none;">
+                                    <label>Thumb K1, K2 &amp; K3 (N/m)</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input id="Thk1" class="form-control" placeholder="Spring 1" type="number" min="1" step="1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input id="Thk2" class="form-control" placeholder="Spring 2" type="number" min="1" step="1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input id="Thk3" class="form-control mb-2" placeholder="Spring 3"
+                                                type="number" min="1" step="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- <div id="springInputs" class="mt-2"></div> -->
+
+                            <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
+                                Generate Graph
+                            </button>
+                            <p>Execution Time: <span id="executionTime">0</span> µs</p>
+                            <span id="loader" class="ms-2" style="display:none;">
+                                <span class="spinner-border spinner-border-sm text-primary"></span>
+                                Loading...
+                            </span>
+                        </div>                        
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-9 div2">
+                    <div class="row div2 p-0">
+                        <div id="output" class="col-md-12 div2 p-0">
+                            <div class="card p-0 h-100">
+                                <div class="box output mt-2">
+                            <h4>OUTPUT </h4>
+                            <style>
+                                .bold {
+                                    font-weight: 700;
+                                }
+
+                                .bold600 {
+                                    font-weight: 600;
+                                }
+                            </style>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Time t (sec)</th>
+                                        <th>Force (N)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="graphTableBody">
+                                    <tr>
+                                        <td>1 sec</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2 sec</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3 sec</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4 sec</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5 sec</td>
+                                        <td>-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <style>
+                                mjx-container {
+                                    margin: 0px !important;
+                                }
+                            </style>                            
+                        </div>
+                            </div>
+                        </div>
+                    </div>     
+                    <div class="row g-4" id="row4fingers" style="display: block;">
+                        <div class="col-md-12 div2 p-0">
+                            <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
+                            <div class="card p-3" style="display: none;">
+                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">
+                                    Fig. 1: Bar Chart Representation of Spring structure Model
+                                        :                                      
+                                    </label>
+                                    <img id="fig1" src="static/img/basic.avif" id="myImg"
+                                        onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                                    
+                                </div>
+                            </div>
+                            <div class="card mt-3 p-3">                            
+                                <h4 class="text-center">
+                                    Bar Chart Representation of Spring Structure Model 
+                                    (<span id="shape_name" class="fw-bold"> </span>)
+                                </h4>                            
+                                <div style="height:500px;">
+                                    <canvas id="forceChart"></canvas>
+                                    <input type="hidden" id="chartImage">
+                                </div>
+                                <button class="btn btn-success mt-3" onclick="downloadGraphExcel()">
+                                <i class="bi bi-download me-2"></i>
+                                    Download Graph Excel
+                                
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                   
+                                   
+                </div>
+            </div>
+            
+        </div>
+        <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <span class="close" style="float: right;">&times;</span>
+                <!-- <button type="button" onclick="onDownload()" class="close2">Save Img</button>
+                <button type="button" onclick="onDownloadPdf2()" class="close22">Save Pdf</button> -->
+                <img class="modal-content" id="img01" style="margin-bottom: 50px;">             
+            </div>
+<style>
+    .equation-builder {
+        display: flex;
+
+        flex-direction: row;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 12px;
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        flex-wrap: nowrap;
+    }
+
+    #thirdTermGroup {
+        display: none;
+    }
+
+    .eq-block {
+        width: 100px;
+
+        min-width: 100px;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+    .eq-select {
+        width: 100%;
+
+        text-align: center;
+
+        font-weight: 600;
+
+        border-radius: 10px;
+
+        /* padding: 5px; */
+    }
+
+    .eq-line {
+        width: 100%;
+
+        border: 2px solid #2c3e50;
+
+        opacity: 1;
+
+        margin: 8px 0;
+    }
+
+    .eq-operator {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .operator-select {
+        width: 65px;
+
+        min-width: 65px;
+
+        text-align: center;
+
+        font-size: 22px;
+        font-weight: 700;
+
+        border-radius: 12px;
+
+        /* background: #2c3e50; */
+        /* color: white; */
+
+        /* border: none; */
+    }
+</style>
+        <div id="myModalFun" class="modal"> <span class="close" style="float:right;">&times;</span>
+            <div class="container box" style="width:40% !important;">
+                <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
+                <!-- TERM SELECTION -->
+<div class="d-flex justify-content-center gap-4 mb-3">
+
+    <div class="form-check">
+        <input class="form-check-input"
+               type="radio"
+               name="termCount"
+               id="twoTerms"
+               checked
+               onchange="toggleTerms(2)">
+
+        <label class="form-check-label fw-bold">
+            2 Terms
+        </label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input"
+               type="radio"
+               name="termCount"
+               id="threeTerms"
+               onchange="toggleTerms(3)">
+
+        <label class="form-check-label fw-bold">
+            3 Terms
+        </label>
+    </div>
+
+</div>
+                <div class="equation-builder"> <!-- TERM 1 -->
+                    <div class="eq-block"> <select id="cfunc1" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="t">t</option>
+                            <option value="t²">t²</option>
+                            <option value="t³">t³</option>
+                        </select>
+                        <hr class="eq-line"> <select id="cfunc2" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div> <!-- PLUS / MINUS -->
+                    <div class="eq-operator"> <select id="operator1" class="form-select operator-select">
+                            <option value="+">+</option>
+                            <option value="-">−</option>
+                        </select> </div> <!-- TERM 2 -->
+                    <div class="eq-block"> <select id="cfunc3" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="t">t</option>
+                            <option value="t²">t²</option>
+                            <option value="t³">t³</option>
+                        </select>
+                        <hr class="eq-line"> <select id="cfunc4" class="form-select eq-select">
+                            <option value="">select</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div> <!-- PLUS / MINUS -->
+                    <!-- <div class="eq-operator">  -->
+                    <!-- THIRD TERM GROUP -->
+                    <div id="thirdTermGroup" class="align-items-center gap-3">
+                        <!-- OPERATOR 2 -->
+                        <div class="eq-operator">
+                            <select id="operator2" class="form-select operator-select">
+                                <option value="+">+</option>
+                                <option value="-">−</option>
+                            </select>
+                        </div>
+
+                        <!-- TERM 3 -->
+                        <div class="eq-block">
+                            <select id="cfunc5" class="form-select eq-select">
+                                <option value="">select</option>
+                                <option value="t">t</option>
+                                <option value="t²">t²</option>
+                                <option value="t³">t³</option>
+                            </select>
+                            <hr class="eq-line">
+                            <select id="cfunc6" class="form-select eq-select">
+                                <option value="">select</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div> <!-- BUTTON -->
+                <div class="mt-4"> <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
+                        Add Function </button> </div>
+                <hr> <!-- SAVED FUNCTIONS -->
+                <h6>Saved Functions</h6>
+                <table class="table table-bordered table-sm mt-2">
+                    <thead>
+                        <tr>
+                            <th style="width:80%;">Function</th>
+                            <th style="width:20%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="functionTableBody"> </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <div class="row g-4">                
+                <!-- OUTPUT PANEL -->
+                <!-- RIGHT SIDE -->
+                <div class="col-md-7">
+                    <div class="row g-4">
+                        <!-- OUTPUT ROW 1 -->
+                        <div  class="col-12">
+                            
+                        </div>
+                        <!-- OUTPUT ROW 2 -->
+                        <div class="col-12">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- popup for θ(t) Function -->        
+        <script src="/static/js/function.js"></script>
+        <!-- Bootstrap JS -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+        <script src="/static/js/bootstrap.bundle.min.js"></script>
+        <script src="/static/js/graph.js"></script>       
+                
+        <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+         <script src="/static/js/tex-mml-chtml.js"></script>
+</body>
+
+</html>
