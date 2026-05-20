@@ -239,8 +239,8 @@ var myModalFun = document.getElementById("myModalFun");
 var modalImg = document.getElementById("img01");
 function onMyPopupFun(ctrl) {
     myModalFun.style.display = "block";
-    document.getElementById("twoTerms").checked = true;
-    toggleTerms(2);
+    document.getElementById("oneTerm").checked = true;
+    toggleTerms(1);
 }
 
 function onMyPopup(ctrl) {
@@ -263,17 +263,54 @@ updateSpringFields();
 
 function toggleTerms(count) {
 
-    let thirdGroup =
-        document.getElementById("thirdTermGroup");
+    let operator1 =
+        document.querySelector(".eq-operator");
 
-    if (count == 2) {
+    let term2 =
+        document.getElementById("cfunc3")
+            .closest(".eq-block");
+
+    let thirdGroup =
+        document.getElementById(
+            "thirdTermGroup"
+        );
+
+    // =========================
+    // 1 TERM
+    // =========================
+
+    if (count == 1) {
+
+        operator1.style.display = "none";
+
+        term2.style.display = "none";
 
         thirdGroup.style.display = "none";
-
     }
+
+    // =========================
+    // 2 TERMS
+    // =========================
+
+    else if (count == 2) {
+
+        operator1.style.display = "flex";
+
+        term2.style.display = "flex";
+
+        thirdGroup.style.display = "none";
+    }
+
+    // =========================
+    // 3 TERMS
+    // =========================
+
     else {
 
-        // thirdGroup.style.display = "flex";
+        operator1.style.display = "flex";
+
+        term2.style.display = "flex";
+
         thirdGroup.style.display = "inline-flex";
     }
 }
@@ -281,9 +318,9 @@ function toggleTerms(count) {
 /* default load */
 window.addEventListener("load", () => {
 
-    document.getElementById("twoTerms").checked = true;
+    document.getElementById("oneTerm").checked = true;
 
-    toggleTerms(2);
+    toggleTerms(1);
 
 });
 
@@ -549,9 +586,11 @@ async function calculate() {
     console.log("Validation Passed ✅");
     let loader = document.getElementById("loader");
     let execTime = document.getElementById("executionTime");
+    let execTime2 = document.getElementById("executionTime2");
     // 🔥 SHOW LOADER
     loader.style.display = "inline-block";
     execTime.innerText = "0";
+    execTime2.innerText = "0";
     let shape = +document.getElementById("shape").value;
 
     // 🔥 GET SELECTION EVENT
@@ -669,7 +708,8 @@ async function calculate() {
 
     let graphResult = await graphResponse.json();
 
-    document.getElementById("executionTime").innerText = graphResult.execution_time;
+    execTime.innerText = graphResult.execution_time;
+    execTime2.innerText = (graphResult.execution_time / 1000).toFixed(4);
     loader.style.display = "none";
 
     createBarChart(
@@ -785,6 +825,8 @@ function createBarChart(timeData, forceData) {
 
                             text: "Time (sec)",
 
+                            color: "#444",
+
                             font: {
                                 size: 16,
                                 weight: "bold"
@@ -801,7 +843,9 @@ function createBarChart(timeData, forceData) {
 
                             display: true,
 
-                            text: "Force",
+                            text: "Force (N)",
+
+                            color: "#444",
 
                             font: {
                                 size: 16,
@@ -891,6 +935,28 @@ async function downloadGraphExcel() {
     }
 
     let payload = {
+
+        func: document.getElementById("func").value,
+
+        mode_name: document.querySelector('input[name="kmode"]:checked').value == "1"
+
+            ? "All equal"
+
+            : document.querySelector(
+                'input[name="kmode"]:checked'
+            ).value == "2"
+
+                ? "Fingers same, Thumb different"
+
+                : "All unequal",
+
+        gripper_name:
+            document.getElementById("gripper")
+                .value == "1"
+
+                ? "4 Fingers"
+
+                : "3 Fingers + 1 Thumb",
         shape_name:
             document.getElementById("shape_name").innerText,
 
@@ -946,6 +1012,142 @@ async function downloadGraphExcel() {
 
     if (disposition &&
         disposition.includes("filename=")) {
+
+        filename =
+            disposition
+                .split("filename=")[1]
+                .replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    a.click();
+}
+
+async function downloadGraphPdf() {
+
+    let tableRows =
+        document.querySelectorAll("#graphTableBody tr");
+
+    let tableData = [];
+
+    tableRows.forEach(row => {
+
+        let cols = row.querySelectorAll("td");
+
+        let forceValue =
+            cols[1].innerText.trim();
+
+        // skip empty rows
+        if (
+            forceValue === "-" ||
+            forceValue === ""
+        ) {
+            return;
+        }
+
+        tableData.push({
+
+            time: cols[0].innerText,
+
+            force: forceValue
+
+        });
+
+    });
+
+    // VALIDATION SAME AS EXCEL
+    if (tableData.length === 0) {
+
+        alert("Please generate graph first.");
+
+        return;
+    }
+
+    let payload = {
+
+        func:
+            document.getElementById("func")
+                .value,
+
+        mode_name:
+            document.querySelector(
+                'input[name="kmode"]:checked'
+            ).value == "1"
+
+                ? "All equal"
+
+                : document.querySelector(
+                    'input[name="kmode"]:checked'
+                ).value == "2"
+
+                    ? "Fingers same, Thumb different"
+
+                    : "All unequal",
+
+        gripper_name:
+            document.getElementById("gripper")
+                .value == "1"
+
+                ? "4 Fingers"
+
+                : "3 Fingers + 1 Thumb",
+        shape_name:
+            document.getElementById("shape_name").innerText,
+
+        object_shape:
+            document.getElementById("shape")
+                .options[
+                document.getElementById("shape")
+                    .selectedIndex
+            ].text,
+
+        material:
+            document.getElementById("material")
+                .options[
+                document.getElementById("material")
+                    .selectedIndex
+            ].text,
+
+        graphImage:
+            document.getElementById("chartImage").value,
+
+        tableData: tableData
+
+    };
+
+    let response = await fetch("/download_graph_pdf", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(payload)
+
+    });
+
+    let blob = await response.blob();
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    let disposition =
+        response.headers.get(
+            "Content-Disposition"
+        );
+
+    let filename =
+        "Graph_Report.pdf";
+
+    if (
+        disposition &&
+        disposition.includes("filename=")
+    ) {
 
         filename =
             disposition

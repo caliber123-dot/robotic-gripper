@@ -38,8 +38,7 @@
             margin: 0;
         }
     </style>
-    <script src="/static/js/chart.js"></script>
-    <script src="/static/js/chart-plugin.js"></script>
+   
    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script> -->
 </head>
@@ -406,7 +405,7 @@
             }
         
             /* title glow animation */
-            @keyframes titleGlow {
+            @keyframes titleGlow1 {
                 from {
                     text-shadow:
                         0 0 10px rgba(255, 255, 255, 0.4),
@@ -422,7 +421,7 @@
             }
         
             /* floating formula */
-            @keyframes formulaFloat {
+            @keyframes formulaFloat1 {
                 0% {
                     transform: translateY(0px);
                 }
@@ -557,17 +556,17 @@
                 z-index: 2;
             }
         </style>
-        <div class="hero-ai-bg" style="border-radius: 10px;padding: 10px;text-align: center;color: white;">
+        <div id="page_window1" class="hero-ai-bg" style="border-radius: 10px;padding: 10px;text-align: center;color: white;">
             <div class="particles">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-</div>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
             <h4>According to this equation:</h4>
             <img src="static/img/formula_14.png" alt="" height="80">
@@ -575,7 +574,7 @@
             <div class="w-100 text-center d-flex justify-content-center">
                 <div class="formula-details-container mt-3">
         
-                    <div class="formula-details collapsed" id="formulaDetails">
+                    <div class="formula-details collapsed1" id="formulaDetails">
         
                         <div class="detail-item">
                             <i class="bi bi-box-seam formula-icon"></i>
@@ -629,15 +628,19 @@
         
                     </div>
         
-                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()">
-        
+                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()" style="display: none;">        
                         <span>
                             <i class="bi bi-journal-richtext me-1"></i>
                             More Details
-                        </span>
-        
-                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
-        
+                        </span>        
+                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>        
+                    </button>
+                    <button class="formula-toggle-btn mt-2" id="btnpage_window1" onclick="hidePages()">        
+                        <span>
+                            <i class="bi bi-journal-richtext me-1"></i>
+                            Start Gripper System 
+                        </span>        
+                        <i class="bi bi-arrow-right arrow-icon"></i>        
                     </button>
         
                 </div>
@@ -791,17 +794,73 @@
             }
         </script>
 
-        <div class="row g-4 m-1">
-            <div class="box div1" style="margin-top: 5px;">
-                <!-- <label>Gripper Type</label> -->
-                <select id="gripper" onchange="showhidewindow()" class="form-select bold-option">
-                    <option value="" class="bold-option">Choose Gripper Type</option>
-                    <option value="1" class="bold-option">4 Fingers</option>
-                    <option value="2" class="bold-option">3 Fingers + 1 Thumb</option>
-                </select>
+        <div id="page_window2" style="display: none;">
+            <div class="hero-ai-bg">
+                <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+            </div>
+            <div class="row g-4 m-1">
+                <div class="col-md-4 p-0">
+            
+                </div>
+                <div class="col-md-4 p-0">
+                    <div class="box div1" style="margin-top: 5px;">
+                        <!-- <label>Gripper Type</label> -->
+                        <select id="gripper"  class="form-select bold-option">
+                            <option value="" class="bold-option">Choose Gripper Type</option>
+                            <option value="1" class="bold-option">4 Fingers</option>
+                            <option value="2" class="bold-option">3 Fingers + 1 Thumb</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary mt-3 w-100 bold600 mt-2" id="btnpage_window2" onclick="hidePages2()">
+                        <span>
+                            <i class="bi bi-robot me-1"></i>
+                            Go to Gripper System
+                        </span>
+                        <i class="bi bi-arrow-right arrow-icon"></i>
+                    </button>
+                    <hr />
+                </div>
+                <div class="col-md-4 p-0">
+            
+                </div>
             </div>
         </div>
+        <script>
+            let page1 = document.getElementById("page_window1");
+            let page2 = document.getElementById("page_window2");
+            function hidePages()
+            {
+                // Start page
+                page1.style.display = "none";
+                page2.style.display = "block";
+            }
+            function hidePages2()
+            {
+                // Click Go to Gripper System
+                let gripper = document.getElementById("gripper").value;
+                let gripper_window_head = document.getElementById("gripper_window_head");
+                if(gripper == "")
+                {
+                    alert("Please select a gripper type to proceed.");
+                    return;
+                }
+                showhidewindow();
+                
+                page1.style.display = "none";
+                page2.style.display = "none";
+                
+                gripper_window_head.style.display = "block";
+            }   
+        </script>
+        <div id="gripper_window_head" style="display: none;">
+
+             <div class="hero-ai-bg">
+                <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+            </div>
         <hr />
+       
+        <!-- <hr /> -->
         <div class="menu" id="gripper_window" data-title="-" style="display: none;">
             <div class="row g-4">
                 <div class="col-md-3 div2 p-0">
@@ -1019,7 +1078,7 @@
                             <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
                                 Generate Graph
                             </button>
-                            <p>Execution Time: <span id="executionTime">0</span> µs</p>
+                             <p class="mt-2"><b>Execution Time:</b><br> <span id="executionTime">0</span> µs / <span id="executionTime2">0</span> ms </p>
                             <span id="loader" class="ms-2" style="display:none;">
                                 <span class="spinner-border spinner-border-sm text-primary"></span>
                                 Loading...
@@ -1046,8 +1105,8 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Time t (sec)</th>
-                                        <th>Force (N)</th>
+                                        <th class="bg-light">Time t (sec)</th>
+                                        <th class="bg-light">Force (N)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="graphTableBody">
@@ -1104,11 +1163,23 @@
                                     <canvas id="forceChart"></canvas>
                                     <input type="hidden" id="chartImage">
                                 </div>
-                                <button class="btn btn-success mt-3" onclick="downloadGraphExcel()">
-                                <i class="bi bi-download me-2"></i>
-                                    Download Graph Excel
+                                <div class="row mt-3 g-3">
                                 
-                                </button>
+                                    <div class="col-md-6">
+                                        <button class="btn btn-success w-100" onclick="downloadGraphExcel()">
+                                            <i class="bi bi-download me-2"></i>
+                                            Download Graph Excel
+                                        </button>
+                                    </div>
+                                
+                                    <div class="col-md-6">
+                                        <button class="btn btn-danger w-100" onclick="downloadGraphPdf()">
+                                            <i class="bi bi-download me-2"></i>
+                                            Download Graph PDF
+                                        </button>
+                                    </div>
+                                
+                                </div>
                             </div>
                         </div>
                         
@@ -1120,6 +1191,7 @@
             </div>
             
         </div>
+         </div>
         <!-- The Modal -->
             <div id="myModal" class="modal">
                 <span class="close" style="float: right;">&times;</span>
@@ -1212,13 +1284,26 @@
                 <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
 <div class="d-flex justify-content-center gap-4 mb-3">
+     <!-- 1 TERM -->
+    <div class="form-check">
 
+        <input class="form-check-input"
+               type="radio"
+               name="termCount"
+               id="oneTerm"
+               onchange="toggleTerms(1)">
+
+        <label class="form-check-label fw-bold">
+            1 Term
+        </label>
+
+    </div>
+    <!-- 2 TERMS -->
     <div class="form-check">
         <input class="form-check-input"
                type="radio"
                name="termCount"
                id="twoTerms"
-               checked
                onchange="toggleTerms(2)">
 
         <label class="form-check-label fw-bold">
@@ -1336,6 +1421,9 @@
             </div>
         </div>
     </div>
+        <script src="/static/js/chart.js"></script>
+        <script src="/static/js/chart-plugin.js"></script>
+
         <!-- popup for θ(t) Function -->        
         <script src="/static/js/function.js"></script>
         <!-- Bootstrap JS -->
@@ -1344,7 +1432,9 @@
         <script src="/static/js/graph.js"></script>       
                 
         <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
-         <script src="/static/js/tex-mml-chtml.js"></script>
+        <script src="/static/js/tex-mml-chtml.js"></script>
+
+       
 </body>
 
 </html>

@@ -302,7 +302,26 @@ async function downloadResultsExcel() {
 
     a.href = url;
 
-    a.download = "gripper_results.xlsx";
+    let disposition =
+    response.headers.get(
+        "Content-Disposition"
+    );
+
+    let filename =
+        "gripper_results.xlsx";
+
+    if (
+        disposition &&
+        disposition.includes("filename=")
+    ) {
+
+        filename =
+            disposition
+                .split("filename=")[1]
+                .replace(/"/g, "");
+    }
+
+    a.download = filename;
 
     document.body.appendChild(a);
 
@@ -313,3 +332,150 @@ async function downloadResultsExcel() {
     window.URL.revokeObjectURL(url);
 }
 
+async function downloadResultsPdf() {
+
+    let total = document.getElementById("total").value;
+
+    // VALIDATION
+    if (
+        total === "" ||
+        total === "0"
+    ) {
+
+        alert("Please calculate force first.");
+
+        return;
+    }
+
+    let gripper =
+        document.getElementById("gripper").value;
+
+    let mode =
+        document.querySelector(
+            'input[name="kmode"]:checked'
+        ).value;
+
+    let mode_name = "";
+
+    if (mode == "1") {
+
+        mode_name = "All equal";
+    }
+    else if (mode == "2") {
+
+        mode_name =
+            "Fingers same, Thumb different";
+    }
+    else {
+
+        mode_name = "All unequal";
+    }
+
+    let payload = {
+
+        gripper_name:
+            (gripper == "1")
+                ? "4 Fingers"
+                : "3 Fingers + 1 Thumb",
+
+        shape_name:
+            document.getElementById("shape")
+                .options[
+                document.getElementById("shape")
+                    .selectedIndex
+            ].text,
+
+        material:
+            document.getElementById("material")
+                .options[
+                document.getElementById("material")
+                    .selectedIndex
+            ].text,
+
+        time:
+            document.getElementById("time")
+                .value,
+
+        func:
+            document.getElementById("func")
+                .value,
+
+        mode_name: mode_name,
+
+        a1: document.getElementById("a1").value,
+        a2: document.getElementById("a2").value,
+        a3: document.getElementById("a3").value,
+        a4: document.getElementById("a4").value,
+
+        b1: document.getElementById("b1").value,
+        b2: document.getElementById("b2").value,
+        b3: document.getElementById("b3").value,
+        b4: document.getElementById("b4").value,
+
+        k1: document.getElementById("k1").value,
+        k2: document.getElementById("k2").value,
+        k3: document.getElementById("k3").value,
+        k4: document.getElementById("k4").value,
+
+        f1: document.getElementById("f1").value,
+        f2: document.getElementById("f2").value,
+        f3: document.getElementById("f3").value,
+        f4: document.getElementById("f4").value,
+
+        ta: document.getElementById("ta").value,
+        tb: document.getElementById("tb").value,
+        tk: document.getElementById("tk").value,
+        ft: document.getElementById("ft").value,
+
+        total: total
+    };
+
+    let response = await fetch(
+        "/download_results_pdf",
+        {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify(payload)
+
+        }
+    );
+
+    let blob = await response.blob();
+
+    let url =
+        window.URL.createObjectURL(blob);
+
+    let a =
+        document.createElement("a");
+
+    a.href = url;
+
+    let disposition =
+    response.headers.get(
+        "Content-Disposition"
+    );
+
+    let filename =
+        "gripper_results.pdf";
+
+    if (
+        disposition &&
+        disposition.includes("filename=")
+    ) {
+
+        filename =
+            disposition
+                .split("filename=")[1]
+                .replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    a.click();
+}

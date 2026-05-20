@@ -1,9 +1,10 @@
 # from turtle import mode
 import math
-# import os
+
+import os
 from flask import Flask, render_template, request, jsonify, send_file
 from waitress import serve as waitress_serve
-import datetime
+from datetime import datetime
 import time
 # from openpyxl import Workbook
 # from openpyxl.worksheet.worksheet import Worksheet
@@ -21,6 +22,20 @@ from shape_drawer import (
 import base64
 from io import BytesIO
 from openpyxl.drawing.image import Image
+# from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    Image as RLImage
+)
+
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
+
 
 app = Flask(__name__)
 
@@ -524,17 +539,330 @@ def download_excel():
 
         ws.column_dimensions[column_letter].width = length + 5
 
+    # =========================================
+    # DYNAMIC FILE NAME
+    # =========================================
+
+    current_time = datetime.now().strftime(
+        "%H-%M-%S"
+    )
+
+    gripper_name = (
+        data.get("gripper_name", "")
+        .replace(" ", "")
+        .replace("+", "")
+    )
+
+    shape_name = (
+        data.get("shape_name", "")
+        .replace(" ", "")
+    )
+
+    material = (
+        data.get("material", "")
+        .replace(" ", "")
+    )
+
+    file_name = (
+        f"{gripper_name}_"
+        f"{shape_name}_"
+        f"{material}_"
+        f"{current_time}.xlsx"
+    )
     # =========================
     # SAVE FILE
     # =========================
 
-    file_name = "gripper_results.xlsx"
+    # file_name = "gripper_results.xlsx"
 
     wb.save(file_name)
 
     return send_file(
         file_name,
-        as_attachment=True
+        as_attachment=True,
+        download_name=file_name
+    )
+
+
+@app.route( "/download_results_pdf",methods=["POST"])
+def download_results_pdf():
+
+    data = request.json
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter
+    )
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    # =====================================
+    # TITLE
+    # =====================================
+
+    elements.append(
+
+        Paragraph(
+
+            "<b>Robotic Gripper Results</b>",
+
+            styles["Title"]
+
+        )
+
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # =====================================
+    # DETAILS
+    # =====================================
+
+    details = [
+
+        f"<b>Gripper Type:</b> "
+        f"{data.get('gripper_name')}",
+
+        f"<b>Object Shape:</b> "
+        f"{data.get('shape_name')}",
+
+        f"<b>Material:</b> "
+        f"{data.get('material')}",
+
+        f"<b>Time:</b> "
+        f"{data.get('time')} sec",
+
+        f"<b>θ(t) Function:</b> "
+        f"{data.get('func')}",
+
+        f"<b>Spring Constant:</b> "
+        f"{data.get('mode_name')}",
+
+    ]
+
+    for item in details:
+
+        elements.append(
+
+            Paragraph(
+                item,
+                styles["Normal"]
+            )
+
+        )
+
+    elements.append(Spacer(1, 20))
+
+    # =====================================
+    # TABLE
+    # =====================================
+
+    table_data = [
+
+        [
+            "Gripper",
+            "A",
+            "K",
+            "B",
+            "F(t) (N)"
+        ]
+
+    ]
+
+    rows = [
+
+        [
+            "Finger 1",
+            data.get("a1"),
+            data.get("k1"),
+            data.get("b1"),
+            data.get("f1")
+        ],
+
+        [
+            "Finger 2",
+            data.get("a2"),
+            data.get("k2"),
+            data.get("b2"),
+            data.get("f2")
+        ],
+
+        [
+            "Finger 3",
+            data.get("a3"),
+            data.get("k3"),
+            data.get("b3"),
+            data.get("f3")
+        ]
+
+    ]
+
+    if "4" in str(
+        data.get("gripper_name", "")
+    ):
+
+        rows.append([
+
+            "Finger 4",
+
+            data.get("a4"),
+
+            data.get("k4"),
+
+            data.get("b4"),
+
+            data.get("f4")
+
+        ])
+
+    if "Thumb" in str(
+        data.get("gripper_name", "")
+    ):
+
+        rows.append([
+
+            "Thumb",
+
+            data.get("ta"),
+
+            data.get("tk"),
+
+            data.get("tb"),
+
+            data.get("ft")
+
+        ])
+
+    table_data.extend(rows)
+
+    table_data.append([
+
+        "TOTAL",
+        "",
+        "",
+        "",
+        data.get("total")
+
+    ])
+
+    table = Table(
+
+        table_data,
+
+        colWidths=[
+            100,
+            90,
+            90,
+            90,
+            90
+        ]
+
+    )
+
+    table.setStyle(TableStyle([
+
+        (
+            "BACKGROUND",
+            (0, 0),
+            (-1, 0),
+            colors.grey
+        ),
+
+        (
+            "TEXTCOLOR",
+            (0, 0),
+            (-1, 0),
+            colors.whitesmoke
+        ),
+
+        (
+            "ALIGN",
+            (0, 0),
+            (-1, -1),
+            "CENTER"
+        ),
+
+        (
+            "FONTNAME",
+            (0, 0),
+            (-1, 0),
+            "Helvetica-Bold"
+        ),
+
+        (
+            "GRID",
+            (0, 0),
+            (-1, -1),
+            1,
+            colors.black
+        ),
+
+        (
+            "BACKGROUND",
+            (0, -1),
+            (-1, -1),
+            colors.lightgrey
+        ),
+
+        (
+            "FONTNAME",
+            (0, -1),
+            (-1, -1),
+            "Helvetica-Bold"
+        ),
+
+    ]))
+
+    elements.append(table)
+
+    # =====================================
+    # BUILD PDF
+    # =====================================
+
+    doc.build(elements)
+
+    buffer.seek(0)
+    from datetime import datetime
+    current_time = datetime.now().strftime(
+        "%H-%M-%S"
+    )
+
+    gripper_name = (
+        data.get("gripper_name", "")
+        .replace(" ", "")
+        .replace("+", "")
+    )
+
+    shape_name = (
+        data.get("shape_name", "")
+        .replace(" ", "")
+    )
+
+    material = (
+        data.get("material", "")
+        .replace(" ", "")
+    )
+
+    filename = (
+        f"{gripper_name}_"
+        f"{shape_name}_"
+        f"{material}_"
+        f"{current_time}.pdf"
+    )
+
+    return send_file(
+
+        buffer,
+
+        as_attachment=True,
+
+        download_name= filename,
+
+        mimetype="application/pdf"
     )
 
 # CALL NEW API FROM graph.js
@@ -766,7 +1094,7 @@ def download_graph_excel():
     # MAIN HEADING
     # =========================================
 
-    ws.merge_cells("A1:H1")
+    ws.merge_cells("A1:J1")
 
     shape_name = data.get("shape_name", "")
     ws["A1"] = (
@@ -796,20 +1124,50 @@ def download_graph_excel():
         "-"
     )
 
-    ws["A2"] = (
+
+    ws["A4"] = (
         f"Object Shape : {object_shape}"
     )
 
-    ws["A3"] = (
+    ws["A5"] = (
         f"Material : {material}"
     )
 
-    ws["A2"].font = Font(
+    ws["A3"].font = Font(
         bold=True,
         size=12
     )
 
-    ws["A3"].font = Font(
+    ws["A4"].font = Font(
+        bold=True,
+        size=12
+    )
+    ws["A3"] = (
+    f"Gripper Type : "
+    f"{data.get('gripper_name', '-')}"
+)
+
+    ws["A6"] = (
+        f"θ(t) Function : "
+        f"{data.get('func', '-')}"
+    )
+
+    ws["A7"] = (
+        f"Spring Constant : "
+        f"{data.get('mode_name', '-')}"
+    )
+
+    ws["A5"].font = Font(
+        bold=True,
+        size=12
+    )
+
+    ws["A6"].font = Font(
+        bold=True,
+        size=12
+    )
+
+    ws["A7"].font = Font(
         bold=True,
         size=12
     )
@@ -817,24 +1175,24 @@ def download_graph_excel():
     # TABLE HEADER
     # =========================================
 
-    ws["A5"] = "Time t (sec)"
-    ws["B5"] = "Force (N)"
+    ws["A9"] = "Time t (sec)"
+    ws["B9"] = "Force (N)"
 
     # from openpyxl.styles import Alignment
-    ws["B5"].alignment = Alignment(
+    ws["B9"].alignment = Alignment(
         horizontal="right"
     )
 
     header_font = Font(bold=True)
 
-    ws["A5"].font = header_font
-    ws["B5"].font = header_font
+    ws["A9"].font = header_font
+    ws["B9"].font = header_font
 
     # =========================================
     # TABLE DATA
     # =========================================
 
-    row = 6
+    row = 10
     for item in data["tableData"]:
 
         ws[f"A{row}"] = item["time"]
@@ -870,7 +1228,7 @@ def download_graph_excel():
     img.height = 450
 
     # place graph below table
-    ws.add_image(img, "A13")
+    ws.add_image(img, "A16")
 
     # =========================================
     # SAVE FILE
@@ -881,11 +1239,15 @@ def download_graph_excel():
         .replace("+", "")
     )
     # filename = "Graph_Report_AAAA.xlsx"
+    current_time = datetime.now().strftime(
+        "%H-%M-%S"
+    )
     filename = (
         f"Graph_"
         f"{shape_name}_"
         f"{object_shape}_"
-        f"{material}.xlsx"
+        f"{material}_{current_time}.xlsx"
+
     )
     print("Saving file:", filename)
     wb.save(filename)
@@ -893,6 +1255,212 @@ def download_graph_excel():
     return send_file(
         filename,
         as_attachment=True
+    )
+
+@app.route("/download_graph_pdf", methods=["POST"])
+def download_graph_pdf():
+
+    data = request.json
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter
+    )
+
+    elements = []
+
+    styles = getSampleStyleSheet()
+
+    # =========================================
+    # TITLE
+    # =========================================
+
+    shape_name = data.get("shape_name", "")
+
+    title = (
+        "Bar Chart Representation of "
+        f"Spring Structure Model "
+        f"({shape_name})"
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>{title}</b>",
+            styles["Title"]
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # =========================================
+    # DETAILS
+    # =========================================
+
+    object_shape = data.get(
+        "object_shape",
+        "-"
+    )
+
+    material = data.get(
+        "material",
+        "-"
+    )
+
+    elements.append(
+
+        Paragraph(
+
+            f"<b>Gripper Type:</b> "
+            f"{data.get('gripper_name', '-')}",
+            styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Object Shape:</b> {object_shape}",
+            styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Material:</b> {material}",
+            styles["Normal"]
+        )
+    )    
+
+    elements.append(
+
+        Paragraph(
+
+            f"<b>θ(t) Function:</b> "
+            f"{data.get('func', '-')}",
+
+            styles["Normal"]
+
+        )
+
+    )
+
+    elements.append(
+
+        Paragraph(
+
+            f"<b>Spring Constant:</b> "
+            f"{data.get('mode_name', '-')}",
+
+            styles["Normal"]
+
+        )
+
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # =========================================
+    # TABLE
+    # =========================================
+
+    table_data = [
+        ["Time t (sec)", "Force (N)"]
+    ]
+
+    for item in data["tableData"]:
+
+        table_data.append([
+            item["time"],
+            item["force"]
+        ])
+
+    table = Table(
+        table_data,
+        colWidths=[200, 200]
+    )
+
+    table.setStyle(TableStyle([
+
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+
+    ]))
+
+    elements.append(table)
+
+    elements.append(Spacer(1, 30))
+
+    # =========================================
+    # GRAPH IMAGE
+    # =========================================
+
+    graph_data = data["graphImage"]
+
+    graph_data = graph_data.split(",")[1]
+
+    image_data = base64.b64decode(graph_data)
+
+    temp_image = "temp_chart_pdf.png"
+
+    with open(temp_image, "wb") as f:
+
+        f.write(image_data)
+
+    chart = RLImage(
+        temp_image,
+        width=500,
+        height=280
+    )
+
+    elements.append(chart)
+
+    # =========================================
+    # BUILD PDF
+    # =========================================
+
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    # delete temp image
+    if os.path.exists(temp_image):
+
+        os.remove(temp_image)
+
+    # =========================================
+    # DOWNLOAD
+    # =========================================
+    current_time = datetime.now().strftime(
+        "%H-%M-%S"
+    )
+    
+    filename = (
+        f"Graph_"
+        f"{shape_name}_"
+        f"{object_shape}_"
+        f"{material}_"
+        f"{current_time}.pdf"
+    )
+
+    return send_file(
+
+        buffer,
+
+        as_attachment=True,
+
+        download_name=filename,
+
+        mimetype="application/pdf"
     )
 
 if __name__ == '__main__':
