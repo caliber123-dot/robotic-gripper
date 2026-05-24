@@ -218,11 +218,12 @@ def calculate():
     material = data["material"]
     t = float(data["time"])
     func = data["func"]
-    print("Function:", func)  
+    # print("Function:", func)  
     
     # print("Selected Function ID:", func)
     
     gripper = int(data["gripper"]) # 1 or 2
+    # print("Gripper type:", "4-Finger Gripper" if gripper == 1 else "3-Finger Gripper with Thumb")
 
     if shape == 1:  # Rectangular
         if event == "length":
@@ -234,7 +235,7 @@ def calculate():
         else:
             L, B, H = 0.1, 0.04, 0.02  # default ✅
         volume = L * B * H
-        print("Volume:", volume)
+        # print("Volume:", volume)
 
     elif shape == 2:  # Spherical
         # r = 0.05
@@ -506,9 +507,11 @@ def calculate():
         print("New entry saved")
 
     else:
-
         print("Duplicate entry skipped")
 
+    # print("Execution time (µs):", round(execution_time, 2))
+#    Print forces for debugging
+    # print(f"t={t} sec, Forces: {forces}, Thumb: {thumb}, Total: {total}")
     return jsonify({
         "volume": volume,
         "mass": M,
@@ -1048,6 +1051,8 @@ def perform_calculation(data, t):
     func = data["func"]
 
     gripper = int(data["gripper"])
+    # gripper = int(data["gripper"])
+    # print("Gripper type:", gripper)
 
     # =====================================
     # VOLUME
@@ -1110,7 +1115,7 @@ def perform_calculation(data, t):
 
         for i in range(finger_count):
 
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(M, kf, func, t)
 
             F = abs(A) + K * abs(B)
 
@@ -1120,7 +1125,7 @@ def perform_calculation(data, t):
 
             ktt = 1/((1/k) + (1/k) + (1/k))
 
-            A, B, K = cal_force_eq14(M, ktt, func, t)
+            A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(M, ktt, func, t)
 
             thumb = round(abs(A) + K * abs(B), 4)
 
@@ -1136,7 +1141,7 @@ def perform_calculation(data, t):
 
         for i in range(finger_count):
 
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(M, kf, func, t)
 
             F = abs(A) + K * abs(B)
 
@@ -1154,7 +1159,7 @@ def perform_calculation(data, t):
                     (1/kt[2])
                 )
 
-                A, B, K = cal_force_eq14(
+                A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(
                     M,
                     ktt,
                     func,
@@ -1180,7 +1185,7 @@ def perform_calculation(data, t):
 
             kf = (k1 * k2)/(k1 + k2)
 
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(M, kf, func, t)
 
             F = abs(A) + K * abs(B)
 
@@ -1198,7 +1203,7 @@ def perform_calculation(data, t):
                     (1/kt[2])
                 )
 
-                A, B, K = cal_force_eq14(
+                A1, A2, B1, B2, A, B, K  = cal_force_eq14A1B1(
                     M,
                     ktt,
                     func,
@@ -1211,6 +1216,7 @@ def perform_calculation(data, t):
                 )
 
     total = round(sum(forces) + thumb, 4)
+    # print(f"t={t} sec, Forces: {forces}, Thumb: {thumb}, Total: {total}")
 
     return total
 
@@ -1229,6 +1235,8 @@ def calculate_graph():
     
     end_time = time.perf_counter()
     execution_time = (end_time - start_time) * 1_000_000
+
+
     
     return jsonify({
 

@@ -181,7 +181,7 @@ function showhidewindow(pno) {
 function updateSpringFields() {
     // alert("Update spring fields called");
     console.log("Updating spring fields...");
-    let gripper = localStorage.getItem("pno") || "0";
+    let gripper = sessionStorage.getItem("pno");
     let mode = document.querySelector('input[name="kmode"]:checked').value;
     // let container = document.getElementById("springInputs");
     let equal = document.getElementById("springInputs_equal");
@@ -973,7 +973,7 @@ document
 function validateInputs() {
     // alert("Validating inputs...");
     let mode = document.querySelector('input[name="kmode"]:checked').value;
-    let gripper = localStorage.getItem("pno") || "0";
+    let gripper = sessionStorage.getItem("pno");
     // let time = document.getElementById("time").value;
     let material = document.getElementById("material").value;
     // let trFinger4 = document.getElementById("trFinger4");
@@ -1211,7 +1211,7 @@ async function calculate() {
         // time: +document.getElementById("time").value,
         // func: document.getElementById("func").value,
         func: document.getElementById("func").value,
-        gripper: localStorage.getItem("pno") || "0",
+        gripper: sessionStorage.getItem("pno"),
         mode: mode,
         k_common: +document.getElementById("k_common")?.value || 0,
         k_finger: +document.getElementById("k_finger")?.value || 0,
@@ -1530,7 +1530,7 @@ async function downloadGraphExcel() {
                 : "All unequal",
 
         gripper_name:
-            localStorage.getItem("pno") || "0" == 1
+            sessionStorage.getItem("pno") == 1
 
                 ? "4 Fingers"
 
@@ -1664,7 +1664,7 @@ async function downloadGraphPdf() {
                     : "All unequal",
 
         gripper_name:
-            localStorage.getItem("pno") || "0" == 1
+            sessionStorage.getItem("pno") == 1
 
                 ? "4 Fingers"
 
