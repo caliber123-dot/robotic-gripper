@@ -902,26 +902,26 @@ function updateSelectionEvent() {
     rectangleInput.style.display = "none";
     ellipsInput.style.display = "none";
     sphericalInput.style.display = "none";
-    selectevt.style.display = "block";
+    // selectevt.style.display = "block";
     // Ellipsoidal → Major / Minor
     if (shape == 3) {
         // Ellipsoidal
-        ellipsEvent.style.display = "flex";
+        // ellipsEvent.style.display = "flex";
         ellipsEvent.querySelectorAll("input").forEach(input => input.checked = false);
         document.getElementById("rbmajor").checked = true; // default selection
-        ellipsInput.style.display = "flex";
+        // ellipsInput.style.display = "flex";
     }
     // Rectangular → Length / Breadth
     else if (shape == 1) {
         // Rectangular
-        rectangleEvent.style.display = "flex";
+        // rectangleEvent.style.display = "flex";
         rectangleEvent.querySelectorAll("input").forEach(input => input.checked = false);
         document.getElementById("rblength").checked = true; // default selection
-        rectangleInput.style.display = "flex";
+        // rectangleInput.style.display = "flex";
     }
     // Spherical
     else {
-        sphericalInput.style.display = "flex";
+        // sphericalInput.style.display = "flex";
         selectevt.style.display = "none";
         // container.innerHTML = `<small class="text-muted">No selection required</small>`;
         // ellipsEvent.style.display = "none";
