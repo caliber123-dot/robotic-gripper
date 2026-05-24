@@ -37,6 +37,23 @@
         .menu ul {
             margin: 0;
         }
+        .table {
+    border: 2px solid #000;
+}
+
+.table th,
+.table td {
+    border: 1.5px solid #000 !important;
+    vertical-align: middle;
+}
+
+.table thead {
+    background: #dcdcdc;
+}
+
+.table input {
+    border: 0px solid #000 !important;
+}
     </style>
    
 </head>
@@ -692,12 +709,12 @@
         
                         <div class="detail-item">
                             <i class="bi bi-graph-up-arrow formula-icon"></i>
-                            <b>dθ/dt</b> = first derivative
+                            <b>dθ/dt</b> = first derivative angle of contact with respective to time
                         </div>
         
                         <div class="detail-item">
                             <i class="bi bi-activity formula-icon"></i>
-                            <b>d²θ/dt²</b> = second derivative
+                            <b>d²θ/dt²</b> = second derivative angle of contact with respective to time
                         </div>
         
                         <div class="detail-item">
@@ -724,15 +741,29 @@
                         </span>        
                         <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>        
                     </button>
-
-                    <button class="formula-toggle-btn mt-2" id="btnpage_window1" onclick="hidePages()">        
+            <div class="row w-75" style="border: #121212; border-width: 0px; border-style: solid;">
+                <div class="col-md-6">
+                    <button class="btn btn-primary mt-2" id="btnpage_window1" title="4 Finger gripper" onclick="hidePages(1)">
                         <span>
                             <i class="bi bi-journal-richtext me-1"></i>
-                            Start Gripper System 
-                        </span>        
-                        <i class="bi bi-arrow-right arrow-icon"></i>        
+                            Start 4 Fingers Gripper
+                        </span>
+                        <i class="bi bi-arrow-right arrow-icon"></i>
                     </button>
-        
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary mt-2" id="btnpage_window2" title="3 Fingers + 1 Thumb" tag="2" onclick="hidePages(2)">
+                        <span>
+                            <i class="bi bi-journal-richtext me-1"></i>
+                            Start 3 Fingers + 1 Thumb
+                        </span>
+                        <i class="bi bi-arrow-right arrow-icon"></i>
+                    </button>
+                </div>
+
+            </div>
+                   
+                   
                 </div>
             </div>
         </div>
@@ -755,13 +786,13 @@
                         </select>
                     </div>
                     
-                    <button class="btn btn-primary mt-3 w-100 bold600 mt-2" id="btnpage_window2" onclick="hidePages2()">
+                    <!-- <button class="btn btn-primary mt-3 w-100 bold600 mt-2" id="btnpage_window2" onclick="hidePages2()">
                         <span>
                             <i class="bi bi-robot me-1"></i>
                             Go to Gripper System
                         </span>
                         <i class="bi bi-arrow-right arrow-icon"></i>
-                    </button>
+                    </button> -->
                     <hr />
                 </div>
                 <div class="col-md-4 p-0">
@@ -770,31 +801,42 @@
             </div>
         </div>
         <script>
+            // let CURRENT_GRIPPER = 0;
             let page1 = document.getElementById("page_window1");
-            let page2 = document.getElementById("page_window2");
-            function hidePages()
+            // let page2 = document.getElementById("page_window2");
+            function hidePages111()
             {
                 // Start page
                 page1.style.display = "none";
-                page2.style.display = "block";
+                // page2.style.display = "block";
             }
-            function hidePages2()
+            function hidePages(pageNumber)
             {
-                // Click Go to Gripper System
-                let gripper = document.getElementById("gripper").value;
+                // after click function this page open in new tab next
+                // open("/", "_blank");
+
+                // let gripper = document.getElementById("gripper").value;
                 let gripper_window_head = document.getElementById("gripper_window_head");
-                if(gripper == "")
-                {
-                    alert("Please select a gripper type to proceed.");
-                    return;
-                }
-                showhidewindow();
+                 // memory variable
+                // CURRENT_GRIPPER = pageNumber;         
+                // localStorage.setItem("pno", pageNumber);
+                sessionStorage.setItem(
+                    "pno",
+                    pageNumber
+                );
+                showhidewindow(pageNumber);
                 
                 page1.style.display = "none";
-                page2.style.display = "none";
+                // page2.style.display = "none";
                 
                 gripper_window_head.style.display = "block";
-            }   
+            }  
+            function getCurrentGripper(){
+
+                return parseInt(
+                    sessionStorage.getItem("pno")
+                ) || 0;
+            }
         </script>
         
         <div id="gripper_window_head" style="display: none;">
@@ -815,7 +857,7 @@
                             <label>Object Shape</label>
                             <select id="shape" class="form-select"  onchange="updateSelectionEvent()">
                                 <option value="">Select Shape</option>
-                                <option value="1">Rectangular</option>
+                                <option value="1">Rectangular Paralleopiped</option>
                                 <option value="2">Spherical</option>
                                 <option value="3">Ellipsoidal</option>
                             </select>
@@ -1019,6 +1061,8 @@
                             <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
                                 Calculate Force
                             </button>
+                            <div id="savedText" class="mt-2 text-success fw-bold">
+                            </div>
                             <p class="mt-2"><b>Execution Time:</b><br> <span id="executionTime">0</span> µs / <span id="executionTime2">0</span> ms </p>
                             <span id="loader" class="ms-2" style="display:none;">
                                 <span class="spinner-border spinner-border-sm text-primary"></span>
@@ -1035,7 +1079,7 @@
                             <div class="card p-3">
                                 <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
                                         for 4 Fingers                                        
-                                    </label><img id="fig1" src="static/img/basic.avif" id="myImg"
+                                    </label><img id="fig1" src="static/img/model_4Fingers.png" id="myImg"
                                         onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
                                 </div>
                             </div>
@@ -1053,7 +1097,7 @@
                            <div class="card p-3">
                                 <div class="graph-box" style="text-align: center;"><label style="font-size: 14px;height: 50px;">Fig. 3: Schematic Representation of Spring structure Model for Industrial Image:
                                         <span id="shape_name">-</span>
-                                    </label><img id="fig3" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                    </label><img id="fig3" src="static/img/Industrial_For4inger.jpg"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: 200px;" alt="basic.avif">
                                 </div>
                             </div>
@@ -1065,7 +1109,7 @@
                             <div class="card p-3">
                                 <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
                                         for 3 Fingers + 1 Thumb
-                                    </label><img id="fig11" src="static/img/basic.avif" id="myImg"
+                                    </label><img id="fig11" src="static/img/model_3Fingers_Thumb.png" id="myImg"
                                         onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
                                 </div>
                             </div>
@@ -1112,34 +1156,52 @@
                             <style>
                                 mjx-container {
                                     margin: 0px !important;
+                                    font-size: 14px !important;
+                                    padding: 0px !important;
                                 }
                             </style>
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr class="fw-bold text-center table-secondary">
                                         <td></td>
-                                        <td>|A|</td>
-                                        <td>K</td>
-                                        <td>|B|</td>
+                                        <td colspan="2">|A|</td>
+                                        <td>+ K</td>
+                                        <td colspan="2">|B|</td>
                                         <td></td>
                                     </tr>
                                     <tr class="fw-bold text-center align-middle table-secondary">
                                         <th style="vertical-align: middle;">Gripper</th>
                                         <th>\[
                                             \boldsymbol{
-                                            (mg)_i \left[ - r_i \sin\theta_i \frac{d\theta_i}{dt} + r_i \cos\theta_i \frac{d^2\theta_i}{dt^2}
+                                            A1=(mg)_i
+                                            }
+                                            \]</th>
+                                        <th>\[
+                                            \boldsymbol{
+                                            A2=\left[ - r_i \sin\theta_i \frac{d\theta_i}{dt} + r_i \cos\theta_i \frac{d^2\theta_i}{dt^2}
                                             \right]
                                             }
                                             \]</th>
-                                        <th class="fw-bold text-center" style="vertical-align: middle;">+ K</th>
+                                        <th class="fw-bold text-center" style="vertical-align: middle;"> \[
+                                            \boldsymbol{
+                                            K=  \frac{K1-K2}{K1+K2} 
+                                            
+                                            }
+                                            \]</th>
                                         <th>
                                             \[
                                             \boldsymbol{
-                                             \Bigg[r_i
+                                             B1=r_i                                            
+                                            }
+                                            \]</th>
+                                            <th>
+                                            \[
+                                            \boldsymbol{
+                                            B2=
                                             \big\{
                                             \theta_i - \frac{\theta_i^3}{3!} + \frac{\theta_i^5}{5!} + \cdots
                                             \big\}
-                                            \Bigg]
+                                            
                                             }
                                             \]</th>
                                         <th style="vertical-align: middle;">= F(t) (N)</th>
@@ -1149,49 +1211,59 @@
                                 <tbody>
 
                                     <tr>
-                                        <td style="width: 100px;">Finger 1</td>
+                                        <td style="width: 30%;">Finger 1</td>
+                                        <td><input id="a10" class="form-control bold" readonly /></td>
                                         <td><input id="a1" class="form-control bold" readonly /></td>
                                         <td><input id="k1" class="form-control bold" readonly /></td>
+                                        <td style="width: 20%;"><input id="b10" class="form-control bold" readonly /></td>
                                         <td><input id="b1" class="form-control bold" readonly /></td>
-                                        <td><input id="f1" class="form-control bold" readonly /></td>
+                                        <td style="width: 50%;"><input id="f1" class="form-control bold" readonly /></td>
                                     </tr>
                                     <tr>
                                         <td>Finger 2</td>
+                                        <td><input id="a20" class="form-control bold" readonly /></td>
                                         <td><input id="a2" class="form-control bold" readonly /></td>
                                         <td><input id="k2" class="form-control bold" readonly /></td>
+                                        <td><input id="b20" class="form-control bold" readonly /></td>
                                         <td><input id="b2" class="form-control bold" readonly /></td>
                                         <td><input id="f2" class="form-control bold" readonly /></td>
                                     </tr>
                                     <tr>
                                         <td>Finger 3</td>
+                                        <td><input id="a30" class="form-control bold" readonly /></td>
                                         <td><input id="a3" class="form-control bold" readonly /></td>
                                         <td><input id="k3" class="form-control bold" readonly /></td>
+                                        <td><input id="b30" class="form-control bold" readonly /></td>
                                         <td><input id="b3" class="form-control bold" readonly /></td>
                                         <td><input id="f3" class="form-control bold" readonly /></td>
                                     </tr>
                                     <tr id="trFinger4">
                                         <td>Finger 4</td>
+                                        <td><input id="a40" class="form-control bold" readonly /></td>
                                         <td><input id="a4" class="form-control bold" readonly /></td>
                                         <td><input id="k4" class="form-control bold" readonly /></td>
+                                        <td><input id="b40" class="form-control bold" readonly /></td>
                                         <td><input id="b4" class="form-control bold" readonly /></td>
                                         <td><input id="f4" class="form-control bold" readonly /></td>
                                     </tr>
                                     <tr id="trThumb">
                                         <td>Thumb</td>
+                                        <td><input id="a50" class="form-control bold" readonly /></td>
                                         <td><input id="ta" class="form-control bold" readonly /></td>
                                         <td><input id="tk" class="form-control bold" readonly /></td>
+                                        <td><input id="b50" class="form-control bold" readonly /></td>
                                         <td><input id="tb" class="form-control bold" readonly /></td>
                                         <td><input id="ft" class="form-control bold" readonly /></td>
                                     </tr>
                                     <tr class="table-secondary">
-                                        <th colspan="4">Total Force</th>
+                                        <th colspan="6">Total Force</th>
                                         <th><input id="total" class="form-control fw-bold" readonly /></th>
                                     </tr>
                                     <tr class="table-secondary">
                                         <th colspan="3">
                                            <button type="button" class="btn btn-success w-100 fw-bold" onclick="downloadResultsExcel()"> <i class="bi bi-download me-2"></i> Download Results in Excel</button>
                                         </th>
-                                        <th colspan="2">
+                                        <th colspan="4">
                                            <button type="button" class="btn btn-danger w-100 fw-bold" onclick="downloadResultsPdf()"> <i class="bi bi-download me-2"></i> Download Results in PDF</button>
                                         </th>
                                       
@@ -1295,11 +1367,11 @@
     }
 </style>
         <div id="myModalFun" class="modal"> <span class="close" style="float:right;">&times;</span>
-            <div class="container box" style="width:40% !important;">
+            <div class="container box" style="width:45% !important;">
                 <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
                 <div class="d-flex justify-content-center gap-4 mb-3">
-                    <div class="form-check">
+                    <!-- <div class="form-check">
                     
                         <input class="form-check-input" type="radio" name="termCount" id="oneTerm" onchange="toggleTerms(1)">
                     
@@ -1307,7 +1379,7 @@
                             1 Term
                         </label>
                     
-                    </div>
+                    </div> -->
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="twoTerms" 
                             onchange="toggleTerms(2)">
@@ -1326,8 +1398,16 @@
                     </div>
         
                 </div>
-                <div class="equation-builder"> <!-- TERM 1 -->
-                    <div class="eq-block"> <select id="cfunc1" class="form-select eq-select">
+                <div class="equation-builder"> 
+                    <!-- TERM 1 -->
+                    <div class="eq-operator">
+                            <select id="operator0" class="form-select operator-select">
+                                <option value="+">+</option>
+                                <option value="-">−</option>
+                            </select>
+                        </div>
+                    <div class="eq-block"> 
+                        <select id="cfunc1" class="form-select eq-select">
                             <option value="">select</option>
                             <option value="t">t</option>
                             <option value="t²">t²</option>
@@ -1341,7 +1421,8 @@
                             <option value="5">5</option>
                         </select>
                     </div> <!-- PLUS / MINUS -->
-                    <div class="eq-operator" id="operatorGroup1"> <select id="operator1" class="form-select operator-select">
+                    <div class="eq-operator" id="operatorGroup1"> 
+                        <select id="operator1" class="form-select operator-select">
                             <option value="+">+</option>
                             <option value="-">−</option>
                         </select> </div> <!-- TERM 2 -->
@@ -1524,8 +1605,11 @@
 
             // ===== MATERIAL DENSITY =====
             const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
-            function showhidewindow() {
-                let gripper = document.getElementById("gripper").value;
+            
+            function showhidewindow(pageNumber) {
+
+                // let gripper = document.getElementById("gripper").value;
+                let gripper = pageNumber;
                 let gripper_window = document.getElementById("gripper_window");
                 let trFinger4 = document.getElementById("trFinger4");
                 let trThumb = document.getElementById("trThumb");
@@ -1629,13 +1713,13 @@
                 ft.value = "";
                 total.value = "";
                 document.getElementById("shape_name").innerText = "-";
-                fig1.src = fig11.src = "static/img/basic.avif";
+                // fig1.src = fig11.src = "static/img/basic.avif";
                 fig2.src = fig22.src = "static/img/basic.avif";
-                fig3.src = "static/img/basic.avif";
+                // fig3.src = "static/img/basic.avif";
                 let row4fingers = document.getElementById("row4fingers");
                 let row3fingers = document.getElementById("row3fingers");
 
-                if (gripper == "") {
+                if (!gripper) {
                     gripper_window.setAttribute("data-title", "-");
                     gripper_window.style.display = "none";
                     trFinger4.style.display = "none";
@@ -1644,7 +1728,9 @@
                     row3fingers.style.display = "none";
                     // alert("Please select Gripper Type 0");
                 }
-                else if (gripper == "1") {
+                else if (gripper == 1) {
+                    //if 4 fingers gripper selected scroll at top
+                    scrollTo(0, 0);
                     gripper_window.setAttribute("data-title", "4 Fingers");
                     gripper_window.style.display = "block";
                     trFinger4.style.display = "table-row";
@@ -1654,7 +1740,8 @@
                     // gripper_name.innerText = "4 Fingers";
                     // alert("4 Fingers Gripper Selected");
                 }
-                else if (gripper == "2") {
+                else if (gripper == 2) {
+                    scrollTo(0, 0);
                     gripper_window.setAttribute("data-title", "3 Fingers + 1 Thumb");
                     gripper_window.style.display = "block";
                     trFinger4.style.display = "none";
@@ -1728,8 +1815,8 @@
             var modalImg = document.getElementById("img01");
             function onMyPopupFun(ctrl) {
                 myModalFun.style.display = "block";
-                document.getElementById("oneTerm").checked = true;
-                toggleTerms(1);
+                document.getElementById("twoTerms").checked = true;
+                toggleTerms(2);
             }
 
             function onMyPopup(ctrl) {
@@ -1813,10 +1900,10 @@
     function () {
 
         document.getElementById(
-            "oneTerm"
+            "twoTerms"
         ).checked = true;
 
-        toggleTerms(1);
+        toggleTerms(2);
     }
 );
 
@@ -1892,23 +1979,27 @@
             function validateInputs() {
                 // alert("Validating inputs...");
                 let mode = document.querySelector('input[name="kmode"]:checked').value;
-                let gripper = document.getElementById("gripper").value;
+                // let gripper = document.getElementById("gripper").value;
+                let pno = getCurrentGripper(); 
+                // alert("Current Gripper (from getCurrentGripper): " + pno);
+                let gripper = pno; // page number is same as gripper type
                 let time = document.getElementById("time").value;
                 let material = document.getElementById("material").value;
                 let trFinger4 = document.getElementById("trFinger4");
                 let trThumb = document.getElementById("trThumb");
                 let shape = +document.getElementById("shape").value;
-                if(gripper == "") {
-                    markInvalid("gripper");
+                if (!gripper) {
+                    // markInvalid("gripper");
+                    alert("Please select Gripper Type");
                     return false;
                 }
-                if (gripper == "1") {
+                if (gripper == 1) {
                     //4 Fingers
                     trFinger4.style.display = "table-row";
                     trThumb.style.display = "none";
 
                 }
-                else if (gripper == "2") {
+                else if (gripper == 2) {
                     // 3 Fingers + 1 Thumb
                     trFinger4.style.display = "none";
                     trThumb.style.display = "table-row";
@@ -1918,11 +2009,11 @@
                     markInvalid("shape");
                     return false;
                 }
-                if(material == "") {
+                if (material == "") {
                     markInvalid("material");
                     return false;
                 }
-                if(shape == 1) {
+                if (shape == 1) {
                     let length = document.getElementById("length").value;
                     let breadth = document.getElementById("breadth").value;
                     let width = document.getElementById("width").value;
@@ -1939,16 +2030,16 @@
                         return false;
                     }
                 }
-                else if(shape == 2) {
+                else if (shape == 2) {
                     let radius = document.getElementById("radius").value;
                     if (!radius) {
                         markInvalid("radius");
                         return false;
                     }
                 }
-                else if(shape == 3) {
+                else if (shape == 3) {
                     let Rmajor = document.getElementById("Rmajor").value;
-                    let Rminor = document.getElementById("Rminor").value;                   
+                    let Rminor = document.getElementById("Rminor").value;
                     if (!Rmajor) {
                         markInvalid("Rmajor");
                         return false;
@@ -1956,7 +2047,7 @@
                     if (!Rminor) {
                         markInvalid("Rminor");
                         return false;
-                    }                    
+                    }
                 }
                 if (!time) {
                     // alert("Please enter Time");
@@ -1964,7 +2055,7 @@
                     return false;
                 }
                 // alert("shape entered: " + shape);
-                
+
                 if (!material) {
                     // alert("Please select Material");
                     markInvalid("material");
@@ -2088,7 +2179,7 @@
                 loader.style.display = "inline-block";
                 execTime.innerText = "0";
                 execTime2.innerText = "0";
-                let shape = +document.getElementById("shape").value;                
+                let shape = +document.getElementById("shape").value;
 
                 // 🔥 GET SELECTION EVENT
                 let event = "";
@@ -2129,7 +2220,7 @@
                     time: +document.getElementById("time").value,
                     // func: document.getElementById("func").value,
                     func: document.getElementById("func").value,
-                    gripper: +document.getElementById("gripper").value,
+                    gripper: getCurrentGripper(),
                     mode: mode,
                     k_common: +document.getElementById("k_common")?.value || 0,
                     k_finger: +document.getElementById("k_finger")?.value || 0,
@@ -2176,47 +2267,95 @@
                 // ✅ Total
                 document.getElementById("total").value = result.total?.toFixed(4) || "";
 
-                document.getElementById("a1").value = result.forcesA[0]?.toFixed(4) || "";
-                document.getElementById("a2").value = result.forcesA[1]?.toFixed(4) || "";
-                document.getElementById("a3").value = result.forcesA[2]?.toFixed(4) || "";
-                document.getElementById("a4").value = result.forcesA[3]?.toFixed(4) || "";
+                // document.getElementById("a1").value = result.forcesA[0]?.toFixed(4) || "";
+                // document.getElementById("a2").value = result.forcesA[1]?.toFixed(4) || "";
+                // document.getElementById("a3").value = result.forcesA[2]?.toFixed(4) || "";
+                // document.getElementById("a4").value = result.forcesA[3]?.toFixed(4) || "";
 
-                document.getElementById("b1").value = result.forcesB[0]?.toFixed(4) || "";
-                document.getElementById("b2").value = result.forcesB[1]?.toFixed(4) || "";
-                document.getElementById("b3").value = result.forcesB[2]?.toFixed(4) || "";
-                document.getElementById("b4").value = result.forcesB[3]?.toFixed(4) || "";
+                // document.getElementById("b1").value = result.forcesB[0]?.toFixed(4) || "";
+                // document.getElementById("b2").value = result.forcesB[1]?.toFixed(4) || "";
+                // document.getElementById("b3").value = result.forcesB[2]?.toFixed(4) || "";
+                // document.getElementById("b4").value = result.forcesB[3]?.toFixed(4) || "";
 
+                // document.getElementById("k1").value = result.kf_total[0]?.toFixed(4) || "";
+                // document.getElementById("k2").value = result.kf_total[1]?.toFixed(4) || "";
+                // document.getElementById("k3").value = result.kf_total[2]?.toFixed(4) || "";
+                // document.getElementById("k4").value = result.kf_total[3]?.toFixed(4) || "";
+
+                // document.getElementById("tk").value = result.ktt?.toFixed(4) || "";
+
+                // document.getElementById("ta").value = result.thumbA?.toFixed(4) || "";
+                // document.getElementById("tb").value = result.thumbB?.toFixed(4) || "";
+                // Finger 1
+                document.getElementById("a10").value = result.forcesA1[0];
+                document.getElementById("a1").value = result.forcesA2[0];
+
+                document.getElementById("b10").value = result.forcesB1[0];
+                document.getElementById("b1").value = result.forcesB2[0];
+                // round 4 decimal places
                 document.getElementById("k1").value = result.kf_total[0]?.toFixed(4) || "";
+
+                // Finger 2
+                document.getElementById("a20").value = result.forcesA1[1];
+                document.getElementById("a2").value = result.forcesA2[1];
+
+                document.getElementById("b20").value = result.forcesB1[1];
+                document.getElementById("b2").value = result.forcesB2[1];
+                // round 4 decimal places
                 document.getElementById("k2").value = result.kf_total[1]?.toFixed(4) || "";
+
+                // Finger 3
+                document.getElementById("a30").value = result.forcesA1[2];
+                document.getElementById("a3").value = result.forcesA2[2];
+
+                document.getElementById("b30").value = result.forcesB1[2];
+                document.getElementById("b3").value = result.forcesB2[2];
+                // round 4 decimal places
                 document.getElementById("k3").value = result.kf_total[2]?.toFixed(4) || "";
-                document.getElementById("k4").value = result.kf_total[3]?.toFixed(4) || "";
 
+                // Finger 4
+                if (result.forcesA1.length > 3) {
+
+                    document.getElementById("a40").value = result.forcesA1[3];
+                    document.getElementById("a4").value = result.forcesA2[3];
+
+                    document.getElementById("b40").value = result.forcesB1[3];
+                    document.getElementById("b4").value = result.forcesB2[3];
+                    // round 4 decimal places
+                    document.getElementById("k4").value = result.kf_total[3]?.toFixed(4) || "";
+                }
+
+                // Thumb
+                document.getElementById("a50").value = result.thumbA1;
+                document.getElementById("ta").value = result.thumbA2;
+
+                document.getElementById("b50").value = result.thumbB1;
+                document.getElementById("tb").value = result.thumbB2;
+                // round 4 decimal places
                 document.getElementById("tk").value = result.ktt?.toFixed(4) || "";
-
-                document.getElementById("ta").value = result.thumbA?.toFixed(4) || "";
-                document.getElementById("tb").value = result.thumbB?.toFixed(4) || "";
 
                 // ✅ Hide loader
                 loader.style.display = "none";
                 // ✅ Show execution time
                 execTime.innerText = result.execution_time;
                 execTime2.innerText = (result.execution_time / 1000).toFixed(4);
-                let gripper = document.getElementById("gripper").value;
+                // let pno = localStorage.getItem("pno");
+                let gripper = getCurrentGripper();
                 // alert("gripper: " + gripper + " mode: " + mode);
-                if(gripper == "1") {
+                if (gripper == 1) {
                     document.getElementById("fig1").src = result.fig1;
                     // document.getElementById("fig2").src = result.fig2;
                     document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
                     document.getElementById("fig3").src = result.fig3;
                     document.getElementById("shape_name").innerText = result.shape_name;
                 }
-                else if(gripper == "2") {
+                else if (gripper == 2) {
                     document.getElementById("fig11").src = result.fig1;
                     // document.getElementById("fig22").src = result.fig2;
                     document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
                     document.getElementById("shape_name2").innerText = result.shape_name;
-                }                
-                console.log("Fig1 URL:", result.fig1);            
+                }
+                console.log("Fig1 URL:", result.fig1);
 
             }
         </script>

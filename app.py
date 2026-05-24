@@ -35,10 +35,16 @@ from reportlab.platypus import (
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
-
+from database import (
+    create_tables,
+    save_input,
+    get_saved_input,
+    is_duplicate
+)
 
 app = Flask(__name__)
 
+create_tables()
 # @app.route('/')
 # def hello_world():
 #     return 'Hello World'
@@ -142,6 +148,7 @@ def compute_A(M, th, dth, d2th):
 def compute_B(th):
     return r * (th - (th**3)/6 + (th**5)/120)
 
+
 # F = A + K * B
 def cal_force_eq14(M, K, func, t):  
     # CALL DYNAMIC FUNCTION PARSER
@@ -152,6 +159,42 @@ def cal_force_eq14(M, K, func, t):
     B = compute_B(th)    
     
     return A, B, K   # ✅ RETURN SEPARATE VALUES
+
+# ===================== New A1, A2 and B1, B2==========================
+def compute_A1A2(M, th, dth, d2th):
+    # A1 = (mg)i
+    A1 = (M * g)
+    # A2 equation
+    A2 = (
+        - r * math.sin(th) * dth
+        + r * math.cos(th) * d2th
+    )
+    return A1, A2
+
+def compute_B1B2(th):
+    # B1 = ri
+    B1 = r
+    # B2 Taylor series
+    B2 = (
+        th
+        - (th**3)/6
+        + (th**5)/120
+    )
+    return B1, B2
+
+def cal_force_eq14A1B1(M, K, func, t):  
+    # CALL DYNAMIC FUNCTION PARSER
+    # θ(t), θ′(t), θ″(t)
+    th, dth, d2th = parse_theta_function(func, t)
+    
+    A1, A2 = compute_A1A2(M, th, dth, d2th)
+
+    B1, B2 = compute_B1B2(th)
+
+    A = A1 * A2
+    B = B1 * B2
+
+    return A1, A2, B1, B2, A, B, K
 
 
 @app.route("/calculate", methods=["POST"])
@@ -218,13 +261,19 @@ def calculate():
     # print("Mass:", M)
         
     forces = []
-    forcesA = []
-    forcesB = []
+    # forcesA = []
+    # forcesB = []
+    forcesA1 = []
+    forcesA2 = []
+    forcesB1 = []
+    forcesB2 = []
     kf_total = []    
     thumb = 0
     ktt = 0
-    tA = 0
-    tB = 0
+    tA1 = 0
+    tA2 = 0
+    tB1 = 0
+    tB2 = 0
     finger_count = 4 if gripper == 1 else 3
     mode = data["mode"] # get string constant values eg 1, 2, 3
 
@@ -238,21 +287,27 @@ def calculate():
         for i in range(finger_count):
             #🔥 forces.append(round(calculate_force(M, k_finger_total, func, t), 3))
             kf_total.append(kf)
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            # A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, kf, func, t)
             # F = A + K * B
             F = abs(A) + K * abs(B)  # ✅ Use absolute values to avoid negative forces
-            forcesA.append(round(abs(A), 4))
-            forcesB.append(round(abs(B), 4))
+            forcesA1.append(round(abs(A1), 4))
+            forcesA2.append(round(abs(A2), 4))
+            forcesB1.append(round(abs(B1), 4))
+            forcesB2.append(round(abs(B2), 4))
             forces.append(round(F, 4))
 
         # Thumb (only if exists)
         if gripper == 2:
             # thumb = round(calculate_force(M, k_thumb_total, func, t), 3)            
             ktt = 1/((1/k) + (1/k) + (1/k))  # Parallel spring formula
-            A, B, K = cal_force_eq14(M, ktt, func, t)
+            # A, B, K = cal_force_eq14(M, ktt, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, ktt, func, t)
             F = abs(A) + K * abs(B)
-            tA = round(abs(A), 4)
-            tB = round(abs(B), 4)
+            tA1 = round(abs(A1), 4)
+            tA2 = round(abs(A2), 4)
+            tB1 = round(abs(B1), 4)
+            tB2 = round(abs(B2), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
@@ -270,10 +325,13 @@ def calculate():
             # forces.append(round(calculate_force(M, kf_total, func, t), 2))
             # cal_force_eq14(M, K, func, t)
             kf_total.append(kf)
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            # A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, kf, func, t)
             F = abs(A) + K * abs(B)
-            forcesA.append(round(abs(A), 4))
-            forcesB.append(round(abs(B), 4))
+            forcesA1.append(round(abs(A1), 4))
+            forcesA2.append(round(abs(A2), 4))
+            forcesB1.append(round(abs(B1), 4))
+            forcesB2.append(round(abs(B2), 4))
             forces.append(round(F, 4))
             
             # forces.append(round(cal_force_eq14(M, kf_total, func, t), 4))
@@ -283,10 +341,13 @@ def calculate():
             if len(kt) >= 3:
                 ktt = 1/((1/kt[0]) + (1/kt[1]) + (1/kt[2]))  # Parallel spring formula
                 # print("ktt:", ktt)
-            A, B, K = cal_force_eq14(M, ktt, func, t)
+            # A, B, K = cal_force_eq14(M, ktt, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, ktt, func, t)
             F = abs(A) + K * abs(B)
-            tA = round(abs(A), 4)
-            tB = round(abs(B), 4)
+            tA1 = round(abs(A1), 4)
+            tA2 = round(abs(A2), 4)
+            tB1 = round(abs(B1), 4)
+            tB2 = round(abs(B2), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
@@ -303,10 +364,13 @@ def calculate():
             kf = (k1 * k2)/(k1 + k2)    
             kf_total.append(kf)
             # forces.append(round(calculate_force(M, k, func, t), 2))
-            A, B, K = cal_force_eq14(M, kf, func, t)
+            # A, B, K = cal_force_eq14(M, kf, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, kf, func, t)
             F = abs(A) + K * abs(B)
-            forcesA.append(round(abs(A), 4))
-            forcesB.append(round(abs(B), 4))
+            forcesA1.append(round(abs(A1), 4))
+            forcesA2.append(round(abs(A2), 4))
+            forcesB1.append(round(abs(B1), 4))
+            forcesB2.append(round(abs(B2), 4))
             forces.append(round(F, 4))
 
         if gripper == 2:
@@ -314,10 +378,12 @@ def calculate():
             kt = data.get("thumb", [])
             if len(kt) >= 3:
                 ktt = 1/((1/kt[0]) + (1/kt[1]) + (1/kt[2]))  # Parallel spring formula
-            A, B, K = cal_force_eq14(M, ktt, func, t)
+            A1, A2, B1, B2, A, B, K = cal_force_eq14A1B1(M, ktt, func, t)
             F = abs(A) + K * abs(B)
-            tA = round(abs(A), 4)
-            tB = round(abs(B), 4)
+            tA1 = round(abs(A1), 4)
+            tA2 = round(abs(A2), 4)
+            tB1 = round(abs(B1), 4)
+            tB2 = round(abs(B2), 4)
             # print("Thumb A:", tA)
             # print("Thumb B:", tB)
             # print("Thumb K:", ktt)
@@ -376,6 +442,73 @@ def calculate():
     end_time = time.time()  # ⏱ end
     # execution_time = (end_time - start_time) * 1000  # convert to ms
     execution_time = (end_time - start_time) * 1000000  # microseconds (µs)
+
+    # =========================
+    # SAVE INPUT TO SQLITE
+    # =========================
+
+    save_data = {
+
+        "gripper": gripper,
+        "shape": shape,
+        "event": event,
+
+        "material": material,
+
+        "time": t,
+
+        "func": func,
+
+        "mode": mode,
+
+        "length": length,
+        "breadth": breadth,
+        "width": width,
+
+        "radius": radius,
+
+        "Rmajor": Rmajor,
+        "Rminor": Rminor,
+
+        "k_common": data.get("k_common"),
+
+        "k_finger": data.get("k_finger"),
+
+        # "k_thumb1": data.get("k_thumb"),
+        # "k_thumb2": data.get("k_thumb2"),
+        # "k_thumb3": data.get("k_thumb3"),
+        "f1k1": data.get("fingers", [{}])[0].get("k1"),
+        "f1k2": data.get("fingers", [{}])[0].get("k2"),
+
+        "f2k1": data.get("fingers", [{}, {}])[1].get("k1"),
+        "f2k2": data.get("fingers", [{}, {}])[1].get("k2"),
+
+        "f3k1": data.get("fingers", [{}, {}, {}])[2].get("k1"),
+        "f3k2": data.get("fingers", [{}, {}, {}])[2].get("k2"),
+
+        "f4k1": data.get("fingers", [{}, {}, {}, {}])[3].get("k1"),
+        "f4k2": data.get("fingers", [{}, {}, {}, {}])[3].get("k2"),
+
+        "Thk1": data.get("thumb", [None, None, None])[0],
+        "Thk2": data.get("thumb", [None, None, None])[1],
+        "Thk3": data.get("thumb", [None, None, None])[2],
+
+        "total": total
+    }
+    # =========================
+    # SAVE ONLY IF NEW
+    # =========================
+
+    if not is_duplicate(save_data):
+
+        save_input(save_data)
+
+        print("New entry saved")
+
+    else:
+
+        print("Duplicate entry skipped")
+
     return jsonify({
         "volume": volume,
         "mass": M,
@@ -387,13 +520,42 @@ def calculate():
         "fig2": fig2,
         "gripper_name": gripper_name,
         "shape_name": shape_name,
-        "forcesA": forcesA,
-        "forcesB": forcesB,
-        "thumbA": tA,
-        "thumbB": tB,
+        "forcesA1": forcesA1,
+        "forcesA2": forcesA2,
+        "forcesB1": forcesB1,
+        "forcesB2": forcesB2,
+        "thumbA1": tA1,
+        "thumbA2": tA2,
+        "thumbB1": tB1,
+        "thumbB2": tB2,
         "kf_total": kf_total,
         "ktt": ktt,
         "fig3": fig3
+    })
+
+@app.route("/get_saved_data", methods=["POST"])
+def get_saved_data():
+
+    data = request.json
+
+    result = get_saved_input(
+
+        int(data.get("shape", 0)),
+        data.get("material"),
+        float(data.get("time", 0)),
+        data.get("func"),
+        data.get("mode")
+    )
+
+    if result:
+
+        return jsonify({
+            "status": "found",
+            "data": result
+        })
+
+    return jsonify({
+        "status": "not_found"
     })
 
 @app.route("/download_excel", methods=["POST"])

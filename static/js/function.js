@@ -20,8 +20,22 @@ function addCustomFunction() {
     let funcStr = "";
 
     // TERM 1
+    // if (f1 && d1) {
+    //     funcStr += `${f1}/${d1}`;
+    // }
+    // TERM 1
+    let op0 = document.getElementById("operator0").value;
+
     if (f1 && d1) {
-        funcStr += `${f1}/${d1}`;
+
+        // negative first term
+        if (op0 === "-") {
+            funcStr += `-${f1}/${d1}`;
+        }
+        // positive first term
+        else {
+            funcStr += `${f1}/${d1}`;
+        }
     }
 
     // TERM 2
@@ -171,6 +185,8 @@ window.addEventListener("load", function () {
         reloadDropdown();
         renderFunctionTable();
     });
+    // Clean localStorage.getItem("pno");
+    // localStorage.removeItem("pno");
 });
 function renderFunctionTable() {
     let table = document.getElementById("functionTableBody");
@@ -479,3 +495,339 @@ async function downloadResultsPdf() {
 
     a.click();
 }
+
+function clearSpringInputs(){
+
+    let ids = [
+
+        "k_common",
+        "k_finger",
+
+        "f1k1", "f1k2",
+        "f2k1", "f2k2",
+        "f3k1", "f3k2",
+        "f4k1", "f4k2",
+
+        "Thk1", "Thk2", "Thk3"
+    ];
+
+    ids.forEach(id => {
+
+        let el = document.getElementById(id);
+
+        if(el){
+
+            el.value = "";
+        }
+    });
+}
+
+function clearTable(){
+
+    let ids = [
+
+        "txtvolume",
+        "txtmass",
+        // A values
+        "a10", "a1",
+        "a20", "a2",
+        "a30", "a3",
+        "a40", "a4",
+        "a50", "ta",
+
+        // B values
+        "b10", "b1",
+        "b20", "b2",
+        "b30", "b3",
+        "b40", "b4",
+        "b50", "tb",
+
+        // K values
+        "k1",
+        "k2",
+        "k3",
+        "k4",
+        "tk",
+
+        // Force values
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "ft",
+
+        // Total
+        "total"
+
+        // Execution time
+        // "executionTime",
+        // "executionTime2"
+    ];
+
+    ids.forEach(id => {
+
+        let el =
+            document.getElementById(id);
+
+        if(el){
+
+            // input textbox
+            if(
+                el.tagName === "INPUT" ||
+                el.tagName === "TEXTAREA"
+            ){
+
+                el.value = "";
+            }
+
+            // normal div/span
+            else{
+
+                el.innerHTML = "";
+            }
+        }
+    });
+    document.getElementById("executionTime").innerHTML = "0";
+    document.getElementById("executionTime2").innerHTML = "0";
+
+}
+
+async function getSavedData() {
+
+    let shape =
+        document.getElementById("shape").value;
+
+    let material =
+        document.getElementById("material").value;
+
+    let time =
+        document.getElementById("time").value;
+
+    let func =
+        document.getElementById("func").value;
+
+    let mode =
+        document.querySelector(
+            'input[name="kmode"]:checked'
+        ).value;
+
+    // validation
+    if (!shape || !material || !time || !func || !mode) {
+
+        clearSpringInputs();
+
+        return;
+    }
+
+    let response = await fetch(
+        "/get_saved_data",
+        {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+
+                shape: shape,
+                material: material,
+                time: time,
+                func: func,
+                mode: mode
+            })
+        }
+    );
+
+    let result =
+        await response.json();
+
+    console.log(result);
+
+    // =========================
+    // FOUND
+    // =========================
+
+    if (result.status === "found") {
+
+        let d = result.data;
+
+        console.log(
+            "Previous Data:",
+            d
+        );
+
+        // avoid reload same data
+        let currentTotal =
+            document
+            .getElementById("savedText")
+            .getAttribute("data-total");
+
+        if (currentTotal == d.total_force) {
+
+            console.log(
+                "Already loaded"
+            );
+
+            return;
+        }
+
+        // =========================
+        // MODE 1
+        // =========================
+
+        let kCommon =
+            document.getElementById(
+                "k_common"
+            );
+
+        if (
+            kCommon &&
+            d.k_common != null
+        ) {
+
+            kCommon.value =
+                d.k_common;
+        }
+
+        // =========================
+        // MODE 2
+        // =========================
+
+        let kFinger =
+            document.getElementById(
+                "k_finger"
+            );
+
+        if (
+            kFinger &&
+            d.k_finger != null
+        ) {
+
+            kFinger.value =
+                d.k_finger;
+        }
+
+        // =========================
+        // ALL SPRING VALUES
+        // =========================
+
+        let mapValues = [
+
+            ["f1k1", d.f1k1],
+            ["f1k2", d.f1k2],
+
+            ["f2k1", d.f2k1],
+            ["f2k2", d.f2k2],
+
+            ["f3k1", d.f3k1],
+            ["f3k2", d.f3k2],
+
+            ["f4k1", d.f4k1],
+            ["f4k2", d.f4k2],
+
+            ["Thk1", d.thk1],
+            ["Thk2", d.thk2],
+            ["Thk3", d.thk3]
+        ];
+
+        mapValues.forEach(item => {
+
+            let id = item[0];
+
+            let value = item[1];
+
+            let el =
+                document.getElementById(id);
+
+            if (
+                el &&
+                value != null
+            ) {
+
+                el.value = value;
+            }
+        });
+
+        // =========================
+        // MESSAGE
+        // =========================
+
+        document.getElementById(
+            "savedText"
+        ).innerHTML =
+
+        `
+        <span class="text-success">
+            <i class="bi bi-check-circle-fill"></i>
+            Previous calculation loaded
+        </span>
+
+        <br>
+
+        Total Force:
+        <b>${d.total_force}</b>
+        `;
+
+        // cache current
+        document
+        .getElementById("savedText")
+        .setAttribute(
+            "data-total",
+            d.total_force
+        );
+        calculate();
+    }
+
+    // =========================
+    // NOT FOUND
+    // =========================
+
+    else {
+
+        clearSpringInputs();
+        //clear o/p table        
+        clearTable();
+        document
+        .getElementById("savedText")
+        .removeAttribute(
+            "data-total"
+        );
+
+        document.getElementById(
+            "savedText"
+        ).innerHTML =
+
+        `
+        <span class="text-danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            No previous calculation found
+        </span>
+        `;
+    }
+}
+
+document.getElementById("shape")
+    .addEventListener("change", getSavedData);
+
+document.getElementById("material")
+    .addEventListener("change", getSavedData);
+
+document.getElementById("time")
+    .addEventListener("input", getSavedData);
+
+document.getElementById("func")
+    .addEventListener("change", getSavedData);
+
+document
+.querySelectorAll('input[name="kmode"]')
+.forEach(radio => {
+
+    radio.addEventListener(
+        "change",
+        getSavedData
+    );
+
+});

@@ -41,16 +41,16 @@ document
 
 // ===== MATERIAL DENSITY =====
 const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
-function showhidewindow() {
+function showhidewindow(pno) {
 
-    let gripper = document.getElementById("gripper").value;
+    let gripper = pno;
     let gripper_window = document.getElementById("gripper_window");
-    
+
     let fig1 = document.getElementById("fig1");
-   
+
     let txttime1 = document.getElementById("txttime1");
     let txtforce1 = document.getElementById("txtforce1");
-    
+
     let length = document.getElementById("length");
     let breadth = document.getElementById("breadth");
     let width = document.getElementById("width");
@@ -74,7 +74,7 @@ function showhidewindow() {
     let Thk1 = document.getElementById("Thk1");
     let Thk2 = document.getElementById("Thk2");
     let Thk3 = document.getElementById("Thk3");
-    
+
     length.value = "100";
     breadth.value = "40";
     width.value = "20";
@@ -155,25 +155,25 @@ function showhidewindow() {
 
     document.getElementById("shape_name").innerText = "-";
     fig1.src = "static/img/basic.avif";
-    
+    // alert("You have selected Gripper Type " + gripper + ". Click OK to proceed.");
     if (gripper == "") {
         gripper_window.setAttribute("data-title", "-");
         gripper_window.style.display = "none";
-        
+
     }
-    else if (gripper == "1") {
+    else if (gripper == 1) {
         gripper_window.setAttribute("data-title", "4 Fingers Graph");
         gripper_window.style.display = "block";
         // trFinger4.style.display = "table-row";
         document.getElementById("shape_name").innerText = "4 Fingers";
-        
+
     }
-    else if (gripper == "2") {
+    else if (gripper == 2) {
         gripper_window.setAttribute("data-title", "3 Fingers + 1 Thumb Graph");
         gripper_window.style.display = "block";
         // trFinger4.style.display = "none";
         document.getElementById("shape_name").innerText = "3 Fingers + 1 Thumb";
-        
+
     }
     updateSpringFields();
 }
@@ -181,7 +181,7 @@ function showhidewindow() {
 function updateSpringFields() {
     // alert("Update spring fields called");
     console.log("Updating spring fields...");
-    let gripper = document.getElementById("gripper").value;
+    let gripper = localStorage.getItem("pno") || "0";
     let mode = document.querySelector('input[name="kmode"]:checked').value;
     // let container = document.getElementById("springInputs");
     let equal = document.getElementById("springInputs_equal");
@@ -234,13 +234,347 @@ function updateSpringFields() {
     }
 }
 
+async function autoLoadSavedSpring() {
+
+    let shape =
+        document.getElementById(
+            "shape"
+        ).value;
+
+    let material =
+        document.getElementById(
+            "material"
+        ).value;
+
+    let func =
+        document.getElementById(
+            "func"
+        ).value;
+
+    let mode =
+        document.querySelector(
+            'input[name="kmode"]:checked'
+        )?.value;
+
+    // fixed graph page time
+    let time = 1;
+
+    // validation
+    if (
+        !shape ||
+        !material ||
+        !func ||
+        !mode
+    ) {
+
+        clearSpringInputs();
+
+        return;
+    }
+
+    let response =
+        await fetch(
+            "/get_saved_data",
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    shape: shape,
+
+                    material: material,
+
+                    time: time,
+
+                    func: func,
+
+                    mode: mode
+                })
+            }
+        );
+
+    let result =
+        await response.json();
+
+    console.log(result);
+
+    // =========================
+    // FOUND
+    // =========================
+
+    if (result.status === "found") {
+        
+        clearSpringInputs();
+
+        let d = result.data;
+
+        console.log(
+            "Auto loaded:",
+            d
+        );
+        document.getElementById(
+            "savedText"
+        ).innerHTML =
+
+            `
+            <span class="text-success">
+                <i class="bi bi-check-circle-fill"></i>
+                Previous spring data loaded
+            </span>
+            `;
+
+        // MODE 1
+        if (
+            d.k_common != null
+        ) {
+
+            let el =
+                document.getElementById(
+                    "k_common"
+                );
+
+            if (el) {
+
+                el.value =
+                    d.k_common;
+            }
+        }
+
+        // MODE 2
+        if (
+            d.k_finger != null
+        ) {
+
+            let el =
+                document.getElementById(
+                    "k_finger"
+                );
+
+            if (el) {
+
+                el.value =
+                    d.k_finger;
+            }
+        }
+
+        // MODE 2 THUMB
+        let thumbs = [
+
+            ["k_thumb", d.thk1],
+            ["k_thumb2", d.thk2],
+            ["k_thumb3", d.thk3]
+        ];
+
+        thumbs.forEach(item => {
+
+            let el =
+                document.getElementById(
+                    item[0]
+                );
+
+            if (
+                el &&
+                item[1] != null
+            ) {
+
+                el.value =
+                    item[1];
+            }
+        });
+
+        // MODE 3
+        let values = [
+
+            ["f1k1", d.f1k1],
+            ["f1k2", d.f1k2],
+
+            ["f2k1", d.f2k1],
+            ["f2k2", d.f2k2],
+
+            ["f3k1", d.f3k1],
+            ["f3k2", d.f3k2],
+
+            ["f4k1", d.f4k1],
+            ["f4k2", d.f4k2],
+
+            ["Thk1", d.thk1],
+            ["Thk2", d.thk2],
+            ["Thk3", d.thk3]
+        ];
+
+        values.forEach(item => {
+
+            let el =
+                document.getElementById(
+                    item[0]
+                );
+
+            if (
+                el &&
+                item[1] != null
+            ) {
+
+                el.value =
+                    item[1];
+            }
+        });
+    }
+
+    // =========================
+    // NOT FOUND
+    // =========================
+
+    else {
+
+        // clearSpringInputs();
+        clearSpringInputs();
+
+        console.warn(
+            "No saved spring data"
+        );
+        document.getElementById(
+            "savedText"
+        ).innerHTML =
+
+            `
+            <span class="text-danger">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                No previous calculation found
+            </span>
+            `;
+    }
+}
+
+function clearSpringInputs() {
+    // executionTime and executionTime2
+    document.getElementById("executionTime").innerText = "0";
+    document.getElementById("executionTime2").innerText = "0";
+
+    let ids = [
+
+        "k_common",
+        "k_finger",
+
+        "k_thumb",
+        "k_thumb2",
+        "k_thumb3",
+
+        "f1k1",
+        "f1k2",
+
+        "f2k1",
+        "f2k2",
+
+        "f3k1",
+        "f3k2",
+
+        "f4k1",
+        "f4k2",
+
+        "Thk1",
+        "Thk2",
+        "Thk3"
+    ];
+
+    ids.forEach(id => {
+
+        let el =
+            document.getElementById(id);
+
+        if (el) {
+
+            el.value = "";
+        }
+    });
+
+    // =========================
+    // CLEAR TABLE
+    // =========================
+
+    let tbody =
+        document.getElementById(
+            "graphTableBody"
+        );
+
+    if (tbody) {
+
+        tbody.innerHTML = `
+
+            <tr>
+                <td>1 sec</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>2 sec</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>3 sec</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>4 sec</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>5 sec</td>
+                <td>-</td>
+            </tr>
+
+        `;
+    }
+
+    // =========================
+    // CLEAR CHART
+    // =========================
+
+    if (forceChart) {
+
+        forceChart.destroy();
+
+        forceChart = null;
+    }
+
+    // =========================
+    // CLEAR CANVAS
+    // =========================
+
+    let canvas =
+        document.getElementById(
+            "forceChart"
+        );
+
+    if (canvas) {
+
+        let ctx =
+            canvas.getContext("2d");
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+    }
+}
+
 var modal = document.getElementById("myModal");
 var myModalFun = document.getElementById("myModalFun");
 var modalImg = document.getElementById("img01");
 function onMyPopupFun(ctrl) {
     myModalFun.style.display = "block";
-    document.getElementById("oneTerm").checked = true;
-    toggleTerms(1);
+    document.getElementById("twoTerms").checked = true;
+    toggleTerms(2);
 }
 
 function onMyPopup(ctrl) {
@@ -264,7 +598,9 @@ updateSpringFields();
 function toggleTerms(count) {
 
     let operator1 =
-        document.querySelector(".eq-operator");
+        document.getElementById(
+            "operatorGroup1"
+        );
 
     let term2 =
         document.getElementById("cfunc3")
@@ -316,13 +652,218 @@ function toggleTerms(count) {
 }
 
 /* default load */
+// document.addEventListener(
+//     "DOMContentLoaded",
+//     function () {
+
+//         document.getElementById( "oneTerm" ).checked = true;
+
+//         toggleTerms(1);
+//     }
+// );
+
+
+function addCustomFunction() {
+
+    let terms = [];
+
+    // Read operators
+    let op1 = document.getElementById("operator1").value;
+    let op2 = document.getElementById("operator2").value;
+
+    // Read terms
+    let f1 = document.getElementById("cfunc1").value;
+    let d1 = document.getElementById("cfunc2").value;
+
+    let f2 = document.getElementById("cfunc3").value;
+    let d2 = document.getElementById("cfunc4").value;
+
+    let f3 = document.getElementById("cfunc5").value;
+    let d3 = document.getElementById("cfunc6").value;
+
+    // Build equation dynamically
+    let funcStr = "";
+
+    // TERM 1
+    // if (f1 && d1) {
+    //     funcStr += `${f1}/${d1}`;
+    // }
+    // TERM 1
+    let op0 = document.getElementById("operator0").value;
+
+    if (f1 && d1) {
+
+        // negative first term
+        if (op0 === "-") {
+            funcStr += `-${f1}/${d1}`;
+        }
+        // positive first term
+        else {
+            funcStr += `${f1}/${d1}`;
+        }
+    }
+
+    // TERM 2
+    if (f2 && d2) {
+
+        if (funcStr !== "") {
+            funcStr += ` ${op1} `;
+        }
+
+        funcStr += `${f2}/${d2}`;
+    }
+
+    // TERM 3
+    if (f3 && d3) {
+
+        if (funcStr !== "") {
+            funcStr += ` ${op2} `;
+        }
+
+        funcStr += `${f3}/${d3}`;
+    }
+
+    // Validation
+    if (funcStr.trim() === "") {
+        alert("Please select at least one valid term");
+        return;
+    }
+
+    // LocalStorage
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    // Prevent duplicate
+    if (saved.includes(funcStr)) {
+        alert("Function already exists!");
+        return;
+    }
+
+    // Save
+    saved.push(funcStr);
+
+    localStorage.setItem(
+        "customFunctions",
+        JSON.stringify(saved)
+    );
+
+    // Update dropdown + table
+    addFunctionToDropdown(funcStr);
+
+    renderFunctionTable();
+
+    // Optional close popup
+    // document.getElementById("myModalFun").style.display = "none";
+}
+function addFunctionToDropdown(funcStr) {
+    let dropdown = document.getElementById("func");
+
+    let option = document.createElement("option");
+    option.text = funcStr;
+    // option.value = funcStr;   // store full string
+    option.value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
+
+    dropdown.appendChild(option);
+
+    // dropdown.value = funcStr; // select newly added
+    dropdown.value = option.value;
+}
+/* default load */
 window.addEventListener("load", () => {
 
-    document.getElementById("oneTerm").checked = true;
+    document.getElementById("twoTerms").checked = true;
 
-    toggleTerms(1);
+    toggleTerms(2);
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    saved.forEach(func => {
+        // addFunctionToDropdown(func);
+        reloadDropdown();
+        renderFunctionTable();
+    });
 
 });
+
+function reloadDropdown() {
+    let dropdown = document.getElementById("func");
+
+    // Keep default options
+    dropdown.innerHTML = `
+    <option value="t/2 + t^2/3">
+        t/2 + t²/3
+    </option>
+
+    <option value="t/2 + t^2/3 + t^3/4">
+        t/2 + t²/3 + t³/4
+    </option>
+
+    <option value="t/3 + t^2/4 + t^3/5">
+        t/3 + t²/4 + t³/5
+    </option>
+`;
+
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    saved.forEach(func => {
+        addFunctionToDropdown(func);
+    });
+}
+function renderFunctionTable() {
+    let table = document.getElementById("functionTableBody");
+    table.innerHTML = "";
+
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    saved.forEach((func, index) => {
+
+        let row = `
+                                <tr>
+                                    <td>${func}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm"
+                                            onclick="deleteFunction(${index})">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                `;
+
+        table.innerHTML += row;
+    });
+}
+
+function deleteFunction(index) {
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    saved.splice(index, 1);
+    localStorage.setItem("customFunctions", JSON.stringify(saved));
+
+    renderFunctionTable();
+    reloadDropdown();
+}
+function reloadDropdown() {
+    let dropdown = document.getElementById("func");
+
+    // Keep default options
+    dropdown.innerHTML = `
+    <option value="t/2 + t^2/3">
+        t/2 + t²/3
+    </option>
+
+    <option value="t/2 + t^2/3 + t^3/4">
+        t/2 + t²/3 + t³/4
+    </option>
+
+    <option value="t/3 + t^2/4 + t^3/5">
+        t/3 + t²/4 + t³/5
+    </option>
+`;
+
+    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+
+    saved.forEach(func => {
+        addFunctionToDropdown(func);
+    });
+}
 
 
 const sections = document.querySelectorAll("section, div[id]");
@@ -390,19 +931,58 @@ function updateSelectionEvent() {
 }
 updateSelectionEvent();
 
+// =========================
+// AUTO LOAD SAVED DATA
+// =========================
+
+document
+    .getElementById("shape")
+    .addEventListener(
+        "change",
+        autoLoadSavedSpring
+    );
+
+document
+    .getElementById("material")
+    .addEventListener(
+        "change",
+        autoLoadSavedSpring
+    );
+
+document
+    .getElementById("func")
+    .addEventListener(
+        "change",
+        autoLoadSavedSpring
+    );
+
+// radio buttons
+document
+    .querySelectorAll(
+        'input[name="kmode"]'
+    )
+    .forEach(r => {
+
+        r.addEventListener(
+            "change",
+            autoLoadSavedSpring
+        );
+    });
+
 // ################# For Calculation Grapgh Page
 
 function validateInputs() {
     // alert("Validating inputs...");
     let mode = document.querySelector('input[name="kmode"]:checked').value;
-    let gripper = document.getElementById("gripper").value;
+    let gripper = localStorage.getItem("pno") || "0";
     // let time = document.getElementById("time").value;
     let material = document.getElementById("material").value;
     // let trFinger4 = document.getElementById("trFinger4");
     // let trThumb = document.getElementById("trThumb");
     let shape = +document.getElementById("shape").value;
     if (gripper == "") {
-        markInvalid("gripper");
+        // markInvalid("gripper");
+        alert("Select Gripper Type");
         return false;
     }
     if (gripper == "1") {
@@ -632,7 +1212,7 @@ async function calculate() {
         // time: +document.getElementById("time").value,
         // func: document.getElementById("func").value,
         func: document.getElementById("func").value,
-        gripper: +document.getElementById("gripper").value,
+        gripper: localStorage.getItem("pno") || "0",
         mode: mode,
         k_common: +document.getElementById("k_common")?.value || 0,
         k_finger: +document.getElementById("k_finger")?.value || 0,
@@ -674,7 +1254,7 @@ async function calculate() {
     // document.getElementById("txtforce4").value = result.force4?.toFixed(5) || "";
     // document.getElementById("txttime5").value = result.time5?.toFixed(5) || "";
     // document.getElementById("txtforce5").value = result.force5?.toFixed(5) ||"";
-    
+
 
     // ✅ Hide loader
     // loader.style.display = "block";
@@ -684,7 +1264,7 @@ async function calculate() {
     // // alert("gripper: " + gripper + " mode: " + mode);
     // if (gripper == "1") {
     //     document.getElementById("fig1").src = result.fig1;
-        
+
     // }
     // else if (gripper == "2") {
     //     document.getElementById("fig1").src = result.fig1;        
@@ -854,7 +1434,7 @@ function createBarChart(timeData, forceData) {
                         }
                     }
                 }
-                
+
             }
         });
 
@@ -937,7 +1517,7 @@ async function downloadGraphExcel() {
     let payload = {
 
         func: document.getElementById("func").value,
-
+        // alert("sss" + localStorage.getItem("pno") || "0")
         mode_name: document.querySelector('input[name="kmode"]:checked').value == "1"
 
             ? "All equal"
@@ -951,8 +1531,7 @@ async function downloadGraphExcel() {
                 : "All unequal",
 
         gripper_name:
-            document.getElementById("gripper")
-                .value == "1"
+            localStorage.getItem("pno") || "0" == 1
 
                 ? "4 Fingers"
 
@@ -1086,8 +1665,7 @@ async function downloadGraphPdf() {
                     : "All unequal",
 
         gripper_name:
-            document.getElementById("gripper")
-                .value == "1"
+            localStorage.getItem("pno") || "0" == 1
 
                 ? "4 Fingers"
 
