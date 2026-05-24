@@ -865,7 +865,6 @@ function reloadDropdown() {
     });
 }
 
-
 const sections = document.querySelectorAll("section, div[id]");
 const navLinks = document.querySelectorAll(".nav-link");
 
@@ -1467,7 +1466,7 @@ function updateGraphTable(timeData, forceData) {
 
             <tr>
                 <td>${timeData[i]}</td>
-                <td>${forceData[i]}</td>
+                <td>${forceData[i]} (N)</td>
             </tr>
 
         `;

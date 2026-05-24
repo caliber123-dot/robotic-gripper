@@ -1371,15 +1371,7 @@
                 <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
                 <div class="d-flex justify-content-center gap-4 mb-3">
-                    <!-- <div class="form-check">
                     
-                        <input class="form-check-input" type="radio" name="termCount" id="oneTerm" onchange="toggleTerms(1)">
-                    
-                        <label class="form-check-label fw-bold">
-                            1 Term
-                        </label>
-                    
-                    </div> -->
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="twoTerms" 
                             onchange="toggleTerms(2)">
@@ -1470,7 +1462,28 @@
                         </div>
                     </div>
                 </div> <!-- BUTTON -->
-                <div class="mt-4"> <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
+
+                <div class="mt-4"> 
+                    <div class="mt-2">
+
+    <b>Note:</b>
+
+    <ul class="mb-0 ps-3">
+
+        <li>
+            In numerator choose only up to
+            t<sup>3</sup>
+        </li>
+
+        <li>
+            In denominator choose only up to 5
+        </li>
+
+    </ul>
+
+</div>
+                    
+                    <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
                         Add Function </button> </div>         <hr> <!-- SAVED FUNCTIONS -->
                 <h6>Saved Functions</h6>
                 <table class="table table-bordered table-sm mt-2">
