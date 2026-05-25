@@ -508,7 +508,10 @@ function clearSpringInputs(){
         "f3k1", "f3k2",
         "f4k1", "f4k2",
 
-        "Thk1", "Thk2", "Thk3"
+        "Thk1", "Thk2", "Thk3",
+        "k_thumb",
+        "k_thumb2",
+        "k_thumb3"
     ];
 
     ids.forEach(id => {
@@ -730,7 +733,11 @@ async function getSavedData() {
 
             ["Thk1", d.thk1],
             ["Thk2", d.thk2],
-            ["Thk3", d.thk3]
+            ["Thk3", d.thk3],
+
+            ["k_thumb", d.thk1],
+            ["k_thumb2", d.thk2],
+            ["k_thumb3", d.thk3]
         ];
 
         mapValues.forEach(item => {

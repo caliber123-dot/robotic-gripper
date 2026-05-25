@@ -165,10 +165,30 @@ def compute_A1A2(M, th, dth, d2th):
     # A1 = (mg)i
     A1 = (M * g)
     # A2 equation
-    A2 = (
-        - r * math.sin(th) * dth
-        + r * math.cos(th) * d2th
+    # A2 = (
+    #     - r * math.sin(th) * dth
+    #     + r * math.cos(th) * d2th
+    # )
+    A2 = r * (
+
+        d2th
+
+        - th * dth
+
+        - ((th**2) / 2) * d2th
+
+        + ((th**3) / 6) * dth
+
+        + ((th**4) / 24) * d2th
+
+        - ((th**5) / 120) * dth
     )
+    print("A1:", A1)
+    print("Computed A2:", A2)
+    # Print - r * math.sin(th) * dth
+    #     + r * math.cos(th) * d2th
+    print("r:", r, "th:", th, "dth:", dth, "d2th:", d2th, "sin(th):", math.sin(th), "cos(th):", math.cos(th))
+    
     return A1, A2
 
 def compute_B1B2(th):
