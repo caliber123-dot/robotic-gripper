@@ -1184,7 +1184,7 @@
                                             \]</th>
                                         <th class="fw-bold text-center" style="vertical-align: middle;"> \[
                                             \boldsymbol{
-                                            K=  \frac{K1-K2}{K1+K2} 
+                                            K=  \frac{K1*K2}{K1+K2} 
                                             
                                             }
                                             \]</th>
@@ -1770,7 +1770,7 @@
             function updateSpringFields() {
                 // alert("Update spring fields called");
                 console.log("Updating spring fields...");
-                let gripper = document.getElementById("gripper").value;
+                let gripper = getCurrentGripper(); // get current gripper type (1 or 2)
                 let mode = document.querySelector('input[name="kmode"]:checked').value;
                 // let container = document.getElementById("springInputs");
                 let equal = document.getElementById("springInputs_equal");
