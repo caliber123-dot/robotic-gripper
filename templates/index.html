@@ -2289,6 +2289,8 @@
                 //     alert("Please select Selection Event");
                 //     return;
                 // }
+                let savedText = document.getElementById("savedText");
+                savedText.style.display = "none";
                 let mode = document.querySelector('input[name="kmode"]:checked').value;
                 let data = {
                     shape: +shape,
@@ -2407,7 +2409,7 @@
                 // let pno = localStorage.getItem("pno");
                 let gripper = getCurrentGripper();
                 // alert("gripper: " + gripper + " mode: " + mode);
-                let savedText = document.getElementById("savedText");
+                
                 if (gripper == 1) {
                     document.getElementById("fig1").src = result.fig1;
                     // document.getElementById("fig2").src = result.fig2;
