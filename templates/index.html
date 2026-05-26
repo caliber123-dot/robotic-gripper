@@ -1057,8 +1057,9 @@
 
                             </div>
                             <!-- <div id="springInputs" class="mt-2"></div> -->
-
-                            <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
+                            <!-- hidden field manage Saved and Existing -->
+                            <!-- <input id="isSaved" type="hidden" value="0" /> -->
+                            <button onclick="calculate(1)" class="btn btn-primary mt-3 w-100 bold600">
                                 Calculate Force
                             </button>
                             <div id="savedText" class="mt-2 text-success fw-bold">
@@ -1077,26 +1078,61 @@
                         <div class="col-md-4 div2 p-0">
                             <!-- OUTPUT PANEL 4fingers -->
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
+                                <div class="graph-box">
+                                    <label style="font-size: 14px;height: 50px;padding-top: 12px;">Fig. 1: Schematic Representation of Spring structure Model
                                         for 4 Fingers                                        
-                                    </label><img id="fig1" src="static/img/model_4Fingers.png" id="myImg"
-                                        onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
+                                    </label>
+                                    <img id="fig1" src="static/img/model_4Fingers.png" 
+                                        onclick="onMyPopup(this)" style="width:100%; height:auto;" alt="basic.avif">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 div2 p-0">
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px; height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
-                                        <span id="shape_name">-</span>
-                                    </label><img id="fig2" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                <div class="graph-box">
+                                    <!-- <label style="font-size: 14px; height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                        <span id="shape_name">-</span> 
+                                        toggle btn to 2D or 3D
+                                    </label> -->
+                                    <label style="  font-size:12px; line-height:1.5; ">                                    
+                                        Fig. 2: Typical Grasp Postures for Objects of Shapes:                                    
+                                        <div style="display:flex;  align-items:center; justify-content:space-between;  margin-top:6px;  gap:10px;  ">
+                                    
+                                            <!-- SHAPE NAME -->
+                                            <div style="  font-weight:600;  font-size:14px; ">
+                                                <span id="shape_name">-</span>
+                                            </div>                                    
+                                            <!-- 2D / 3D TOGGLE -->
+                                            <div class="btn-group" role="group" style="transform:scale(0.78);transform-origin:right center; ">
+                                    
+                                                <input type="radio" class="btn-check" name="viewMode" id="view2d" autocomplete="off" checked
+                                                    onchange="changeViewMode('2d')">
+                                    
+                                                <label class="btn btn-outline-primary" for="view2d" style="font-size:12px;font-weight:600;">
+                                                    2D
+                                                </label>
+                                    
+                                                <input type="radio" class="btn-check" name="viewMode" id="view3d" autocomplete="off"
+                                                    onchange="changeViewMode('3d')">
+                                    
+                                                <label class="btn btn-outline-dark" for="view3d" style="font-size:12px;font-weight:600;">
+                                                    3D
+                                                </label>                                    
+                                            </div>                                    
+                                        </div>                                    
+                                    </label>
+
+                                    <img id="fig2" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: auto;" alt="basic.avif">
+                                    <img id="fig3d" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                        style="width: 100%;height: auto;display: none;" alt="basic.avif">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 div2 p-0">
                            <div class="card p-3">
                                 <div class="graph-box" style="text-align: center;"><label style="font-size: 14px;height: 50px;">Fig. 3: Schematic Representation of Spring structure Model for Industrial Image:
-                                        <span id="shape_name">-</span>
+                                        <!-- <span id="shape_name">-</span> -->
                                     </label><img id="fig3" src="static/img/Industrial_For4inger.jpg"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: 200px;" alt="basic.avif">
                                 </div>
@@ -1107,7 +1143,8 @@
                         <div class="col-md-6 div2 p-0">
                             <!-- OUTPUT PANEL 3 Fingers and 1 Thumb -->
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 1: Schematic Representation of Spring structure Model
+                                <div class="graph-box">
+                                    <label style="font-size: 14px;height: 50px;padding-top: 15px;">Fig. 1: Schematic Representation of Spring structure Model
                                         for 3 Fingers + 1 Thumb
                                     </label><img id="fig11" src="static/img/model_3Fingers_Thumb.png" id="myImg"
                                         onclick="onMyPopup(this)" style="width: 100%;height: auto;" alt="basic.avif">
@@ -1116,10 +1153,41 @@
                         </div>
                         <div class="col-md-6 div2 p-0">
                             <div class="card p-3">
-                                <div class="graph-box"><label style="font-size: 14px;height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
+                                <div class="graph-box">
+                                    <!-- <label style="font-size: 14px;height: 50px;">Fig. 2: Typical Grasp Postures for Objects of Shapes:
                                         <span id="shape_name2">-</span>
-                                    </label><img id="fig22" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                    </label> -->
+                                     <label style="  font-size:14px; line-height:1.5; ">                                    
+                                        Fig. 2: Typical Grasp Postures for Objects of Shapes: <span class="fw-bold" id="shape_name2">-</span>                                   
+                                        <div style="display:flex;  align-items:right; justify-content:flex-end; width:100%; margin-top:6px;  ">
+                                    
+                                            <!-- SHAPE NAME -->
+                                            <!-- <div style="  font-weight:600;  font-size:14px; ">
+                                                
+                                            </div>                                     -->
+                                            <!-- 2D / 3D TOGGLE -->
+                                            <div class="btn-group" role="group" style="transform:scale(0.78);transform-origin:right center; ">
+                                    
+                                                <input type="radio" class="btn-check" name="viewMode" id="view2d2" autocomplete="off" checked
+                                                    onchange="changeViewMode('2d')">
+                                    
+                                                <label class="btn btn-outline-primary" for="view2d2" style="font-size:12px;font-weight:600;">
+                                                    2D
+                                                </label>
+                                    
+                                                <input type="radio" class="btn-check" name="viewMode" id="view3d2" autocomplete="off"
+                                                    onchange="changeViewMode('3d')">
+                                    
+                                                <label class="btn btn-outline-dark" for="view3d2" style="font-size:12px;font-weight:600;">
+                                                    3D
+                                                </label>                                    
+                                            </div>                                    
+                                        </div>                                    
+                                    </label>
+                                    <img id="fig22" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
                                         style="width: 100%;height: auto;" alt="basic.avif">
+                                    <img id="fig3d2" src="static/img/basic.avif"  id=" myImg" onclick="onMyPopup(this)"
+                                        style="width: 100%;height: auto;display: none;" alt="basic.avif">
                                 </div>
                             </div>
                         </div>                        
@@ -1850,77 +1918,79 @@
             }
             updateSpringFields();
         </script>
+       
         <script>
-           function toggleTerms(count) {
+            function toggleTerms(count) {
 
-    let operator1 =
-        document.getElementById(
-            "operatorGroup1"
-        );
+                let operator1 =
+                    document.getElementById(
+                        "operatorGroup1"
+                    );
 
-    let term2 =
-        document.getElementById("cfunc3")
-            .closest(".eq-block");
+                let term2 =
+                    document.getElementById("cfunc3")
+                        .closest(".eq-block");
 
-    let thirdGroup =
-        document.getElementById(
-            "thirdTermGroup"
-        );
+                let thirdGroup =
+                    document.getElementById(
+                        "thirdTermGroup"
+                    );
 
-    // =========================
-    // 1 TERM
-    // =========================
+                // =========================
+                // 1 TERM
+                // =========================
 
-    if (count == 1) {
+                if (count == 1) {
 
-        operator1.style.display = "none";
+                    operator1.style.display = "none";
 
-        term2.style.display = "none";
+                    term2.style.display = "none";
 
-        thirdGroup.style.display = "none";
-    }
+                    thirdGroup.style.display = "none";
+                }
 
-    // =========================
-    // 2 TERMS
-    // =========================
+                // =========================
+                // 2 TERMS
+                // =========================
 
-    else if (count == 2) {
+                else if (count == 2) {
 
-        operator1.style.display = "flex";
+                    operator1.style.display = "flex";
 
-        term2.style.display = "flex";
+                    term2.style.display = "flex";
 
-        thirdGroup.style.display = "none";
-    }
+                    thirdGroup.style.display = "none";
+                }
 
-    // =========================
-    // 3 TERMS
-    // =========================
+                // =========================
+                // 3 TERMS
+                // =========================
 
-    else {
+                else {
 
-        operator1.style.display = "flex";
+                    operator1.style.display = "flex";
 
-        term2.style.display = "flex";
+                    term2.style.display = "flex";
 
-        thirdGroup.style.display = "inline-flex";
-    }
-}
+                    thirdGroup.style.display = "inline-flex";
+                }
+            }
 
             /* default load */
-          document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+            document.addEventListener(
+                "DOMContentLoaded",
+                function () {
 
-        document.getElementById(
-            "twoTerms"
-        ).checked = true;
+                    document.getElementById(
+                        "twoTerms"
+                    ).checked = true;
 
-        toggleTerms(2);
-    }
-);
+                    toggleTerms(2);
+                }
+            );
 
         </script>
+
         <script>
             const sections = document.querySelectorAll("section, div[id]");
             const navLinks = document.querySelectorAll(".nav-link");
@@ -2179,8 +2249,8 @@
                 el.style.border = "2px solid red";
             }
             // Main Logic to call backend and calculate forces
-            async function calculate() {
-                console.log("✅ Working calculate function called");
+            async function calculate(clickType) {
+                console.log("✅ Working calculate function called clickType:", clickType);
                 // 🔥 VALIDATION FIRST
                 // alert("Validation started");
                 if (!validateInputs()) return;
@@ -2280,25 +2350,7 @@
                 // ✅ Total
                 document.getElementById("total").value = result.total?.toFixed(4) || "";
 
-                // document.getElementById("a1").value = result.forcesA[0]?.toFixed(4) || "";
-                // document.getElementById("a2").value = result.forcesA[1]?.toFixed(4) || "";
-                // document.getElementById("a3").value = result.forcesA[2]?.toFixed(4) || "";
-                // document.getElementById("a4").value = result.forcesA[3]?.toFixed(4) || "";
-
-                // document.getElementById("b1").value = result.forcesB[0]?.toFixed(4) || "";
-                // document.getElementById("b2").value = result.forcesB[1]?.toFixed(4) || "";
-                // document.getElementById("b3").value = result.forcesB[2]?.toFixed(4) || "";
-                // document.getElementById("b4").value = result.forcesB[3]?.toFixed(4) || "";
-
-                // document.getElementById("k1").value = result.kf_total[0]?.toFixed(4) || "";
-                // document.getElementById("k2").value = result.kf_total[1]?.toFixed(4) || "";
-                // document.getElementById("k3").value = result.kf_total[2]?.toFixed(4) || "";
-                // document.getElementById("k4").value = result.kf_total[3]?.toFixed(4) || "";
-
-                // document.getElementById("tk").value = result.ktt?.toFixed(4) || "";
-
-                // document.getElementById("ta").value = result.thumbA?.toFixed(4) || "";
-                // document.getElementById("tb").value = result.thumbB?.toFixed(4) || "";
+                
                 // Finger 1
                 document.getElementById("a10").value = result.forcesA1[0];
                 document.getElementById("a1").value = result.forcesA2[0];
@@ -2355,21 +2407,68 @@
                 // let pno = localStorage.getItem("pno");
                 let gripper = getCurrentGripper();
                 // alert("gripper: " + gripper + " mode: " + mode);
+                let savedText = document.getElementById("savedText");
                 if (gripper == 1) {
                     document.getElementById("fig1").src = result.fig1;
                     // document.getElementById("fig2").src = result.fig2;
                     document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
                     document.getElementById("fig3").src = result.fig3;
+                    // fig3D
+                    document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
                     document.getElementById("shape_name").innerText = result.shape_name;
                 }
                 else if (gripper == 2) {
                     document.getElementById("fig11").src = result.fig1;
                     // document.getElementById("fig22").src = result.fig2;
                     document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
+                    // fig3D2
+                    document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
                     document.getElementById("shape_name2").innerText = result.shape_name;
                 }
-                console.log("Fig1 URL:", result.fig1);
+                // let isSaved = document.getElementById("isSaved").value;
+                if (clickType == 1){
+                    savedText.style.display = "block";
+                    savedText.innerHTML = `
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Saved calculation to DB
+                    </span>
 
+                    <br>
+
+                    Total Force:
+                    <b>${result.total?.toFixed(4) || ""}</b>
+                    `;
+
+                }
+                else{
+                    savedText.style.display = "block";
+                }
+                
+                console.log("Fig1 URL:", result.fig1);
+                // let savedText = document.getElementById("savedText");
+                // savedText.style.display = "none";
+                return result;
+
+            }
+
+            function changeViewMode(mode) {
+                let fig2 = document.getElementById("fig2");
+                let fig3d = document.getElementById("fig3d");
+                let fig22 = document.getElementById("fig22");
+                let fig3d2 = document.getElementById("fig3d2");
+                if (mode == "2d") {
+                    fig2.style.display = "block";
+                    fig3d.style.display = "none";
+                    fig22.style.display = "block";
+                    fig3d2.style.display = "none";
+                }
+                else {
+                    fig2.style.display = "none";
+                    fig3d.style.display = "block";
+                    fig22.style.display = "none";
+                    fig3d2.style.display = "block";
+                }
             }
         </script>
 

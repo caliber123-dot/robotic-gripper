@@ -597,6 +597,7 @@ function clearTable(){
 
 async function getSavedData() {
 
+    let gripper = getCurrentGripper();
     let shape =
         document.getElementById("shape").value;
 
@@ -634,7 +635,7 @@ async function getSavedData() {
             },
 
             body: JSON.stringify({
-
+                gripper: gripper,
                 shape: shape,
                 material: material,
                 time: time,
@@ -758,10 +759,13 @@ async function getSavedData() {
             }
         });
 
+        // document.getElementById("isSaved").value = "1";
+        await calculate(2);
+        // alert("After calculation loaded");        
         // =========================
         // MESSAGE
         // =========================
-
+        let total = document.getElementById("total").value;
         document.getElementById(
             "savedText"
         ).innerHTML =
@@ -775,7 +779,7 @@ async function getSavedData() {
         <br>
 
         Total Force:
-        <b>${d.total_force}</b>
+        <b>${total}</b>
         `;
 
         // cache current
@@ -783,9 +787,8 @@ async function getSavedData() {
         .getElementById("savedText")
         .setAttribute(
             "data-total",
-            d.total_force
+            total
         );
-        calculate();
     }
 
     // =========================
@@ -793,7 +796,7 @@ async function getSavedData() {
     // =========================
 
     else {
-
+        // document.getElementById("isSaved").value = "0";
         clearSpringInputs();
         //clear o/p table        
         clearTable();
@@ -802,7 +805,7 @@ async function getSavedData() {
         .removeAttribute(
             "data-total"
         );
-
+        // document.getElementById("savedText").style.display = "block";
         document.getElementById(
             "savedText"
         ).innerHTML =

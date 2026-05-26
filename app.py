@@ -15,8 +15,11 @@ from sympy import symbols, diff, sympify, N
 from sympy.core.expr import Expr
 from shape_drawer import (
     generate_sphere,
+    generate_sphere_3d_2,
     generate_rectangle,
-    generate_ellipsoid
+    generate_rectangle_3d,
+    generate_ellipsoid,
+    generate_ellipsoid_3d_2
 )
 
 import base64
@@ -39,7 +42,9 @@ from database import (
     create_tables,
     save_input,
     get_saved_input,
-    is_duplicate
+    get_saved_input_graph,
+    is_duplicate,
+    update_input
 )
 
 app = Flask(__name__)
@@ -183,11 +188,11 @@ def compute_A1A2(M, th, dth, d2th):
 
         - ((th**5) / 120) * dth
     )
-    print("A1:", A1)
-    print("Computed A2:", A2)
+    # print("A1:", A1)
+    # print("Computed A2:", A2)
     # Print - r * math.sin(th) * dth
     #     + r * math.cos(th) * d2th
-    print("r:", r, "th:", th, "dth:", dth, "d2th:", d2th, "sin(th):", math.sin(th), "cos(th):", math.cos(th))
+    # print("r:", r, "th:", th, "dth:", dth, "d2th:", d2th, "sin(th):", math.sin(th), "cos(th):", math.cos(th))
     
     return A1, A2
 
@@ -238,10 +243,8 @@ def calculate():
     material = data["material"]
     t = float(data["time"])
     func = data["func"]
-    # print("Function:", func)  
-    
-    # print("Selected Function ID:", func)
-    
+    # print("Function:", func) 
+    # print("Selected Function ID:", func)    
     gripper = int(data["gripper"]) # 1 or 2
     # print("Gripper type:", "4-Finger Gripper" if gripper == 1 else "3-Finger Gripper with Thumb")
 
@@ -416,6 +419,7 @@ def calculate():
    
     # total = round(sum(forces) + thumb, 2)
     fig1, fig2 = "", ""    # 🔥 IMPORTANT: Initialize variables to avoid reference errors
+    fig3d = ""
     fig3 = ""
     gripper_name = ""
     shape_name = ""
@@ -442,12 +446,19 @@ def calculate():
             length * 1000,
             breadth * 1000
         )
+        fig3d = generate_rectangle_3d(
+            length * 1000,
+            breadth * 1000                        
+        )
 
     elif shape == 2:
 
         shape_name = "Spherical"
 
         fig2 = generate_sphere(
+            radius * 1000
+        )
+        fig3d = generate_sphere_3d_2(
             radius * 1000
         )
 
@@ -459,11 +470,10 @@ def calculate():
             Rmajor * 1000,
             Rminor * 1000
         )
-    
-    end_time = time.time()  # ⏱ end
-    # execution_time = (end_time - start_time) * 1000  # convert to ms
-    execution_time = (end_time - start_time) * 1000000  # microseconds (µs)
-
+        fig3d = generate_ellipsoid_3d_2(
+            Rmajor * 1000,
+            Rminor * 1000
+        )
     # =========================
     # SAVE INPUT TO SQLITE
     # =========================
@@ -520,18 +530,28 @@ def calculate():
     # SAVE ONLY IF NEW
     # =========================
 
-    if not is_duplicate(save_data):
+    duplicate_id = is_duplicate(save_data)
+
+    if not duplicate_id:
 
         save_input(save_data)
 
-        print("New entry saved")
+        # print("New entry GripperID:", gripper, "GrpperName", gripper_name, "Shape:", shape_name, "Material:", material, "Time:", t, "Function:", func, "Mode:", mode)
+        # with timestamp
+        print("New entry saved at:", datetime.now())
 
     else:
-        print("Duplicate entry skipped")
+        update_input(duplicate_id, save_data)
+        # print("Duplicate found → Updated ID:", duplicate_id, "GripperID:", gripper, "GrpperName", gripper_name, "Shape:", shape_name, "Material:", material, "Time:", t, "Function:", func, "Mode:", mode)
+        print("Duplicate/Updated entry at:", datetime.now())
 
-    # print("Execution time (µs):", round(execution_time, 2))
-#    Print forces for debugging
+    
+    # Print forces for debugging
     # print(f"t={t} sec, Forces: {forces}, Thumb: {thumb}, Total: {total}")
+    end_time = time.time()  # ⏱ end
+    # execution_time = (end_time - start_time) * 1000  # convert to ms
+    execution_time = (end_time - start_time) * 1000000  # microseconds (µs)
+    # print("fig3d:", fig3d)
     return jsonify({
         "volume": volume,
         "mass": M,
@@ -553,7 +573,8 @@ def calculate():
         "thumbB2": tB2,
         "kf_total": kf_total,
         "ktt": ktt,
-        "fig3": fig3
+        "fig3": fig3,
+        "fig3d": fig3d
     })
 
 @app.route("/get_saved_data", methods=["POST"])
@@ -562,10 +583,35 @@ def get_saved_data():
     data = request.json
 
     result = get_saved_input(
-
+        data.get("gripper"),
         int(data.get("shape", 0)),
         data.get("material"),
         float(data.get("time", 0)),
+        data.get("func"),
+        data.get("mode")
+    )
+
+    if result:
+
+        return jsonify({
+            "status": "found",
+            "data": result
+        })
+
+    return jsonify({
+        "status": "not_found"
+    })
+
+@app.route("/get_saved_data_graph", methods=["POST"])
+def get_saved_data_graph():
+
+    data = request.json
+
+    result = get_saved_input_graph(
+
+        int(data.get("gripper", 0)),
+        int(data.get("shape", 0)),
+        data.get("material"),
         data.get("func"),
         data.get("mode")
     )

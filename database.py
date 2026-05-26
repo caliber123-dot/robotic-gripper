@@ -194,7 +194,8 @@ def save_input(data):
 # =========================
 # GET SAVED DATA
 # =========================
-def get_saved_input(shape,
+def get_saved_input(gripper,
+                    shape,
                     material,
                     time_value,
                     theta_function,
@@ -210,7 +211,8 @@ def get_saved_input(shape,
 
     FROM gripper_inputs
 
-    WHERE shape = ?
+    WHERE gripper = ?
+    AND shape = ?
     AND material = ?
     AND time_value = ?
     AND theta_function = ?
@@ -222,6 +224,7 @@ def get_saved_input(shape,
 
     """, (
 
+        gripper,
         shape,
         material,
         time_value,
@@ -235,6 +238,115 @@ def get_saved_input(shape,
     conn.close()
 
     return dict(row) if row else None
+# ============================ Graph Data =========================
+def get_saved_input_graph(gripper,
+                    shape,
+                    material,                    
+                    theta_function,
+                    spring_mode):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+    SELECT *
+
+    FROM gripper_inputs
+
+    WHERE gripper = ?
+    AND shape = ?
+    AND material = ?   
+    AND theta_function = ?
+    AND spring_mode = ?
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+    """, (
+
+        gripper,
+        shape,
+        material,        
+        theta_function,
+        spring_mode
+
+    ))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    return dict(row) if row else None
+
+# =========================
+# UPDATE DUPLICATE DATA
+# =========================
+def update_input(record_id, data):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+    UPDATE gripper_inputs
+
+    SET
+
+        k_common = ?,
+        k_finger = ?,
+
+        f1k1 = ?,
+        f1k2 = ?,
+
+        f2k1 = ?,
+        f2k2 = ?,
+
+        f3k1 = ?,
+        f3k2 = ?,
+
+        f4k1 = ?,
+        f4k2 = ?,
+
+        thk1 = ?,
+        thk2 = ?,
+        thk3 = ?,
+        total_force = ?           
+
+    WHERE id = ?
+
+    """, (
+
+        data.get("k_common"),
+        data.get("k_finger"),
+
+        data.get("f1k1"),
+        data.get("f1k2"),
+
+        data.get("f2k1"),
+        data.get("f2k2"),
+
+        data.get("f3k1"),
+        data.get("f3k2"),
+
+        data.get("f4k1"),
+        data.get("f4k2"),
+
+        data.get("Thk1"),
+        data.get("Thk2"),
+        data.get("Thk3"),
+        data.get("total"),
+
+        record_id
+
+    ))
+
+    conn.commit()
+
+    conn.close()
 
 # =========================
 # CHECK DUPLICATE ENTRY
@@ -252,28 +364,29 @@ def is_duplicate(data):
     FROM gripper_inputs
 
     WHERE
-
-        shape = ?
+        gripper = ? 
+        AND shape = ?
         AND material = ?
         AND time_value = ?
         AND theta_function = ?
-        AND spring_mode = ?
-        AND total_force = ?
+        AND spring_mode = ?        
 
     LIMIT 1
 
     """, (
 
+        data.get("gripper"),
         data.get("shape"),
         data.get("material"),
         data.get("time"),
         data.get("func"),
-        data.get("mode"),
-        data.get("total")
+        data.get("mode")        
     ))
 
     row = cursor.fetchone()
 
     conn.close()
 
-    return row is not None
+    # return row is not None
+    return row["id"] if row else None
+

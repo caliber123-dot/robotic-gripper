@@ -236,6 +236,7 @@ function updateSpringFields() {
 
 async function autoLoadSavedSpring() {
 
+    let gripper = getCurrentGripper();
     let shape =
         document.getElementById(
             "shape"
@@ -257,7 +258,7 @@ async function autoLoadSavedSpring() {
         )?.value;
 
     // fixed graph page time
-    let time = 1;
+    // let time = 1;
 
     // validation
     if (
@@ -274,7 +275,7 @@ async function autoLoadSavedSpring() {
 
     let response =
         await fetch(
-            "/get_saved_data",
+            "/get_saved_data_graph",
             {
 
                 method: "POST",
@@ -285,12 +286,11 @@ async function autoLoadSavedSpring() {
                 },
 
                 body: JSON.stringify({
+                    gripper: gripper,
 
                     shape: shape,
 
-                    material: material,
-
-                    time: time,
+                    material: material,                   
 
                     func: func,
 
@@ -405,7 +405,11 @@ async function autoLoadSavedSpring() {
 
             ["Thk1", d.thk1],
             ["Thk2", d.thk2],
-            ["Thk3", d.thk3]
+            ["Thk3", d.thk3],
+
+            ["k_thumb", d.thk1],
+            ["k_thumb2", d.thk2],
+            ["k_thumb3", d.thk3]
         ];
 
         values.forEach(item => {
@@ -424,6 +428,8 @@ async function autoLoadSavedSpring() {
                     item[1];
             }
         });
+
+        calculate();
     }
 
     // =========================
