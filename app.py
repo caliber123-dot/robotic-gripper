@@ -1,6 +1,6 @@
 # from turtle import mode
 import math
-
+from io import BytesIO
 import os
 from flask import Flask, render_template, request, jsonify, send_file
 from waitress import serve as waitress_serve
@@ -1453,7 +1453,11 @@ def download_graph_excel():
 
         ws[f"A{row}"] = item["time"]
 
-        ws[f"B{row}"] = float(item["force"])
+        # ws[f"B{row}"] = float(item["force"])
+        force_value = str(item["force"]).replace("(N)", "").strip()
+        ws[f"B{row}"] = float(force_value)
+
+        print("Time:", item["time"], "Force:", item["force"])
 
         row += 1
 
@@ -1468,22 +1472,39 @@ def download_graph_excel():
     # GRAPH IMAGE
     # =========================================
 
-    graph_data = data["graphImage"]
+    # graph_data = data["graphImage"]
+    graph_data = data.get("graphImage")
+
+    if not graph_data:
+        return jsonify({
+            "error": "Graph image not received"
+        }), 400
 
     graph_data = graph_data.split(",")[1]
 
     image_data = base64.b64decode(graph_data)
 
-    with open("temp_chart.png", "wb") as f:
+    # with open("temp_chart.png", "wb") as f:
 
-        f.write(image_data)
+    #     f.write(image_data)
 
-    img = Image("temp_chart.png")
+    # img = Image("temp_chart.png")
+
+    # img.width = 900
+    # img.height = 450
+
+    # # place graph below table
+    # ws.add_image(img, "A16")
+
+    # if os.path.exists("temp_chart.png"):
+    #     os.remove("temp_chart.png")
+    image_stream = BytesIO(image_data)
+
+    img = Image(image_stream)
 
     img.width = 900
     img.height = 450
 
-    # place graph below table
     ws.add_image(img, "A16")
 
     # =========================================
@@ -1498,19 +1519,40 @@ def download_graph_excel():
     current_time = datetime.now().strftime(
         "%H-%M-%S"
     )
+    # filename = (
+    #     f"Graph_"
+    #     f"{shape_name}_"
+    #     f"{object_shape}_"
+    #     f"{material}_{current_time}.xlsx"
+
+    # )
+    # print("Saving file:", filename)
+    # wb.save(filename)
+
+    # return send_file(
+    #     filename,
+    #     as_attachment=True
+    # )
     filename = (
         f"Graph_"
         f"{shape_name}_"
         f"{object_shape}_"
         f"{material}_{current_time}.xlsx"
-
     )
-    print("Saving file:", filename)
-    wb.save(filename)
+
+    # print("Generating file:", filename)
+
+    excel_file = BytesIO()
+
+    wb.save(excel_file)
+
+    excel_file.seek(0)
 
     return send_file(
-        filename,
-        as_attachment=True
+        excel_file,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
 @app.route("/download_graph_pdf", methods=["POST"])

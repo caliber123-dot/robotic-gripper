@@ -1566,18 +1566,26 @@ async function downloadGraphExcel() {
     };
 
     let response = await fetch("/download_graph_excel", {
-
         method: "POST",
-
         headers: {
             "Content-Type": "application/json"
         },
-
         body: JSON.stringify(payload)
-
     });
 
+    console.log("Status:", response.status);
+    console.log("Content-Type:", response.headers.get("content-type"));
+
+    if (!response.ok) {
+        let txt = await response.text();
+        console.log(txt);
+        alert("Server Error");
+        return;
+    }
+
     let blob = await response.blob();
+
+    console.log("Blob Size:", blob.size);
 
     let url = window.URL.createObjectURL(blob);
 
