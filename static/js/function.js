@@ -841,3 +841,113 @@ document
     );
 
 });
+
+async function GetShapes() {
+
+    let loader = document.getElementById("loader");
+    let shape = +document.getElementById("shape").value;
+
+    let event = "";
+    let Rmajor = document.getElementById("Rmajor").value;
+    let Rminor = document.getElementById("Rminor").value;
+
+    let length = document.getElementById("length").value;
+    let breadth = document.getElementById("breadth").value;
+    let width = document.getElementById("width").value;
+
+    let radius = document.getElementById("radius").value;
+
+    if (!shape) {
+        console.log("Shape not selected");
+        // alert("Please select a shape");
+        // markInvalid("shape");
+        return false;
+    }
+    // 🔥 SHOW LOADER
+    loader.style.display = "inline-block";
+    // 🔥 GET SELECTION EVENT    
+
+    if (shape == "3") { // Ellipsoidal
+        if (document.getElementById("rbmajor").checked) {
+            event = "major";
+        } else if (document.getElementById("rbminor").checked) {
+            event = "minor";
+        }
+        if (!Rmajor) {
+            // markInvalid("Rmajor");
+            return false;
+        }
+        if (!Rminor) {
+            // markInvalid("Rminor");
+            return false;
+        }
+    }
+    else if (shape == "1") { // Rectangular
+        if (document.getElementById("rblength").checked) {
+            event = "length";
+        } else if (document.getElementById("rbbreadth").checked) {
+            event = "breadth";
+        }
+        if (!length) {
+            // markInvalid("length");
+            return false;
+        }
+        if (!breadth) {
+            // markInvalid("breadth");
+            return false;
+        }
+        if (!width) {
+            // markInvalid("width");
+            return false;
+        }
+        // alert("Event: " + event);
+    }
+    else if (shape == 2) { // Spherical
+        event = "none"; // spherical doesn't have selection events      
+        if (!radius) {
+            // markInvalid("radius");
+            return false;
+        }
+    }
+
+    let data = {
+        shape: +shape,
+        event: event,
+        Rmajor: Rmajor,
+        Rminor: Rminor,
+        length: length,
+        breadth: breadth,
+        width: width,
+        radius: radius
+    };
+    let res = await fetch("/GetShapes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    let result = await res.json();
+    // console.log(result);
+    // ✅ Hide loader
+    loader.style.display = "none";
+
+    let gripper = getCurrentGripper();
+
+    if (gripper == 1) {
+        // document.getElementById("fig1").src = result.fig1;
+        // document.getElementById("fig2").src = result.fig2;
+        document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
+        // document.getElementById("fig3").src = result.fig3;
+        // fig3D for figure 2
+        document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
+        document.getElementById("shape_name").innerText = result.shape_name;
+    }
+    else if (gripper == 2) {
+        // document.getElementById("fig11").src = result.fig1;
+        // document.getElementById("fig22").src = result.fig2;
+        document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
+        // fig3D2 for figure 2
+        document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
+        document.getElementById("shape_name2").innerText = result.shape_name;
+    }
+}

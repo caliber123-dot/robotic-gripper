@@ -265,8 +265,10 @@ def generate_sphere(R):
         -1.38*R
     )
 
-    ax.set_xlim(-1.7*R,1.7*R)
-    ax.set_ylim(-1.5*R,1.5*R)
+    # ax.set_xlim(-1.7*R,1.7*R)
+    # ax.set_ylim(-1.5*R,1.5*R)
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(-100, 100)
 
     os.makedirs("static/generated",exist_ok=True)
 
@@ -2028,15 +2030,18 @@ def generate_sphere_3d_2(R):
     # LIMITS
     # =====================================================
 
-    ax.set_xlim(
-        -1.9*R,
-        2.1*R
-    )
+    # ax.set_xlim(
+    #     -1.9*R,
+    #     2.1*R
+    # )
 
-    ax.set_ylim(
-        -1.7*R,
-        1.9*R
-    )
+    # ax.set_ylim(
+    #     -1.7*R,
+    #     1.9*R
+    # )
+
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(-100, 100)
 
     # =====================================================
     # SAVE
@@ -2362,7 +2367,7 @@ def generate_ellipsoid_3d_2(a, b):
 
         r'$\theta$',
 
-        28
+        24
     )
 
     # =====================================================
@@ -2407,12 +2412,12 @@ def generate_ellipsoid_3d_2(a, b):
     engineering_text(
         ax,
 
-        x-0.58*a,
+        x-0.68*a,
         y+0.35*b,
 
         r'$\Delta S$',
 
-        32
+        30
     )
 
     # =====================================================
@@ -2465,7 +2470,7 @@ def generate_ellipsoid_3d_2(a, b):
         -1.50*a,
         -1.78*b,
 
-        "Fig. 2: Typical Grasp Postures for Objects of Shapes: ELLIPSOIDAL",
+        "Fig. 2: Typical Grasp Postures for Objects of 3D Shapes: ELLIPSOIDAL",
 
         14
     )
@@ -2976,7 +2981,1568 @@ def generate_rectangle_3d_2(L, B, H=40):
 
     return path
 
+# ========================= VERTICAL ================================
+# VERTICAL RECTANGLE (2D ENGINEERING STYLE) VERTICAL
+# =========================================================
+
+def generate_rectangle_vertical(L, B):
+
+    fig, ax = plt.subplots(figsize=(12,8))
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # =====================================================
+    # RECTANGLE
+    # =====================================================
+
+    rect = Rectangle(
+        (0,0),
+
+        B,     # horizontal breadth
+        L,     # vertical length
+
+        facecolor='#dddddd',
+
+        edgecolor='black',
+
+        linewidth=2.5
+    )
+
+    ax.add_patch(rect)
+
+    # =====================================================
+    # CENTER
+    # =====================================================
+
+    cx = B / 2
+    cy = L / 2
+
+    ax.plot(
+        cx,
+        cy,
+
+        'ko',
+
+        markersize=10
+    )
+
+    engineering_text(
+        ax,
+        cx + 0.06*B,
+        cy - 0.08*L,
+
+        'C',
+
+        32
+    )
+
+    # =====================================================
+    # AXIS
+    # =====================================================
+
+    ax.plot(
+        [cx,cx],
+        [-0.15*L,1.15*L],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    ax.plot(
+        [-0.6*B,1.3*B],
+        [cy,cy],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    # =====================================================
+    # CONTACT POINT
+    # =====================================================
+
+    x = 0
+    y = 0.82 * L
+
+    ax.plot(
+        x,
+        y,
+
+        'ko',
+
+        markersize=10
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.16*B,
+        y + 0.05*L,
+
+        r'$A_i$',
+
+        24
+    )
+
+    # =====================================================
+    # RADIUS LINE
+    # =====================================================
+
+    ax.plot(
+        [cx,x],
+        [cy,y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    engineering_text(
+        ax,
+
+        0.30*B,
+        0.70*L,
+
+        'r',
+
+        28
+    )
+
+    # =====================================================
+    # THETA ARC
+    # =====================================================
+
+    arc = Arc(
+        (cx,cy),
+
+        0.40*B,
+        0.40*B,
+
+        theta1=125,
+        theta2=180,
+
+        linewidth=2.5
+    )
+
+    ax.add_patch(arc)
+
+    engineering_text(
+        ax,
+
+        0.33*B,
+        0.56*L,
+
+        r'$\theta$',
+
+        20
+    )
+
+    # =====================================================
+    # SPRING
+    # =====================================================
+
+    draw_spring(
+        ax,
+
+        -1.2*B,
+        y + 0.18*L,
+
+        x,
+        y,
+
+        coils=7,
+
+        width=0.07*B
+    )
+
+    # =====================================================
+    # FORCE ARROW
+    # =====================================================
+
+    ax.annotate(
+        '',
+
+        xy=(x,y),
+
+        xytext=(
+            -0.35*B,
+            y + 0.05*L
+        ),
+
+        arrowprops=dict(
+            arrowstyle='simple',
+
+            color='black'
+        )
+    )
+
+    engineering_text(
+        ax,
+
+        -0.65*B,
+        y + 0.12*L,
+
+        r'$\Delta S$',
+
+        30
+    )
+
+    # =====================================================
+    # DIMENSIONS
+    # =====================================================
+
+    length_txt = f"Length = {L:.2f} mm"
+
+    breadth_txt = f"Breadth = {B:.2f} mm"
+
+    # LENGTH
+    dimension_arrow(
+        ax,
+
+        -0.18*B,
+        0,
+
+        -0.18*B,
+        L,
+
+        length_txt,
+
+        -0.95*B,
+        0.50*L
+    )
+
+    # BREADTH
+    dimension_arrow(
+        ax,
+
+        0,
+        -0.10*L,
+
+        B,
+        -0.10*L,
+
+        breadth_txt,
+
+        0.18*B,
+        -0.22*L
+    )
+
+    # =====================================================
+    # FOOTER TITLE
+    # =====================================================
+
+    engineering_text(
+        ax,
+
+        -1.20*B,
+        -0.32*L,
+
+        "Fig. 2: Typical Grasp Postures for Objects of Shapes: RECTANGULAR",
+
+        14
+    )
+
+    # =====================================================
+    # LIMITS
+    # =====================================================
+
+    ax.set_xlim(
+        -1.4*B,
+        1.4*B
+    )
+
+    ax.set_ylim(
+        -0.25*L,
+        1.12*L
+    )
+
+    # =====================================================
+    # SAVE
+    # =====================================================
+
+    os.makedirs(
+        "static/generated",
+        exist_ok=True
+    )
+
+    fname = "rectangle_vertical.png"
+
+    path = os.path.join(
+        "static/generated",
+        fname
+    )
+
+    plt.savefig(
+        path,
+
+        dpi=128,
+
+        bbox_inches=None
+    )
+
+    plt.close()
+
+    return path
+
+# =========================================================
+# 3D VERTICAL RECTANGLE (ENGINEERING STYLE)
+# =========================================================
+
+def generate_rectangle_vertical_3d(L, B, H=40):
+
+    fig, ax = plt.subplots(figsize=(12,8))
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # =====================================================
+    # DEPTH OFFSET
+    # =====================================================
+
+    dx = 0.25 * B
+    dy = 0.12 * L
+
+    # =====================================================
+    # BACK FACE
+    # =====================================================
+
+    back = Rectangle(
+        (dx,dy),
+
+        B,
+        L,
+
+        facecolor='#f0f0f0',
+
+        edgecolor='black',
+
+        linewidth=2.5,
+
+        zorder=0
+    )
+
+    ax.add_patch(back)
+
+    # =====================================================
+    # FRONT FACE
+    # =====================================================
+
+    front = Rectangle(
+        (0,0),
+
+        B,
+        L,
+
+        facecolor='#d9d9d9',
+
+        edgecolor='black',
+
+        linewidth=3,
+
+        zorder=2
+    )
+
+    ax.add_patch(front)
+
+    # =====================================================
+    # SHADOW
+    # =====================================================
+
+    shadow = Rectangle(
+        (0.05*B,-0.04*L),
+
+        0.96*B,
+        0.96*L,
+
+        facecolor='black',
+
+        edgecolor='none',
+
+        alpha=0.08,
+
+        zorder=3
+    )
+
+    ax.add_patch(shadow)
+
+    # =====================================================
+    # HIGHLIGHT
+    # =====================================================
+
+    highlight = Rectangle(
+        (0.12*B,0.68*L),
+
+        0.32*B,
+        0.14*L,
+
+        facecolor='white',
+
+        edgecolor='none',
+
+        alpha=0.30,
+
+        zorder=4
+    )
+
+    ax.add_patch(highlight)
+
+    # =====================================================
+    # CONNECT EDGES
+    # =====================================================
+
+    front_pts = [
+        (0,0),
+        (B,0),
+        (B,L),
+        (0,L)
+    ]
+
+    back_pts = [
+        (dx,dy),
+        (B+dx,dy),
+        (B+dx,L+dy),
+        (dx,L+dy)
+    ]
+
+    for (x1,y1),(x2,y2) in zip(
+        front_pts,
+        back_pts
+    ):
+
+        ax.plot(
+            [x1,x2],
+            [y1,y2],
+
+            color='black',
+
+            linewidth=2,
+
+            zorder=1
+        )
+
+    # =====================================================
+    # CENTER
+    # =====================================================
+
+    cx = B / 2
+    cy = L / 2
+
+    ax.plot(
+        cx,
+        cy,
+
+        'ko',
+
+        markersize=11,
+
+        zorder=30
+    )
+
+    engineering_text(
+        ax,
+
+        cx + 0.08*B,
+        cy - 0.06*L,
+
+        'C',
+
+        34
+    )
+
+    # =====================================================
+    # AXIS
+    # =====================================================
+
+    ax.plot(
+        [cx,cx],
+        [-0.12*L,1.18*L],
+
+        '--',
+
+        color='black',
+
+        linewidth=2,
+
+        zorder=20
+    )
+
+    ax.plot(
+        [-0.65*B,1.40*B],
+        [cy,cy],
+
+        '--',
+
+        color='black',
+
+        linewidth=2,
+
+        zorder=20
+    )
+
+    # =====================================================
+    # CONTACT POINT
+    # =====================================================
+
+    x = 0
+    y = 0.82 * L
+
+    ax.plot(
+        x,
+        y,
+
+        'ko',
+
+        markersize=11,
+
+        zorder=30
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.16*B,
+        y + 0.05*L,
+
+        r'$A_i$',
+
+        24
+    )
+
+    # =====================================================
+    # RADIUS LINE
+    # =====================================================
+
+    ax.plot(
+        [cx,x],
+        [cy,y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2.2,
+
+        zorder=25
+    )
+
+    engineering_text(
+        ax,
+
+        0.28*B,
+        0.72*L,
+
+        'r',
+
+        30
+    )
+
+    # =====================================================
+    # THETA ARC
+    # =====================================================
+
+    arc = Arc(
+        (cx,cy),
+
+        0.42*B,
+        0.42*B,
+
+        theta1=125,
+        theta2=180,
+
+        linewidth=2.8,
+
+        zorder=25
+    )
+
+    ax.add_patch(arc)
+
+    engineering_text(
+        ax,
+
+        0.33*B,
+        0.57*L,
+
+        r'$\theta$',
+
+        24
+    )
+
+    # =====================================================
+    # SPRING
+    # =====================================================
+
+    draw_spring(
+        ax,
+
+        -1.25*B,
+        y + 0.20*L,
+
+        x,
+        y,
+
+        coils=8,
+
+        width=0.08*B
+    )
+
+    # =====================================================
+    # FORCE ARROW
+    # =====================================================
+
+    ax.annotate(
+        '',
+
+        xy=(x,y),
+
+        xytext=(
+            -0.35*B,
+            y + 0.05*L
+        ),
+
+        arrowprops=dict(
+            arrowstyle='simple',
+
+            color='black'
+        )
+    )
+
+    engineering_text(
+        ax,
+
+        -0.70*B,
+        y + 0.13*L,
+
+        r'$\Delta S$',
+
+        32
+    )
+
+    # =====================================================
+    # DIMENSIONS
+    # =====================================================
+
+    length_txt = f"Length = {L:.2f} mm"
+
+    breadth_txt = f"Breadth = {B:.2f} mm"
+
+    # LENGTH
+    dimension_arrow(
+        ax,
+
+        -0.18*B,
+        0,
+
+        -0.18*B,
+        L,
+
+        length_txt,
+
+        -1.0*B,
+        0.50*L
+    )
+
+    # BREADTH
+    dimension_arrow(
+        ax,
+
+        0,
+        -0.10*L,
+
+        B,
+        -0.10*L,
+
+        breadth_txt,
+
+        0.18*B,
+        -0.22*L
+    )
+
+    # =====================================================
+    # FOOTER
+    # =====================================================
+
+    engineering_text(
+        ax,
+
+        -1.20*B,
+        -0.32*L,
+
+        "Fig. 2: Typical Grasp Postures for Objects of 3D Shapes: RECTANGULAR",
+
+        14
+    )
+
+    # =====================================================
+    # LIMITS
+    # =====================================================
+
+    ax.set_xlim(
+        -1.5*B,
+        1.7*B
+    )
+
+    ax.set_ylim(
+        -0.25*L,
+        1.25*L
+    )
+
+    # =====================================================
+    # SAVE
+    # =====================================================
+
+    os.makedirs(
+        "static/generated",
+        exist_ok=True
+    )
+
+    fname = "rectangle_vertical_3d.png"
+
+    path = os.path.join(
+        "static/generated",
+        fname
+    )
+
+    plt.savefig(
+        path,
+
+        dpi=128,
+
+        bbox_inches=None
+    )
+
+    plt.close()
+
+    return path
+
+
+# =========================================================
+# FIXED 3D VERTICAL ELLIPSOID (SOLIDWORKS STYLE)
+# 1536 x 1024 OUTPUT
+# HORIZONTAL CENTERED
+# =========================================================
+
+def generate_ellipsoid_vertical_3d(a, b):
+
+    fig, ax = plt.subplots(figsize=(12,8))
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # =====================================================
+    # VERTICAL ELLIPSOID
+    # =====================================================
+
+    major_y = a
+    minor_x = b
+
+    # =====================================================
+    # SMALLER DEPTH
+    # =====================================================
+
+    dx = 0.10 * minor_x
+    dy = 0.08 * major_y
+
+    # =====================================================
+    # BACK ELLIPSOID
+    # =====================================================
+
+    back = Ellipse(
+        (dx,dy),
+
+        width=2*minor_x,
+        height=2*major_y,
+
+        facecolor='#f0f0f0',
+
+        edgecolor='black',
+
+        linewidth=2.2,
+
+        zorder=0
+    )
+
+    ax.add_patch(back)
+
+    # =====================================================
+    # FRONT ELLIPSOID
+    # =====================================================
+
+    front = Ellipse(
+        (0,0),
+
+        width=2*minor_x,
+        height=2*major_y,
+
+        facecolor='#d9d9d9',
+
+        edgecolor='black',
+
+        linewidth=3,
+
+        zorder=2
+    )
+
+    ax.add_patch(front)
+
+    # =====================================================
+    # SOFT SHADOW
+    # =====================================================
+
+    shadow = Ellipse(
+        (0.05*minor_x,-0.05*major_y),
+
+        width=1.85*minor_x,
+        height=1.85*major_y,
+
+        facecolor='black',
+
+        edgecolor='none',
+
+        alpha=0.06,
+
+        zorder=3
+    )
+
+    ax.add_patch(shadow)
+
+    # =====================================================
+    # HIGHLIGHT
+    # =====================================================
+
+    highlight = Ellipse(
+        (-0.18*minor_x,0.35*major_y),
+
+        width=0.35*minor_x,
+        height=0.45*major_y,
+
+        facecolor='white',
+
+        edgecolor='none',
+
+        alpha=0.28,
+
+        zorder=4
+    )
+
+    ax.add_patch(highlight)
+
+    # =====================================================
+    # CONNECT EDGES
+    # =====================================================
+
+    angles = [45,135,225,315]
+
+    for ang in angles:
+
+        t = np.radians(ang)
+
+        x1 = minor_x*np.cos(t)
+        y1 = major_y*np.sin(t)
+
+        x2 = x1 + dx
+        y2 = y1 + dy
+
+        ax.plot(
+            [x1,x2],
+            [y1,y2],
+
+            color='black',
+
+            linewidth=2,
+
+            zorder=1
+        )
+
+    # =====================================================
+    # HORIZONTAL WIREFRAME
+    # =====================================================
+
+    theta = np.linspace(0,2*np.pi,400)
+
+    wx = minor_x*np.cos(theta)
+    wy = 0.28*major_y*np.sin(theta)
+
+    ax.plot(
+        wx,
+        wy,
+
+        '--',
+
+        color='black',
+
+        linewidth=1.2,
+
+        alpha=0.35,
+
+        zorder=5
+    )
+
+    # =====================================================
+    # AXIS
+    # =====================================================
+
+    ax.plot(
+        [0,0],
+        [-1.15*major_y,1.18*major_y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2,
+
+        zorder=20
+    )
+
+    ax.plot(
+        [-1.45*minor_x,1.45*minor_x],
+        [0,0],
+
+        '--',
+
+        color='black',
+
+        linewidth=2,
+
+        zorder=20
+    )
+
+    # =====================================================
+    # CENTER POINT
+    # =====================================================
+
+    ax.plot(
+        0,
+        0,
+
+        'ko',
+
+        markersize=10,
+
+        zorder=30
+    )
+
+    engineering_text(
+        ax,
+
+        0.08*minor_x,
+        -0.06*major_y,
+
+        'C',
+
+        30
+    )
+
+    # =====================================================
+    # CONTACT POINT
+    # =====================================================
+
+    th = np.radians(145)
+
+    x = minor_x*np.cos(th)
+    y = major_y*np.sin(th)
+
+    ax.plot(
+        x,
+        y,
+
+        'ko',
+
+        markersize=10,
+
+        zorder=30
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.22*minor_x,
+        y + 0.11*major_y,
+
+        r'$A_i$',
+
+        24
+    )
+
+    # =====================================================
+    # RADIUS LINE
+    # =====================================================
+
+    ax.plot(
+        [0,x],
+        [0,y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2,
+
+        zorder=25
+    )
+
+    engineering_text(
+        ax,
+
+        x*0.42,
+        y*0.42,
+
+        'r',
+
+        28
+    )
+
+    # =====================================================
+    # THETA ARC
+    # =====================================================
+
+    arc = Arc(
+        (0,0),
+
+        0.50*minor_x,
+        0.50*minor_x,
+
+        theta1=145,
+        theta2=180,
+
+        linewidth=2.5,
+
+        zorder=25
+    )
+
+    ax.add_patch(arc)
+
+    engineering_text(
+        ax,
+
+        -0.12*minor_x,
+        0.10*major_y,
+
+        r'$\theta$',
+
+        20
+    )
+
+    # =====================================================
+    # SPRING
+    # =====================================================
+
+    draw_spring(
+        ax,
+
+        x - 0.95*minor_x,
+        y + 0.35*major_y,
+
+        x,
+        y,
+
+        coils=7,
+
+        width=0.05*minor_x
+    )
+
+    # =====================================================
+    # FORCE ARROW
+    # =====================================================
+
+    ax.annotate(
+        '',
+
+        xy=(x,y),
+
+        xytext=(
+            x - 0.28*minor_x,
+            y + 0.08*major_y
+        ),
+
+        arrowprops=dict(
+            arrowstyle='simple',
+
+            color='black'
+        )
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.72*minor_x,
+        y + 0.28*major_y,
+
+        r'$\Delta S$',
+
+        24
+    )
+
+    # =====================================================
+    # DIMENSIONS
+    # =====================================================
+
+    major_txt = f"Rmajor = {major_y:.2f} mm"
+
+    minor_txt = f"Rminor = {minor_x:.2f} mm"
+
+    # VERTICAL
+    dimension_arrow(
+        ax,
+
+        -1.05*minor_x,
+        -major_y,
+
+        -1.05*minor_x,
+        major_y,
+
+        major_txt,
+
+        -2.45*minor_x,
+        0
+    )
+
+    # HORIZONTAL
+    dimension_arrow(
+        ax,
+
+        -minor_x,
+        -1.08*major_y,
+
+        minor_x,
+        -1.08*major_y,
+
+        minor_txt,
+
+        -0.30*minor_x,
+        -1.22*major_y
+    )
+
+    # =====================================================
+    # FOOTER
+    # =====================================================
+
+    engineering_text(
+        ax,
+
+        -2.90*minor_x,
+        -1.52*major_y,
+
+        "Fig. 2: Typical Grasp Postures for Objects of 3D Shapes: ELLIPSOIDAL",
+
+        14
+    )
+
+    # =====================================================
+    # PERFECT CENTERING
+    # =====================================================
+
+    x_margin = 2.8 * minor_x
+
+    ax.set_xlim(
+        -x_margin,
+        x_margin
+    )
+
+    ax.set_ylim(
+        -1.5*major_y,
+        1.55*major_y
+    )
+
+    ax.set_anchor('C')
+
+    # =====================================================
+    # SAVE
+    # =====================================================
+
+    os.makedirs(
+        "static/generated",
+        exist_ok=True
+    )
+
+    fname = "ellipsoid_vertical_3d.png"
+
+    path = os.path.join(
+        "static/generated",
+        fname
+    )
+
+    plt.savefig(
+        path,
+
+        dpi=128,
+
+        bbox_inches=None
+    )
+
+    plt.close()
+
+    return path
+
+
+# =========================================================
+# 2D VERTICAL ELLIPSOID (ENGINEERING STYLE)
+# 1536 x 1024 OUTPUT
+# HORIZONTAL CENTERED
+# =========================================================
+
+def generate_ellipsoid_vertical(a, b):
+
+    fig, ax = plt.subplots(figsize=(12,8))
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # =====================================================
+    # ELLIPSOID PARAMETERS
+    # =====================================================
+
+    major_y = a
+    minor_x = b
+
+    # =====================================================
+    # MAIN ELLIPSOID
+    # =====================================================
+
+    ellipsoid = Ellipse(
+        (0,0),
+
+        width=2*minor_x,
+        height=2*major_y,
+
+        facecolor='#dddddd',
+
+        edgecolor='black',
+
+        linewidth=3,
+
+        zorder=2
+    )
+
+    ax.add_patch(ellipsoid)
+
+    # =====================================================
+    # CENTER WIREFRAME
+    # =====================================================
+
+    # theta = np.linspace(0,2*np.pi,400)
+
+    # wx = minor_x*np.cos(theta)
+    # wy = 0.28*major_y*np.sin(theta)
+
+    # ax.plot(
+    #     wx,
+    #     wy,
+
+    #     '--',
+
+    #     color='black',
+
+    #     linewidth=1.2,
+
+    #     alpha=0.45,
+
+    #     zorder=5
+    # )
+
+    # =====================================================
+    # AXIS LINES
+    # =====================================================
+
+    ax.plot(
+        [0,0],
+        [-1.15*major_y,1.15*major_y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    ax.plot(
+        [-1.4*minor_x,1.4*minor_x],
+        [0,0],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    # =====================================================
+    # CENTER POINT
+    # =====================================================
+
+    ax.plot(
+        0,
+        0,
+
+        'ko',
+
+        markersize=10
+    )
+
+    engineering_text(
+        ax,
+
+        0.08*minor_x,
+        -0.06*major_y,
+
+        'C',
+
+        30
+    )
+
+    # =====================================================
+    # CONTACT POINT
+    # =====================================================
+
+    th = np.radians(145)
+
+    x = minor_x*np.cos(th)
+    y = major_y*np.sin(th)
+
+    ax.plot(
+        x,
+        y,
+
+        'ko',
+
+        markersize=10
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.20*minor_x,
+        y + 0.11*major_y,
+
+        r'$A_i$',
+
+        24
+    )
+
+    # =====================================================
+    # RADIUS LINE
+    # =====================================================
+
+    ax.plot(
+        [0,x],
+        [0,y],
+
+        '--',
+
+        color='black',
+
+        linewidth=2
+    )
+
+    engineering_text(
+        ax,
+
+        x*0.45,
+        y*0.45,
+
+        'r',
+
+        28
+    )
+
+    # =====================================================
+    # THETA ARC
+    # =====================================================
+
+    arc = Arc(
+        (0,0),
+
+        0.48*minor_x,
+        0.48*minor_x,
+
+        theta1=145,
+        theta2=180,
+
+        linewidth=2.5
+    )
+
+    ax.add_patch(arc)
+
+    engineering_text(
+        ax,
+
+        -0.12*minor_x,
+        0.10*major_y,
+
+        r'$\theta$',
+
+        20
+    )
+
+    # =====================================================
+    # SPRING
+    # =====================================================
+
+    draw_spring(
+        ax,
+
+        x - 0.95*minor_x,
+        y + 0.35*major_y,
+
+        x,
+        y,
+
+        coils=7,
+
+        width=0.05*minor_x
+    )
+
+    # =====================================================
+    # FORCE ARROW
+    # =====================================================
+
+    ax.annotate(
+        '',
+
+        xy=(x,y),
+
+        xytext=(
+            x - 0.28*minor_x,
+            y + 0.08*major_y
+        ),
+
+        arrowprops=dict(
+            arrowstyle='simple',
+
+            color='black'
+        )
+    )
+
+    engineering_text(
+        ax,
+
+        x - 0.72*minor_x,
+        y + 0.30*major_y,
+
+        r'$\Delta S$',
+
+        22
+    )
+
+    # =====================================================
+    # DIMENSIONS
+    # =====================================================
+
+    major_txt = f"Rmajor = {major_y:.2f} mm"
+
+    minor_txt = f"Rminor = {minor_x:.2f} mm"
+
+    # VERTICAL
+    dimension_arrow(
+        ax,
+
+        -1.05*minor_x,
+        -major_y,
+
+        -1.05*minor_x,
+        major_y,
+
+        major_txt,
+
+        -2.45*minor_x,
+        0
+    )
+
+    # HORIZONTAL
+    dimension_arrow(
+        ax,
+
+        -minor_x,
+        -1.08*major_y,
+
+        minor_x,
+        -1.08*major_y,
+
+        minor_txt,
+
+        -0.30*minor_x,
+        -1.22*major_y
+    )
+
+    # =====================================================
+    # FOOTER
+    # =====================================================
+
+    engineering_text(
+        ax,
+
+        -2.95*minor_x,
+        -1.52*major_y,
+
+        "Fig. 2: Typical Grasp Postures for Objects of Shapes: ELLIPSOIDAL",
+
+        14
+    )
+
+    # =====================================================
+    # CENTERING
+    # =====================================================
+
+    x_margin = 2.8 * minor_x
+
+    ax.set_xlim(
+        -x_margin,
+        x_margin
+    )
+
+    ax.set_ylim(
+        -1.5*major_y,
+        1.55*major_y
+    )
+
+    ax.set_anchor('C')
+
+    # =====================================================
+    # SAVE
+    # =====================================================
+
+    os.makedirs(
+        "static/generated",
+        exist_ok=True
+    )
+
+    fname = "ellipsoid_vertical.png"
+
+    path = os.path.join(
+        "static/generated",
+        fname
+    )
+
+    plt.savefig(
+        path,
+
+        dpi=128,
+
+        bbox_inches=None
+    )
+
+    plt.close()
+
+    return path
+
+# ===================================================
+
 # generate_rectangle(100,60)
+
+# generate_rectangle_vertical(100, 60)
+# generate_rectangle_vertical_3d(100, 60)
+
+# generate_ellipsoid_vertical_3d(50, 30)
+# generate_ellipsoid_vertical(50, 30)
+
 # generate_rectangle_3d(100, 60)
 
 # generate_ellipsoid(80, 50)

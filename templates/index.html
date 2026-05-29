@@ -861,7 +861,7 @@
                                 <option value="2">Spherical</option>
                                 <option value="3">Ellipsoidal</option>
                             </select>
-                            <label id="selectevt">Selection Event</label>
+                            <label id="selectevt" style="display: none;">Selection Event</label>
                             <!-- <div id="selectionEvent"></div> -->
                             <!-- // Ellipsoidal → Major / Minor -->
                             <div id="ellipsEvent" style="display:none;">
@@ -882,11 +882,11 @@
                              <div class="row g-2" id="ellipsInput" style="display:none;">
                                 <div class="col-md-6">
                                     <label>Rmajor (mm)</label>
-                                    <input id="Rmajor" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
+                                    <input id="Rmajor" type="number" class="form-control" placeholder="50 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>
                                 <div class="col-md-6">
                                     <label>Rminor (mm)</label>
-                                    <input id="Rminor" type="number" class="form-control" placeholder="30 mm" min="1" step="1">
+                                    <input id="Rminor" type="number" class="form-control" placeholder="30 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>                                
                             </div>
 
@@ -911,21 +911,21 @@
                             <div class="row g-2" id="rectangleInput" style="display:none;">
                                 <div class="col-md-4">
                                     <label style="font-size: 15px;">Length(mm)</label>
-                                    <input id="length" type="number" class="form-control" placeholder="100 mm" min="1" step="1">
+                                    <input id="length" type="number" class="form-control" placeholder="100 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>
                                 <div class="col-md-4">
                                     <label style="font-size: 15px;">Breadth(mm)</label>
-                                    <input id="breadth" type="number" class="form-control" placeholder="40 mm" min="1" step="1">
+                                    <input id="breadth" type="number" class="form-control" placeholder="40 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>
                                 <div class="col-md-4">
                                     <label style="font-size: 15px;">Width(mm)</label>
-                                    <input id="width" type="number" class="form-control" placeholder="20 mm" min="1" step="1">
+                                    <input id="width" type="number" class="form-control" placeholder="20 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>
                             </div>
                              <div class="row g-2" id="sphericalInput" style="display:none;">
                                      <div class="col-md-12">
                                     <label>Radius (mm)</label>
-                                    <input id="radius" type="number" class="form-control" placeholder="50 mm" min="1" step="1">
+                                    <input id="radius" type="number" class="form-control" placeholder="50 mm" min="1" step="1" oninput="GetShapes()">
                                 </div>
                              </div>
 
@@ -1234,7 +1234,7 @@
                                         <td></td>
                                         <td colspan="2">|A|</td>
                                         <td>+ K</td>
-                                        <td colspan="2">|B|</td>
+                                        <td colspan="2">*|B|</td>
                                         <td></td>
                                     </tr>
                                     <tr class="fw-bold text-center align-middle table-secondary">
@@ -2030,6 +2030,8 @@
                 ellipsInput.style.display = "none";
                 sphericalInput.style.display = "none";
                 selectevt.style.display = "block";
+                // alert("Shap ID:",shape);
+                console.log("Selected shape ID:", shape);
                 // Ellipsoidal → Major / Minor
                 if (shape == 3) {
                     // Ellipsoidal
@@ -2047,15 +2049,18 @@
                     rectangleInput.style.display = "flex";
                 }
                 // Spherical
-                else {
+                else if (shape == 2){
                         sphericalInput.style.display = "flex";      
                         selectevt.style.display = "none";                 
-                    // container.innerHTML = `<small class="text-muted">No selection required</small>`;
-                    // ellipsEvent.style.display = "none";
-                    // rectangleEvent.style.display = "none";
                 }
+                else {
+                    selectevt.style.display = "none";
+                    // container.innerHTML = `<small class="text-muted">Please select shape to see selection events</small>`;
+                }
+                // Generate Shape Based on selection
+                GetShapes();
             }
-            updateSelectionEvent();
+            // updateSelectionEvent();
         </script>
         <!-- Calculation -->
         <script>
@@ -2285,10 +2290,7 @@
                 else {
                     event = "none"; // spherical
                 }
-                // if (!event) {
-                //     alert("Please select Selection Event");
-                //     return;
-                // }
+                
                 let savedText = document.getElementById("savedText");
                 savedText.style.display = "none";
                 let mode = document.querySelector('input[name="kmode"]:checked').value;
@@ -2407,26 +2409,26 @@
                 execTime.innerText = result.execution_time;
                 execTime2.innerText = (result.execution_time / 1000).toFixed(4);
                 // let pno = localStorage.getItem("pno");
-                let gripper = getCurrentGripper();
+                // let gripper = getCurrentGripper();
                 // alert("gripper: " + gripper + " mode: " + mode);
                 
-                if (gripper == 1) {
-                    document.getElementById("fig1").src = result.fig1;
-                    // document.getElementById("fig2").src = result.fig2;
-                    document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
-                    document.getElementById("fig3").src = result.fig3;
-                    // fig3D
-                    document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
-                    document.getElementById("shape_name").innerText = result.shape_name;
-                }
-                else if (gripper == 2) {
-                    document.getElementById("fig11").src = result.fig1;
-                    // document.getElementById("fig22").src = result.fig2;
-                    document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
-                    // fig3D2
-                    document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
-                    document.getElementById("shape_name2").innerText = result.shape_name;
-                }
+                // if (gripper == 1) {
+                //     document.getElementById("fig1").src = result.fig1;
+                //     // document.getElementById("fig2").src = result.fig2;
+                //     document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
+                //     document.getElementById("fig3").src = result.fig3;
+                //     // fig3D
+                //     document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
+                //     document.getElementById("shape_name").innerText = result.shape_name;
+                // }
+                // else if (gripper == 2) {
+                //     document.getElementById("fig11").src = result.fig1;
+                //     // document.getElementById("fig22").src = result.fig2;
+                //     document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
+                //     // fig3D2
+                //     document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
+                //     document.getElementById("shape_name2").innerText = result.shape_name;
+                // }
                 // let isSaved = document.getElementById("isSaved").value;
                 if (clickType == 1){
                     savedText.style.display = "block";

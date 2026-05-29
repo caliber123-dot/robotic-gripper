@@ -418,11 +418,11 @@ def calculate():
     total = round(sum(forces) + thumb, 4)    
    
     # total = round(sum(forces) + thumb, 2)
-    fig1, fig2 = "", ""    # 🔥 IMPORTANT: Initialize variables to avoid reference errors
-    fig3d = ""
+    fig1 = ""    # 🔥 IMPORTANT: Initialize variables to avoid reference errors
+    # fig3d = ""
     fig3 = ""
     gripper_name = ""
-    shape_name = ""
+    # shape_name = ""
     if gripper == 1:
         # print("gripper type: 4-Finger Gripper") 
         fig1= "static/img/model_4Fingers.png"
@@ -434,46 +434,7 @@ def calculate():
         fig3 = "static/img/basic.avif"
         gripper_name = "3-Finger Gripper with Thumb"
     
-    # =====================================
-    # DYNAMIC ENGINEERING FIGURES
-    # =====================================
-
-    if shape == 1:
-
-        shape_name = "Rectangular"
-
-        fig2 = generate_rectangle(
-            length * 1000,
-            breadth * 1000
-        )
-        fig3d = generate_rectangle_3d(
-            length * 1000,
-            breadth * 1000                        
-        )
-
-    elif shape == 2:
-
-        shape_name = "Spherical"
-
-        fig2 = generate_sphere(
-            radius * 1000
-        )
-        fig3d = generate_sphere_3d_2(
-            radius * 1000
-        )
-
-    elif shape == 3:
-
-        shape_name = "Ellipsoidal"
-
-        fig2 = generate_ellipsoid(
-            Rmajor * 1000,
-            Rminor * 1000
-        )
-        fig3d = generate_ellipsoid_3d_2(
-            Rmajor * 1000,
-            Rminor * 1000
-        )
+    
     # =========================
     # SAVE INPUT TO SQLITE
     # =========================
@@ -560,9 +521,9 @@ def calculate():
         "total": total,
         "execution_time": round(execution_time, 2),
         "fig1": fig1,
-        "fig2": fig2,
+        # "fig2": fig2,
         "gripper_name": gripper_name,
-        "shape_name": shape_name,
+        # "shape_name": shape_name,
         "forcesA1": forcesA1,
         "forcesA2": forcesA2,
         "forcesB1": forcesB1,
@@ -573,7 +534,66 @@ def calculate():
         "thumbB2": tB2,
         "kf_total": kf_total,
         "ktt": ktt,
-        "fig3": fig3,
+        "fig3": fig3
+        # "fig3d": fig3d
+    })
+
+@app.route("/GetShapes", methods=["POST"])
+def GetShapes():
+
+    data = request.json
+    shape = int(data.get("shape", 0))
+    event = data["event"]  # 🔥 GET EVENT TYPE string value
+
+    length = float(data.get("length", 0)) * 0.001
+    breadth = float(data.get("breadth", 0)) * 0.001
+    # width = float(data.get("width", 0)) * 0.001
+
+    radius = float(data.get("radius", 0)) * 0.001
+
+    Rmajor = float(data.get("Rmajor", 0)) * 0.001
+    Rminor = float(data.get("Rminor", 0)) * 0.001
+
+    # =====================================
+    # DYNAMIC ENGINEERING FIGURES
+    # =====================================
+    shape_name = ""
+    fig2 = ""
+    fig3d = ""
+    if shape == 1:
+        shape_name = "Rectangular"
+        fig2 = generate_rectangle(
+            length * 1000,
+            breadth * 1000
+        )
+        fig3d = generate_rectangle_3d(
+            length * 1000,
+            breadth * 1000                        
+        )
+
+    elif shape == 2:
+        shape_name = "Spherical"
+        fig2 = generate_sphere(
+            radius * 1000
+        )
+        fig3d = generate_sphere_3d_2(
+            radius * 1000
+        )
+
+    elif shape == 3:
+        shape_name = "Ellipsoidal"
+        fig2 = generate_ellipsoid(
+            Rmajor * 1000,
+            Rminor * 1000
+        )
+        fig3d = generate_ellipsoid_3d_2(
+            Rmajor * 1000,
+            Rminor * 1000
+        )
+
+    return jsonify({
+        "shape_name": shape_name,
+        "fig2": fig2,
         "fig3d": fig3d
     })
 
