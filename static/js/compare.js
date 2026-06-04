@@ -1211,6 +1211,9 @@ function createBarChart(timeData, forceData) {
 
             borderColor: "#000",
 
+            barThickness: 150, // fixed width
+            maxBarThickness: 200, // prevent oversized bars
+
             backgroundColor: [
               "#4e79a7",
               "#59a14f",
