@@ -7,5 +7,6 @@ gripper_results.xlsx
 static/generated/
 static/templates/
 Graph_*.xlsx
+Input_*.xlsx
 4Fingers_*.xlsx
 gripper.db

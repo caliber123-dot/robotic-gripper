@@ -76,6 +76,37 @@ def create_tables():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS spring_constants (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        gripper INTEGER,
+
+        shape INTEGER,
+
+        material TEXT,
+
+        time_value REAL,
+
+        theta_function TEXT,
+                   
+        spring_key TEXT,
+
+        spring_value REAL,
+                   
+        UNIQUE(
+            gripper,
+            shape,
+            material,
+            time_value,
+            theta_function,
+            spring_key,
+            spring_value 
+        )        
+    )
+    """)
+
     conn.commit()
 
     conn.close()
@@ -90,7 +121,8 @@ def save_input(data):
 
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
     INSERT INTO gripper_inputs (
 
         gripper,
@@ -139,52 +171,41 @@ def save_input(data):
 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 
-    """, (
-
-        data.get("gripper"),
-        data.get("shape"),
-        data.get("event"),
-        data.get("material"),
-        data.get("time"),
-        data.get("func"),
-        data.get("mode"),
-
-        data.get("length"),
-        data.get("breadth"),
-        data.get("width"),
-
-        data.get("radius"),
-
-        data.get("Rmajor"),
-        data.get("Rminor"),
-
-        data.get("k_common"),
-
-        data.get("k_finger"),
-
-        # data.get("k_thumb1"),
-        # data.get("k_thumb2"),
-        # data.get("k_thumb3"),
-        data.get("f1k1"),
-        data.get("f1k2"),
-
-        data.get("f2k1"),
-        data.get("f2k2"),
-
-        data.get("f3k1"),
-        data.get("f3k2"),
-
-        data.get("f4k1"),
-        data.get("f4k2"),
-
-        data.get("Thk1"),
-        data.get("Thk2"),
-        data.get("Thk3"),
-
-        data.get("total"),
-
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    ))
+    """,
+        (
+            data.get("gripper"),
+            data.get("shape"),
+            data.get("event"),
+            data.get("material"),
+            data.get("time"),
+            data.get("func"),
+            data.get("mode"),
+            data.get("length"),
+            data.get("breadth"),
+            data.get("width"),
+            data.get("radius"),
+            data.get("Rmajor"),
+            data.get("Rminor"),
+            data.get("k_common"),
+            data.get("k_finger"),
+            # data.get("k_thumb1"),
+            # data.get("k_thumb2"),
+            # data.get("k_thumb3"),
+            data.get("f1k1"),
+            data.get("f1k2"),
+            data.get("f2k1"),
+            data.get("f2k2"),
+            data.get("f3k1"),
+            data.get("f3k2"),
+            data.get("f4k1"),
+            data.get("f4k2"),
+            data.get("Thk1"),
+            data.get("Thk2"),
+            data.get("Thk3"),
+            data.get("total"),
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        ),
+    )
 
     conn.commit()
 
@@ -194,18 +215,14 @@ def save_input(data):
 # =========================
 # GET SAVED DATA
 # =========================
-def get_saved_input(gripper,
-                    shape,
-                    material,
-                    time_value,
-                    theta_function,
-                    spring_mode):
+def get_saved_input(gripper, shape, material, time_value, theta_function, spring_mode):
 
     conn = get_connection()
 
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
 
     SELECT *
 
@@ -222,34 +239,26 @@ def get_saved_input(gripper,
 
     LIMIT 1
 
-    """, (
-
-        gripper,
-        shape,
-        material,
-        time_value,
-        theta_function,
-        spring_mode
-
-    ))
+    """,
+        (gripper, shape, material, time_value, theta_function, spring_mode),
+    )
 
     row = cursor.fetchone()
 
     conn.close()
 
     return dict(row) if row else None
+
+
 # ============================ Graph Data =========================
-def get_saved_input_graph(gripper,
-                    shape,
-                    material,                    
-                    theta_function,
-                    spring_mode):
+def get_saved_input_graph(gripper, shape, material, theta_function, spring_mode):
 
     conn = get_connection()
 
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
 
     SELECT *
 
@@ -265,21 +274,83 @@ def get_saved_input_graph(gripper,
 
     LIMIT 1
 
-    """, (
-
-        gripper,
-        shape,
-        material,        
-        theta_function,
-        spring_mode
-
-    ))
+    """,
+        (gripper, shape, material, theta_function, spring_mode),
+    )
 
     row = cursor.fetchone()
 
     conn.close()
 
     return dict(row) if row else None
+
+
+# ============================ Compare Data =========================
+def get_saved_input_compare(gripper, shape, theta_function, time_value, spring_mode):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+
+    SELECT *
+
+    FROM gripper_inputs
+
+    WHERE gripper = ?
+    AND shape = ?
+    AND time_value = ?
+    AND theta_function = ?
+    AND spring_mode = ?
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+    """,
+        (gripper, shape, time_value, theta_function, spring_mode),
+    )
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    return dict(row) if row else None
+
+
+def get_saved_input_graph_all(gripper, shape, material, theta_function, spring_mode):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+
+    SELECT *
+
+    FROM gripper_inputs
+
+    WHERE gripper = ?
+    AND shape = ?
+    AND material = ?
+    AND theta_function = ?
+    AND spring_mode = ?
+
+    ORDER BY time_value ASC
+
+    """,
+        (gripper, shape, material, theta_function, spring_mode),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return [dict(row) for row in rows]
+
 
 # =========================
 # UPDATE DUPLICATE DATA
@@ -290,7 +361,8 @@ def update_input(record_id, data):
 
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
 
     UPDATE gripper_inputs
 
@@ -318,35 +390,30 @@ def update_input(record_id, data):
 
     WHERE id = ?
 
-    """, (
-
-        data.get("k_common"),
-        data.get("k_finger"),
-
-        data.get("f1k1"),
-        data.get("f1k2"),
-
-        data.get("f2k1"),
-        data.get("f2k2"),
-
-        data.get("f3k1"),
-        data.get("f3k2"),
-
-        data.get("f4k1"),
-        data.get("f4k2"),
-
-        data.get("Thk1"),
-        data.get("Thk2"),
-        data.get("Thk3"),
-        data.get("total"),
-
-        record_id
-
-    ))
+    """,
+        (
+            data.get("k_common"),
+            data.get("k_finger"),
+            data.get("f1k1"),
+            data.get("f1k2"),
+            data.get("f2k1"),
+            data.get("f2k2"),
+            data.get("f3k1"),
+            data.get("f3k2"),
+            data.get("f4k1"),
+            data.get("f4k2"),
+            data.get("Thk1"),
+            data.get("Thk2"),
+            data.get("Thk3"),
+            data.get("total"),
+            record_id,
+        ),
+    )
 
     conn.commit()
 
     conn.close()
+
 
 # =========================
 # CHECK DUPLICATE ENTRY
@@ -357,7 +424,8 @@ def is_duplicate(data):
 
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
 
     SELECT id
 
@@ -373,15 +441,16 @@ def is_duplicate(data):
 
     LIMIT 1
 
-    """, (
-
-        data.get("gripper"),
-        data.get("shape"),
-        data.get("material"),
-        data.get("time"),
-        data.get("func"),
-        data.get("mode")        
-    ))
+    """,
+        (
+            data.get("gripper"),
+            data.get("shape"),
+            data.get("material"),
+            data.get("time"),
+            data.get("func"),
+            data.get("mode"),
+        ),
+    )
 
     row = cursor.fetchone()
 
@@ -390,3 +459,203 @@ def is_duplicate(data):
     # return row is not None
     return row["id"] if row else None
 
+
+# To add Spring Constant values to the database, we can create a new function that updates the existing record with the calculated spring constants. This function can be called after the spring constants are calculated in the application logic.
+# accrordind to gripper, shape, material, time, theta function and spring mode we can update the spring constant values in the database.
+# to create add_spring_constants table column is id, gripper, spring_value  to the database.
+# =========================
+# SAVE SPRING CONSTANT check before insert
+# =========================
+
+
+def save_spring_constants2222(gripper, spring_data):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    rows = [(gripper, item["spring_key"], item["spring_value"]) for item in spring_data]
+
+    cursor.executemany(
+        """
+
+    INSERT OR IGNORE INTO spring_constants
+    (
+        gripper,
+        spring_key,
+        spring_value
+    )
+
+    VALUES (?, ?, ?)
+
+    """,
+        rows,
+    )
+
+    conn.commit()
+
+    conn.close()
+
+
+def save_spring_constants(
+    gripper, shape, material, time_value, theta_function, spring_data
+):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    rows = [
+        (
+            gripper,
+            shape,
+            material,
+            time_value,
+            theta_function,
+            item["spring_key"],
+            item["spring_value"],
+        )
+        for item in spring_data
+    ]
+
+    cursor.executemany(
+        """
+
+    INSERT OR IGNORE INTO spring_constants
+    (
+        gripper,
+        shape,
+        material,
+        time_value,
+        theta_function,
+        spring_key,
+        spring_value
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+
+    """,
+        rows,
+    )
+
+    conn.commit()
+    conn.close()
+
+
+# =========================
+# GET SPRING CONSTANTS
+# =========================
+
+
+def get_spring_constants222(gripper, spring_key):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT DISTINCT spring_value
+        FROM spring_constants
+        WHERE gripper = ?
+        AND spring_key = ?
+        ORDER BY spring_value
+    """,
+        (gripper, spring_key),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def get_spring_constants(gripper, shape, material, theta_function, spring_key):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+
+        SELECT DISTINCT spring_value, time_value
+
+        FROM spring_constants
+
+        WHERE gripper = ?
+        AND shape = ?
+        AND material = ?
+        AND theta_function = ?
+        AND spring_key = ?
+
+        ORDER BY spring_value
+
+    """,
+        (gripper, shape, material, theta_function, spring_key),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    # return rows
+    return [dict(row) for row in rows]
+
+
+# ========================== to Get time to comparison ddl==============
+def get_comparison_time(gripper, shape, theta_function):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT DISTINCT time_value
+        FROM spring_constants
+        WHERE gripper = ?
+        AND shape = ?
+        AND theta_function = ?
+        ORDER BY time_value
+    """,
+        (gripper, shape, theta_function),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+
+
+# ======================== New for Pending===========================
+def get_spring_constants_comparison(gripper, shape, theta_function, time, spring_key):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+
+        SELECT DISTINCT spring_value, time_value
+
+        FROM spring_constants
+
+        WHERE gripper = ?
+        AND shape = ?        
+        AND theta_function = ?
+        AND time_value = ?
+        AND spring_key = ?
+
+        ORDER BY spring_value
+
+    """,
+        (gripper, shape, theta_function, time, spring_key),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    # return rows
+    return [dict(row) for row in rows]

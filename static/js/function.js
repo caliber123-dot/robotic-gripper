@@ -1,202 +1,192 @@
 function addCustomFunction() {
+  let terms = [];
 
-    let terms = [];
+  // Read operators
+  let op1 = document.getElementById("operator1").value;
+  let op2 = document.getElementById("operator2").value;
 
-    // Read operators
-    let op1 = document.getElementById("operator1").value;
-    let op2 = document.getElementById("operator2").value;
+  // Read terms
+  let f1 = document.getElementById("cfunc1").value;
+  let d1 = document.getElementById("cfunc2").value;
 
-    // Read terms
-    let f1 = document.getElementById("cfunc1").value;
-    let d1 = document.getElementById("cfunc2").value;
+  let f2 = document.getElementById("cfunc3").value;
+  let d2 = document.getElementById("cfunc4").value;
 
-    let f2 = document.getElementById("cfunc3").value;
-    let d2 = document.getElementById("cfunc4").value;
+  let f3 = document.getElementById("cfunc5").value;
+  let d3 = document.getElementById("cfunc6").value;
 
-    let f3 = document.getElementById("cfunc5").value;
-    let d3 = document.getElementById("cfunc6").value;
+  // Build equation dynamically
+  let funcStr = "";
 
-    // Build equation dynamically
-    let funcStr = "";
+  // TERM 1
+  // if (f1 && d1) {
+  //     funcStr += `${f1}/${d1}`;
+  // }
+  // TERM 1
+  let op0 = document.getElementById("operator0").value;
 
-    // TERM 1
-    // if (f1 && d1) {
-    //     funcStr += `${f1}/${d1}`;
-    // }
-    // TERM 1
-    let op0 = document.getElementById("operator0").value;
+  if (f1 && d1) {
+    // negative first term
+    if (op0 === "-") {
+      funcStr += `-${f1}/${d1}`;
+    }
+    // positive first term
+    else {
+      funcStr += `${f1}/${d1}`;
+    }
+  }
 
-    if (f1 && d1) {
-
-        // negative first term
-        if (op0 === "-") {
-            funcStr += `-${f1}/${d1}`;
-        }
-        // positive first term
-        else {
-            funcStr += `${f1}/${d1}`;
-        }
+  // TERM 2
+  if (f2 && d2) {
+    if (funcStr !== "") {
+      funcStr += ` ${op1} `;
     }
 
-    // TERM 2
-    if (f2 && d2) {
+    funcStr += `${f2}/${d2}`;
+  }
 
-        if (funcStr !== "") {
-            funcStr += ` ${op1} `;
-        }
-
-        funcStr += `${f2}/${d2}`;
+  // TERM 3
+  if (f3 && d3) {
+    if (funcStr !== "") {
+      funcStr += ` ${op2} `;
     }
 
-    // TERM 3
-    if (f3 && d3) {
+    funcStr += `${f3}/${d3}`;
+  }
 
-        if (funcStr !== "") {
-            funcStr += ` ${op2} `;
-        }
+  // Validation
+  if (funcStr.trim() === "") {
+    alert("Please select at least one valid term");
+    return;
+  }
 
-        funcStr += `${f3}/${d3}`;
-    }
+  // LocalStorage
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    // Validation
-    if (funcStr.trim() === "") {
-        alert("Please select at least one valid term");
-        return;
-    }
+  // Prevent duplicate
+  if (saved.includes(funcStr)) {
+    alert("Function already exists!");
+    return;
+  }
 
-    // LocalStorage
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  // Save
+  saved.push(funcStr);
 
-    // Prevent duplicate
-    if (saved.includes(funcStr)) {
-        alert("Function already exists!");
-        return;
-    }
+  localStorage.setItem("customFunctions", JSON.stringify(saved));
 
-    // Save
-    saved.push(funcStr);
+  // Update dropdown + table
+  addFunctionToDropdown(funcStr);
 
-    localStorage.setItem(
-        "customFunctions",
-        JSON.stringify(saved)
-    );
+  renderFunctionTable();
 
-    // Update dropdown + table
-    addFunctionToDropdown(funcStr);
-
-    renderFunctionTable();
-
-    // Optional close popup
-    // document.getElementById("myModalFun").style.display = "none";
+  // Optional close popup
+  // document.getElementById("myModalFun").style.display = "none";
 }
 function addCustomFunction333() {
+  let terms = [];
 
-    let terms = [];
-
-    function addTerm(f, d) {
-        if (f && d) {
-            terms.push(`${f}/${d}`);
-        }
+  function addTerm(f, d) {
+    if (f && d) {
+      terms.push(`${f}/${d}`);
     }
+  }
 
-    // Read values
-    addTerm(cfunc1.value, cfunc2.value);
-    addTerm(cfunc3.value, cfunc4.value);
-    addTerm(cfunc5.value, cfunc6.value);
+  // Read values
+  addTerm(cfunc1.value, cfunc2.value);
+  addTerm(cfunc3.value, cfunc4.value);
+  addTerm(cfunc5.value, cfunc6.value);
 
-    // ❌ If nothing selected
-    if (terms.length === 0) {
-        alert("Please select at least one valid term");
-        return;
-    }
+  // ❌ If nothing selected
+  if (terms.length === 0) {
+    alert("Please select at least one valid term");
+    return;
+  }
 
-    // Build final function
-    let funcStr = terms.join(" + ");
+  // Build final function
+  let funcStr = terms.join(" + ");
 
-    // Get existing
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  // Get existing
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    // ✅ Prevent duplicate
-    if (saved.includes(funcStr)) {
-        alert("Function already exists!");
-        return;
-    }
+  // ✅ Prevent duplicate
+  if (saved.includes(funcStr)) {
+    alert("Function already exists!");
+    return;
+  }
 
-    // Save
-    saved.push(funcStr);
-    localStorage.setItem("customFunctions", JSON.stringify(saved));
+  // Save
+  saved.push(funcStr);
+  localStorage.setItem("customFunctions", JSON.stringify(saved));
 
-    // Update UI
-    addFunctionToDropdown(funcStr);
-    renderFunctionTable();
+  // Update UI
+  addFunctionToDropdown(funcStr);
+  renderFunctionTable();
 
-    // Close popup
-    // document.getElementById("myModalFun").style.display = "none";
+  // Close popup
+  // document.getElementById("myModalFun").style.display = "none";
 }
 function addCustomFunction22() {
+  // Get values
+  let f1 = document.getElementById("cfunc1").value;
+  let d1 = document.getElementById("cfunc2").value;
 
-    // Get values
-    let f1 = document.getElementById("cfunc1").value;
-    let d1 = document.getElementById("cfunc2").value;
+  let f2 = document.getElementById("cfunc3").value;
+  let d2 = document.getElementById("cfunc4").value;
 
-    let f2 = document.getElementById("cfunc3").value;
-    let d2 = document.getElementById("cfunc4").value;
+  let f3 = document.getElementById("cfunc5").value;
+  let d3 = document.getElementById("cfunc6").value;
 
-    let f3 = document.getElementById("cfunc5").value;
-    let d3 = document.getElementById("cfunc6").value;
+  // Build function string
+  let funcStr = `${f1}/${d1} + ${f2}/${d2} + ${f3}/${d3}`;
 
-    // Build function string
-    let funcStr = `${f1}/${d1} + ${f2}/${d2} + ${f3}/${d3}`;
+  // Get existing list from localStorage
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    // Get existing list from localStorage
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  // Add new function
+  saved.push(funcStr);
 
-    // Add new function
-    saved.push(funcStr);
+  // Save back
+  localStorage.setItem("customFunctions", JSON.stringify(saved));
 
-    // Save back
-    localStorage.setItem("customFunctions", JSON.stringify(saved));
+  // Add to dropdown UI
+  addFunctionToDropdown(funcStr);
+  renderFunctionTable(); // 👈 update table
 
-    // Add to dropdown UI
-    addFunctionToDropdown(funcStr);
-    renderFunctionTable();   // 👈 update table
-
-    // Close modal
-    // document.getElementById("myModalFun").style.display = "none";
+  // Close modal
+  // document.getElementById("myModalFun").style.display = "none";
 }
 function addFunctionToDropdown(funcStr) {
-    let dropdown = document.getElementById("func");
+  let dropdown = document.getElementById("func");
 
-    let option = document.createElement("option");
-    option.text = funcStr;
-    // option.value = funcStr;   // store full string
-    option.value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
+  let option = document.createElement("option");
+  option.text = funcStr;
+  // option.value = funcStr;   // store full string
+  option.value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
 
-    dropdown.appendChild(option);
+  dropdown.appendChild(option);
 
-    // dropdown.value = funcStr; // select newly added
-    dropdown.value = option.value;
+  // dropdown.value = funcStr; // select newly added
+  dropdown.value = option.value;
 }
 window.addEventListener("load", function () {
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    saved.forEach(func => {
-        // addFunctionToDropdown(func);
-        reloadDropdown();
-        renderFunctionTable();
-    });
-    // Clean localStorage.getItem("pno");
-    // localStorage.removeItem("pno");
+  saved.forEach((func) => {
+    // addFunctionToDropdown(func);
+    reloadDropdown();
+    renderFunctionTable();
+  });
+  // Clean localStorage.getItem("pno");
+  // localStorage.removeItem("pno");
 });
 function renderFunctionTable() {
-    let table = document.getElementById("functionTableBody");
-    table.innerHTML = "";
+  let table = document.getElementById("functionTableBody");
+  table.innerHTML = "";
 
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    saved.forEach((func, index) => {
-
-        let row = `
+  saved.forEach((func, index) => {
+    let row = `
                                 <tr>
                                     <td>${func}</td>
                                     <td>
@@ -208,23 +198,23 @@ function renderFunctionTable() {
                                 </tr>
                                 `;
 
-        table.innerHTML += row;
-    });
+    table.innerHTML += row;
+  });
 }
 function deleteFunction(index) {
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    saved.splice(index, 1);
-    localStorage.setItem("customFunctions", JSON.stringify(saved));
+  saved.splice(index, 1);
+  localStorage.setItem("customFunctions", JSON.stringify(saved));
 
-    renderFunctionTable();
-    reloadDropdown();
+  renderFunctionTable();
+  reloadDropdown();
 }
 function reloadDropdown() {
-    let dropdown = document.getElementById("func");
+  let dropdown = document.getElementById("func");
 
-    // Keep default options
-    dropdown.innerHTML = `
+  // Keep default options
+  dropdown.innerHTML = `
     <option value="t/2 + t^2/3">
         t/2 + t²/3
     </option>
@@ -238,539 +228,434 @@ function reloadDropdown() {
     </option>
 `;
 
-    let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
+  let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
-    saved.forEach(func => {
-        addFunctionToDropdown(func);
-    });
+  saved.forEach((func) => {
+    addFunctionToDropdown(func);
+  });
 }
 
 // Download results as Excel >>>
 async function downloadResultsExcel() {
+  let data = {
+    a1: document.getElementById("a1")?.value || "",
+    k1: document.getElementById("k1")?.value || "",
+    b1: document.getElementById("b1")?.value || "",
+    f1: document.getElementById("f1")?.value || "",
 
-    let data = {
+    a2: document.getElementById("a2")?.value || "",
+    k2: document.getElementById("k2")?.value || "",
+    b2: document.getElementById("b2")?.value || "",
+    f2: document.getElementById("f2")?.value || "",
 
-        a1: document.getElementById("a1")?.value || "",
-        k1: document.getElementById("k1")?.value || "",
-        b1: document.getElementById("b1")?.value || "",
-        f1: document.getElementById("f1")?.value || "",
+    a3: document.getElementById("a3")?.value || "",
+    k3: document.getElementById("k3")?.value || "",
+    b3: document.getElementById("b3")?.value || "",
+    f3: document.getElementById("f3")?.value || "",
 
-        a2: document.getElementById("a2")?.value || "",
-        k2: document.getElementById("k2")?.value || "",
-        b2: document.getElementById("b2")?.value || "",
-        f2: document.getElementById("f2")?.value || "",
+    a4: document.getElementById("a4")?.value || "",
+    k4: document.getElementById("k4")?.value || "",
+    b4: document.getElementById("b4")?.value || "",
+    f4: document.getElementById("f4")?.value || "",
 
-        a3: document.getElementById("a3")?.value || "",
-        k3: document.getElementById("k3")?.value || "",
-        b3: document.getElementById("b3")?.value || "",
-        f3: document.getElementById("f3")?.value || "",
+    ta: document.getElementById("ta")?.value || "",
+    tk: document.getElementById("tk")?.value || "",
+    tb: document.getElementById("tb")?.value || "",
+    ft: document.getElementById("ft")?.value || "",
 
-        a4: document.getElementById("a4")?.value || "",
-        k4: document.getElementById("k4")?.value || "",
-        b4: document.getElementById("b4")?.value || "",
-        f4: document.getElementById("f4")?.value || "",
+    total: document.getElementById("total")?.value || "",
+    gripper_name:
+      sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
 
-        ta: document.getElementById("ta")?.value || "",
-        tk: document.getElementById("tk")?.value || "",
-        tb: document.getElementById("tb")?.value || "",
-        ft: document.getElementById("ft")?.value || "",
+    shape_name:
+      document.getElementById("shape")?.selectedOptions[0]?.text || "",
 
-        total: document.getElementById("total")?.value || "",
-        gripper_name: document.getElementById("gripper") ?.selectedOptions[0]?.text || "",
+    material:
+      document.getElementById("material")?.selectedOptions[0]?.text || "",
 
-        shape_name: document.getElementById("shape") ?.selectedOptions[0]?.text || "",
+    time: document.getElementById("time").value,
 
-        material: document.getElementById("material")?.selectedOptions[0]?.text || "",
+    func: document.getElementById("func")?.selectedOptions[0]?.text || "",
 
-        time: document.getElementById("time").value,
+    mode_name:
+      document
+        .querySelector('input[name="kmode"]:checked')
+        ?.nextSibling?.textContent.trim() || "",
+  };
 
-        func: document.getElementById("func")?.selectedOptions[0]?.text || "",
+  console.log(data);
 
-        mode_name: document.querySelector('input[name="kmode"]:checked')
-           ?.nextSibling?.textContent.trim() || "",
-    };
+  let response = await fetch("/download_excel", {
+    method: "POST",
 
-    console.log(data);
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-    let response = await fetch("/download_excel", {
+    body: JSON.stringify(data),
+  });
 
-        method: "POST",
+  if (!response.ok) {
+    alert("Excel download failed");
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+    return;
+  }
 
-        body: JSON.stringify(data)
-    });
+  let blob = await response.blob();
 
-    if (!response.ok) {
+  let url = window.URL.createObjectURL(blob);
 
-        alert("Excel download failed");
+  let a = document.createElement("a");
 
-        return;
-    }
+  a.href = url;
 
-    let blob = await response.blob();
+  let disposition = response.headers.get("Content-Disposition");
 
-    let url = window.URL.createObjectURL(blob);
+  let filename = "gripper_results.xlsx";
 
-    let a = document.createElement("a");
+  if (disposition && disposition.includes("filename=")) {
+    filename = disposition.split("filename=")[1].replace(/"/g, "");
+  }
 
-    a.href = url;
+  a.download = filename;
 
-    let disposition =
-    response.headers.get(
-        "Content-Disposition"
-    );
+  document.body.appendChild(a);
 
-    let filename =
-        "gripper_results.xlsx";
+  a.click();
 
-    if (
-        disposition &&
-        disposition.includes("filename=")
-    ) {
+  a.remove();
 
-        filename =
-            disposition
-                .split("filename=")[1]
-                .replace(/"/g, "");
-    }
-
-    a.download = filename;
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-    window.URL.revokeObjectURL(url);
+  window.URL.revokeObjectURL(url);
 }
 
 async function downloadResultsPdf() {
+  let total = document.getElementById("total").value;
 
-    let total = document.getElementById("total").value;
+  // VALIDATION
+  if (total === "" || total === "0") {
+    alert("Please calculate force first.");
 
-    // VALIDATION
-    if (
-        total === "" ||
-        total === "0"
-    ) {
+    return;
+  }
 
-        alert("Please calculate force first.");
+  let gripper = getCurrentGripper();
 
-        return;
-    }
+  let mode = document.querySelector('input[name="kmode"]:checked').value;
 
-    let gripper =
-        document.getElementById("gripper").value;
+  let mode_name = "";
 
-    let mode =
-        document.querySelector(
-            'input[name="kmode"]:checked'
-        ).value;
+  if (mode == "1") {
+    mode_name = "All equal";
+  } else if (mode == "2") {
+    mode_name = "Fingers same, Thumb different";
+  } else {
+    mode_name = "All unequal";
+  }
 
-    let mode_name = "";
+  let payload = {
+    gripper_name: gripper == "1" ? "4 Fingers" : "3 Fingers + 1 Thumb",
 
-    if (mode == "1") {
+    shape_name:
+      document.getElementById("shape").options[
+        document.getElementById("shape").selectedIndex
+      ].text,
 
-        mode_name = "All equal";
-    }
-    else if (mode == "2") {
+    material:
+      document.getElementById("material").options[
+        document.getElementById("material").selectedIndex
+      ].text,
 
-        mode_name =
-            "Fingers same, Thumb different";
-    }
-    else {
+    time: document.getElementById("time").value,
 
-        mode_name = "All unequal";
-    }
+    func: document.getElementById("func").value,
 
-    let payload = {
+    mode_name: mode_name,
 
-        gripper_name:
-            (gripper == "1")
-                ? "4 Fingers"
-                : "3 Fingers + 1 Thumb",
+    a1: document.getElementById("a1").value,
+    a2: document.getElementById("a2").value,
+    a3: document.getElementById("a3").value,
+    a4: document.getElementById("a4").value,
 
-        shape_name:
-            document.getElementById("shape")
-                .options[
-                document.getElementById("shape")
-                    .selectedIndex
-            ].text,
+    b1: document.getElementById("b1").value,
+    b2: document.getElementById("b2").value,
+    b3: document.getElementById("b3").value,
+    b4: document.getElementById("b4").value,
 
-        material:
-            document.getElementById("material")
-                .options[
-                document.getElementById("material")
-                    .selectedIndex
-            ].text,
+    k1: document.getElementById("k1").value,
+    k2: document.getElementById("k2").value,
+    k3: document.getElementById("k3").value,
+    k4: document.getElementById("k4").value,
 
-        time:
-            document.getElementById("time")
-                .value,
+    f1: document.getElementById("f1").value,
+    f2: document.getElementById("f2").value,
+    f3: document.getElementById("f3").value,
+    f4: document.getElementById("f4").value,
 
-        func:
-            document.getElementById("func")
-                .value,
+    ta: document.getElementById("ta").value,
+    tb: document.getElementById("tb").value,
+    tk: document.getElementById("tk").value,
+    ft: document.getElementById("ft").value,
 
-        mode_name: mode_name,
+    total: total,
+  };
 
-        a1: document.getElementById("a1").value,
-        a2: document.getElementById("a2").value,
-        a3: document.getElementById("a3").value,
-        a4: document.getElementById("a4").value,
+  let response = await fetch("/download_results_pdf", {
+    method: "POST",
 
-        b1: document.getElementById("b1").value,
-        b2: document.getElementById("b2").value,
-        b3: document.getElementById("b3").value,
-        b4: document.getElementById("b4").value,
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-        k1: document.getElementById("k1").value,
-        k2: document.getElementById("k2").value,
-        k3: document.getElementById("k3").value,
-        k4: document.getElementById("k4").value,
+    body: JSON.stringify(payload),
+  });
 
-        f1: document.getElementById("f1").value,
-        f2: document.getElementById("f2").value,
-        f3: document.getElementById("f3").value,
-        f4: document.getElementById("f4").value,
+  let blob = await response.blob();
 
-        ta: document.getElementById("ta").value,
-        tb: document.getElementById("tb").value,
-        tk: document.getElementById("tk").value,
-        ft: document.getElementById("ft").value,
+  let url = window.URL.createObjectURL(blob);
 
-        total: total
-    };
+  let a = document.createElement("a");
 
-    let response = await fetch(
-        "/download_results_pdf",
-        {
+  a.href = url;
 
-            method: "POST",
+  let disposition = response.headers.get("Content-Disposition");
 
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
+  let filename = "gripper_results.pdf";
 
-            body: JSON.stringify(payload)
+  if (disposition && disposition.includes("filename=")) {
+    filename = disposition.split("filename=")[1].replace(/"/g, "");
+  }
 
-        }
-    );
+  a.download = filename;
 
-    let blob = await response.blob();
-
-    let url =
-        window.URL.createObjectURL(blob);
-
-    let a =
-        document.createElement("a");
-
-    a.href = url;
-
-    let disposition =
-    response.headers.get(
-        "Content-Disposition"
-    );
-
-    let filename =
-        "gripper_results.pdf";
-
-    if (
-        disposition &&
-        disposition.includes("filename=")
-    ) {
-
-        filename =
-            disposition
-                .split("filename=")[1]
-                .replace(/"/g, "");
-    }
-
-    a.download = filename;
-
-    a.click();
+  a.click();
 }
 
-function clearSpringInputs(){
+function clearSpringInputs() {
+  let ids = [
+    "k_common",
+    "k_finger",
 
-    let ids = [
+    "f1k1",
+    "f1k2",
+    "f2k1",
+    "f2k2",
+    "f3k1",
+    "f3k2",
+    "f4k1",
+    "f4k2",
 
-        "k_common",
-        "k_finger",
+    "Thk1",
+    "Thk2",
+    "Thk3",
+    "k_thumb",
+    "k_thumb2",
+    "k_thumb3",
+  ];
 
-        "f1k1", "f1k2",
-        "f2k1", "f2k2",
-        "f3k1", "f3k2",
-        "f4k1", "f4k2",
+  ids.forEach((id) => {
+    let el = document.getElementById(id);
 
-        "Thk1", "Thk2", "Thk3",
-        "k_thumb",
-        "k_thumb2",
-        "k_thumb3"
-    ];
-
-    ids.forEach(id => {
-
-        let el = document.getElementById(id);
-
-        if(el){
-
-            el.value = "";
-        }
-    });
+    if (el) {
+      el.value = "";
+    }
+  });
 }
 
-function clearTable(){
+function clearTable() {
+  let ids = [
+    "txtvolume",
+    "txtmass",
+    // A values
+    "a10",
+    "a1",
+    "a20",
+    "a2",
+    "a30",
+    "a3",
+    "a40",
+    "a4",
+    "a50",
+    "ta",
 
-    let ids = [
+    // B values
+    "b10",
+    "b1",
+    "b20",
+    "b2",
+    "b30",
+    "b3",
+    "b40",
+    "b4",
+    "b50",
+    "tb",
 
-        "txtvolume",
-        "txtmass",
-        // A values
-        "a10", "a1",
-        "a20", "a2",
-        "a30", "a3",
-        "a40", "a4",
-        "a50", "ta",
+    // K values
+    "k1",
+    "k2",
+    "k3",
+    "k4",
+    "tk",
 
-        // B values
-        "b10", "b1",
-        "b20", "b2",
-        "b30", "b3",
-        "b40", "b4",
-        "b50", "tb",
+    // Force values
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "ft",
 
-        // K values
-        "k1",
-        "k2",
-        "k3",
-        "k4",
-        "tk",
+    // Total
+    "total",
 
-        // Force values
-        "f1",
-        "f2",
-        "f3",
-        "f4",
-        "ft",
+    // Execution time
+    // "executionTime",
+    // "executionTime2"
+  ];
 
-        // Total
-        "total"
+  ids.forEach((id) => {
+    let el = document.getElementById(id);
 
-        // Execution time
-        // "executionTime",
-        // "executionTime2"
-    ];
+    if (el) {
+      // input textbox
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        el.value = "";
+      }
 
-    ids.forEach(id => {
-
-        let el =
-            document.getElementById(id);
-
-        if(el){
-
-            // input textbox
-            if(
-                el.tagName === "INPUT" ||
-                el.tagName === "TEXTAREA"
-            ){
-
-                el.value = "";
-            }
-
-            // normal div/span
-            else{
-
-                el.innerHTML = "";
-            }
-        }
-    });
-    document.getElementById("executionTime").innerHTML = "0";
-    document.getElementById("executionTime2").innerHTML = "0";
-
+      // normal div/span
+      else {
+        el.innerHTML = "";
+      }
+    }
+  });
+  document.getElementById("executionTime").innerHTML = "0";
+  document.getElementById("executionTime2").innerHTML = "0";
 }
 
 async function getSavedData() {
+  let gripper = getCurrentGripper();
+  let shape = document.getElementById("shape").value;
 
-    let gripper = getCurrentGripper();
-    let shape =
-        document.getElementById("shape").value;
+  let material = document.getElementById("material").value;
 
-    let material =
-        document.getElementById("material").value;
+  let time = document.getElementById("time").value;
 
-    let time =
-        document.getElementById("time").value;
+  let func = document.getElementById("func").value;
 
-    let func =
-        document.getElementById("func").value;
+  let mode = document.querySelector('input[name="kmode"]:checked').value;
 
-    let mode =
-        document.querySelector(
-            'input[name="kmode"]:checked'
-        ).value;
+  // validation
+  if (!shape || !material || !time || !func || !mode) {
+    clearSpringInputs();
 
-    // validation
-    if (!shape || !material || !time || !func || !mode) {
+    return;
+  }
 
-        clearSpringInputs();
+  let response = await fetch("/get_saved_data", {
+    method: "POST",
 
-        return;
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: gripper,
+      shape: shape,
+      material: material,
+      time: time,
+      func: func,
+      mode: mode,
+    }),
+  });
+
+  let result = await response.json();
+
+  console.log(result);
+
+  // =========================
+  // FOUND
+  // =========================
+
+  if (result.status === "found") {
+    let d = result.data;
+
+    console.log("Previous Data:", d);
+
+    // avoid reload same data
+    let currentTotal = document
+      .getElementById("savedText")
+      .getAttribute("data-total");
+
+    if (currentTotal == d.total_force) {
+      console.log("Already loaded");
+
+      return;
     }
 
-    let response = await fetch(
-        "/get_saved_data",
-        {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
-
-            body: JSON.stringify({
-                gripper: gripper,
-                shape: shape,
-                material: material,
-                time: time,
-                func: func,
-                mode: mode
-            })
-        }
-    );
-
-    let result =
-        await response.json();
-
-    console.log(result);
-
     // =========================
-    // FOUND
+    // MODE 1
     // =========================
 
-    if (result.status === "found") {
+    let kCommon = document.getElementById("k_common");
 
-        let d = result.data;
+    if (kCommon && d.k_common != null) {
+      kCommon.value = d.k_common;
+    }
 
-        console.log(
-            "Previous Data:",
-            d
-        );
+    // =========================
+    // MODE 2
+    // =========================
 
-        // avoid reload same data
-        let currentTotal =
-            document
-            .getElementById("savedText")
-            .getAttribute("data-total");
+    let kFinger = document.getElementById("k_finger");
 
-        if (currentTotal == d.total_force) {
+    if (kFinger && d.k_finger != null) {
+      kFinger.value = d.k_finger;
+    }
 
-            console.log(
-                "Already loaded"
-            );
+    // =========================
+    // ALL SPRING VALUES
+    // =========================
 
-            return;
-        }
+    let mapValues = [
+      ["f1k1", d.f1k1],
+      ["f1k2", d.f1k2],
 
-        // =========================
-        // MODE 1
-        // =========================
+      ["f2k1", d.f2k1],
+      ["f2k2", d.f2k2],
 
-        let kCommon =
-            document.getElementById(
-                "k_common"
-            );
+      ["f3k1", d.f3k1],
+      ["f3k2", d.f3k2],
 
-        if (
-            kCommon &&
-            d.k_common != null
-        ) {
+      ["f4k1", d.f4k1],
+      ["f4k2", d.f4k2],
 
-            kCommon.value =
-                d.k_common;
-        }
+      ["Thk1", d.thk1],
+      ["Thk2", d.thk2],
+      ["Thk3", d.thk3],
 
-        // =========================
-        // MODE 2
-        // =========================
+      ["k_thumb", d.thk1],
+      ["k_thumb2", d.thk2],
+      ["k_thumb3", d.thk3],
+    ];
 
-        let kFinger =
-            document.getElementById(
-                "k_finger"
-            );
+    mapValues.forEach((item) => {
+      let id = item[0];
 
-        if (
-            kFinger &&
-            d.k_finger != null
-        ) {
+      let value = item[1];
 
-            kFinger.value =
-                d.k_finger;
-        }
+      let el = document.getElementById(id);
 
-        // =========================
-        // ALL SPRING VALUES
-        // =========================
+      if (el && value != null) {
+        el.value = value;
+      }
+    });
 
-        let mapValues = [
-
-            ["f1k1", d.f1k1],
-            ["f1k2", d.f1k2],
-
-            ["f2k1", d.f2k1],
-            ["f2k2", d.f2k2],
-
-            ["f3k1", d.f3k1],
-            ["f3k2", d.f3k2],
-
-            ["f4k1", d.f4k1],
-            ["f4k2", d.f4k2],
-
-            ["Thk1", d.thk1],
-            ["Thk2", d.thk2],
-            ["Thk3", d.thk3],
-
-            ["k_thumb", d.thk1],
-            ["k_thumb2", d.thk2],
-            ["k_thumb3", d.thk3]
-        ];
-
-        mapValues.forEach(item => {
-
-            let id = item[0];
-
-            let value = item[1];
-
-            let el =
-                document.getElementById(id);
-
-            if (
-                el &&
-                value != null
-            ) {
-
-                el.value = value;
-            }
-        });
-
-        // document.getElementById("isSaved").value = "1";
-        await calculate(2);
-        // alert("After calculation loaded");        
-        // =========================
-        // MESSAGE
-        // =========================
-        let total = document.getElementById("total").value;
-        document.getElementById(
-            "savedText"
-        ).innerHTML =
-
-        `
+    // document.getElementById("isSaved").value = "1";
+    await calculate(2);
+    // alert("After calculation loaded");
+    // =========================
+    // MESSAGE
+    // =========================
+    let total = document.getElementById("total").value;
+    document.getElementById("savedText").innerHTML = `
         <span class="text-success">
             <i class="bi bi-check-circle-fill"></i>
             Previous calculation loaded
@@ -782,172 +667,291 @@ async function getSavedData() {
         <b>${total}</b>
         `;
 
-        // cache current
-        document
-        .getElementById("savedText")
-        .setAttribute(
-            "data-total",
-            total
-        );
-    }
+    // cache current
+    document.getElementById("savedText").setAttribute("data-total", total);
+  }
 
-    // =========================
-    // NOT FOUND
-    // =========================
-
-    else {
-        // document.getElementById("isSaved").value = "0";
-        clearSpringInputs();
-        //clear o/p table        
-        clearTable();
-        document
-        .getElementById("savedText")
-        .removeAttribute(
-            "data-total"
-        );
-        // document.getElementById("savedText").style.display = "block";
-        document.getElementById(
-            "savedText"
-        ).innerHTML =
-
-        `
+  // =========================
+  // NOT FOUND
+  // =========================
+  else {
+    // document.getElementById("isSaved").value = "0";
+    clearSpringInputs();
+    //clear o/p table
+    clearTable();
+    document.getElementById("savedText").removeAttribute("data-total");
+    // document.getElementById("savedText").style.display = "block";
+    document.getElementById("savedText").innerHTML = `
         <span class="text-danger">
             <i class="bi bi-exclamation-circle-fill"></i>
             No previous calculation found
         </span>
         `;
-    }
+  }
 }
 
-document.getElementById("shape")
-    .addEventListener("change", getSavedData);
+document.getElementById("shape").addEventListener("change", getSavedData);
 
-document.getElementById("material")
-    .addEventListener("change", getSavedData);
+document.getElementById("material").addEventListener("change", getSavedData);
 
-document.getElementById("time")
-    .addEventListener("input", getSavedData);
+document.getElementById("time").addEventListener("input", getSavedData);
 
-document.getElementById("func")
-    .addEventListener("change", getSavedData);
+document.getElementById("func").addEventListener("change", getSavedData);
 
-document
-.querySelectorAll('input[name="kmode"]')
-.forEach(radio => {
-
-    radio.addEventListener(
-        "change",
-        getSavedData
-    );
-
+document.querySelectorAll('input[name="kmode"]').forEach((radio) => {
+  radio.addEventListener("change", getSavedData);
 });
 
 async function GetShapes() {
+  let loader = document.getElementById("loader");
+  let shape = +document.getElementById("shape").value;
 
-    let loader = document.getElementById("loader");
-    let shape = +document.getElementById("shape").value;
+  let event = "";
+  let Rmajor = document.getElementById("Rmajor").value;
+  let Rminor = document.getElementById("Rminor").value;
 
-    let event = "";
-    let Rmajor = document.getElementById("Rmajor").value;
-    let Rminor = document.getElementById("Rminor").value;
+  let length = document.getElementById("length").value;
+  let breadth = document.getElementById("breadth").value;
+  let width = document.getElementById("width").value;
 
-    let length = document.getElementById("length").value;
-    let breadth = document.getElementById("breadth").value;
-    let width = document.getElementById("width").value;
+  let radius = document.getElementById("radius").value;
 
-    let radius = document.getElementById("radius").value;
+  if (!shape) {
+    console.log("Shape not selected");
+    // alert("Please select a shape");
+    // markInvalid("shape");
+    return false;
+  }
+  // 🔥 SHOW LOADER
+  loader.style.display = "inline-block";
+  // 🔥 GET SELECTION EVENT
 
-    if (!shape) {
-        console.log("Shape not selected");
-        // alert("Please select a shape");
-        // markInvalid("shape");
-        return false;
+  if (shape == "3") {
+    // Ellipsoidal
+    if (document.getElementById("rbmajor").checked) {
+      event = "major";
+    } else if (document.getElementById("rbminor").checked) {
+      event = "minor";
     }
-    // 🔥 SHOW LOADER
-    loader.style.display = "inline-block";
-    // 🔥 GET SELECTION EVENT    
+    if (!Rmajor) {
+      // markInvalid("Rmajor");
+      return false;
+    }
+    if (!Rminor) {
+      // markInvalid("Rminor");
+      return false;
+    }
+  } else if (shape == "1") {
+    // Rectangular
+    if (document.getElementById("rblength").checked) {
+      event = "length";
+    } else if (document.getElementById("rbbreadth").checked) {
+      event = "breadth";
+    }
+    if (!length) {
+      // markInvalid("length");
+      return false;
+    }
+    if (!breadth) {
+      // markInvalid("breadth");
+      return false;
+    }
+    if (!width) {
+      // markInvalid("width");
+      return false;
+    }
+    // alert("Event: " + event);
+  } else if (shape == 2) {
+    // Spherical
+    event = "none"; // spherical doesn't have selection events
+    if (!radius) {
+      // markInvalid("radius");
+      return false;
+    }
+  }
 
-    if (shape == "3") { // Ellipsoidal
-        if (document.getElementById("rbmajor").checked) {
-            event = "major";
-        } else if (document.getElementById("rbminor").checked) {
-            event = "minor";
-        }
-        if (!Rmajor) {
-            // markInvalid("Rmajor");
-            return false;
-        }
-        if (!Rminor) {
-            // markInvalid("Rminor");
-            return false;
-        }
-    }
-    else if (shape == "1") { // Rectangular
-        if (document.getElementById("rblength").checked) {
-            event = "length";
-        } else if (document.getElementById("rbbreadth").checked) {
-            event = "breadth";
-        }
-        if (!length) {
-            // markInvalid("length");
-            return false;
-        }
-        if (!breadth) {
-            // markInvalid("breadth");
-            return false;
-        }
-        if (!width) {
-            // markInvalid("width");
-            return false;
-        }
-        // alert("Event: " + event);
-    }
-    else if (shape == 2) { // Spherical
-        event = "none"; // spherical doesn't have selection events      
-        if (!radius) {
-            // markInvalid("radius");
-            return false;
-        }
-    }
+  let data = {
+    shape: +shape,
+    event: event,
+    Rmajor: Rmajor,
+    Rminor: Rminor,
+    length: length,
+    breadth: breadth,
+    width: width,
+    radius: radius,
+  };
+  let res = await fetch("/GetShapes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
-    let data = {
-        shape: +shape,
-        event: event,
-        Rmajor: Rmajor,
-        Rminor: Rminor,
-        length: length,
-        breadth: breadth,
-        width: width,
-        radius: radius
-    };
-    let res = await fetch("/GetShapes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+  let result = await res.json();
+  // console.log(result);
+  // ✅ Hide loader
+  loader.style.display = "none";
+
+  let gripper = getCurrentGripper();
+
+  if (gripper == 1) {
+    // document.getElementById("fig1").src = result.fig1;
+    // document.getElementById("fig2").src = result.fig2;
+    document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
+    // document.getElementById("fig3").src = result.fig3;
+    // fig3D for figure 2
+    document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
+    document.getElementById("shape_name").innerText = result.shape_name;
+  } else if (gripper == 2) {
+    // document.getElementById("fig11").src = result.fig1;
+    // document.getElementById("fig22").src = result.fig2;
+    document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
+    // fig3D2 for figure 2
+    document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
+    document.getElementById("shape_name2").innerText = result.shape_name;
+  }
+}
+
+// Auto complete for spring constants for common use == NOT USED CURRENTLY
+async function loadSpringConstants(gripper) {
+  const response = await fetch("/get_spring_constants", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      gripper: gripper,
+    }),
+  });
+
+  const data = await response.json();
+
+  const datalists = [
+    "k_common_options",
+
+    "k_finger_options",
+
+    "k_thumb_options",
+
+    "k_thumb2_options",
+
+    "k_thumb3_options",
+
+    "f1k1_options",
+    "f1k2_options",
+    "f2k1_options",
+    "f2k2_options",
+    "f3k1_options",
+    "f3k2_options",
+    "f4k1_options",
+    "f4k2_options",
+
+    "Thk1_options",
+    "Thk2_options",
+    "Thk3_options",
+  ];
+
+  datalists.forEach((id) => {
+    let dl = document.getElementById(id);
+
+    if (!dl) return;
+
+    dl.innerHTML = "";
+
+    data.spring_values.forEach((value) => {
+      let option = document.createElement("option");
+
+      option.value = value;
+
+      dl.appendChild(option);
     });
+  });
+}
 
-    let result = await res.json();
-    // console.log(result);
-    // ✅ Hide loader
-    loader.style.display = "none";
+// Auto complete for spring constants based on current gripper, shape, material, function and mode
+async function loadSpringAutocomplete(springKey, datalistId) {
+  let gripper = getCurrentGripper();
 
-    let gripper = getCurrentGripper();
+  let shape = document.getElementById("shape").value;
 
-    if (gripper == 1) {
-        // document.getElementById("fig1").src = result.fig1;
-        // document.getElementById("fig2").src = result.fig2;
-        document.getElementById("fig2").src = result.fig2 + "?t=" + Date.now();
-        // document.getElementById("fig3").src = result.fig3;
-        // fig3D for figure 2
-        document.getElementById("fig3d").src = result.fig3d + "?t=" + Date.now();
-        document.getElementById("shape_name").innerText = result.shape_name;
-    }
-    else if (gripper == 2) {
-        // document.getElementById("fig11").src = result.fig1;
-        // document.getElementById("fig22").src = result.fig2;
-        document.getElementById("fig22").src = result.fig2 + "?t=" + Date.now();
-        // fig3D2 for figure 2
-        document.getElementById("fig3d2").src = result.fig3d + "?t=" + Date.now();
-        document.getElementById("shape_name2").innerText = result.shape_name;
-    }
+  let material = document.getElementById("material").value;
+
+  // let time = document.getElementById("time").value;
+
+  let func = document.getElementById("func").value;
+
+  let spring_key = springKey;
+  if (!shape || !material || !func) {
+    return;
+  }
+
+  let response = await fetch("/get_spring_constants", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      gripper: gripper,
+      shape: shape,
+      material: material,
+      func: func,
+      spring_key: spring_key,
+    }),
+  });
+
+  let result = await response.json();
+
+  let datalist = document.getElementById(datalistId);
+
+  datalist.innerHTML = "";
+
+  // result.spring_values.forEach((value) => {
+  //   let option = document.createElement("option");
+
+  //   option.value = value;
+
+  //   datalist.appendChild(option);
+  // });
+  result.spring_values.forEach((item) => {
+    let option = document.createElement("option");
+
+    option.value = item.spring_value;
+
+    option.textContent = item.time_value + " sec";
+
+    datalist.appendChild(option);
+  });
+}
+
+function loadAllSpringConstants() {
+  loadSpringAutocomplete("k_common", "k_common_options");
+
+  loadSpringAutocomplete("k_finger", "k_finger_options");
+
+  loadSpringAutocomplete("k_thumb", "k_thumb_options");
+
+  loadSpringAutocomplete("k_thumb2", "k_thumb2_options");
+
+  loadSpringAutocomplete("k_thumb3", "k_thumb3_options");
+
+  loadSpringAutocomplete("f1k1", "f1k1_options");
+
+  loadSpringAutocomplete("f1k2", "f1k2_options");
+
+  loadSpringAutocomplete("f2k1", "f2k1_options");
+
+  loadSpringAutocomplete("f2k2", "f2k2_options");
+
+  loadSpringAutocomplete("f3k1", "f3k1_options");
+
+  loadSpringAutocomplete("f3k2", "f3k2_options");
+
+  loadSpringAutocomplete("f4k1", "f4k1_options");
+
+  loadSpringAutocomplete("f4k2", "f4k2_options");
+
+  loadSpringAutocomplete("Thk1", "Thk1_options");
+
+  loadSpringAutocomplete("Thk2", "Thk2_options");
+
+  loadSpringAutocomplete("Thk3", "Thk3_options");
 }

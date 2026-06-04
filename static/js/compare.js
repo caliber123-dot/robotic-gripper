@@ -40,7 +40,7 @@ document
 const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
 function showhidewindow(pno) {
   // loadSpringConstants(pno);
-  loadAllSpringConstants();
+  //   loadAllSpringConstants();
   // alert("Default terms initialized. 2222");
   let gripper = pno;
   let gripper_window = document.getElementById("gripper_window");
@@ -103,27 +103,17 @@ function showhidewindow(pno) {
   document.getElementById("graphTableBody").innerHTML = `
 
         <tr>
-            <td>1 sec</td>
+            <td>Rubber</td>
             <td>-</td>
         </tr>
 
         <tr>
-            <td>2 sec</td>
+            <td>ABS</td>
             <td>-</td>
         </tr>
 
         <tr>
-            <td>3 sec</td>
-            <td>-</td>
-        </tr>
-
-        <tr>
-            <td>4 sec</td>
-            <td>-</td>
-        </tr>
-
-        <tr>
-            <td>5 sec</td>
+            <td>Teflon</td>
             <td>-</td>
         </tr>
 
@@ -152,13 +142,16 @@ function showhidewindow(pno) {
     gripper_window.style.display = "none";
     fingerthumb_hide.style.display = "none";
   } else if (gripper == 1) {
-    gripper_window.setAttribute("data-title", "4 Fingers Bar Chart");
+    gripper_window.setAttribute("data-title", "4 Fingers Comparison Chart");
     gripper_window.style.display = "block";
     // trFinger4.style.display = "table-row";
     document.getElementById("shape_name").innerText = "4 Fingers";
     fingerthumb_hide.style.display = "none";
   } else if (gripper == 2) {
-    gripper_window.setAttribute("data-title", "3 Fingers + 1 Thumb Bar Chart");
+    gripper_window.setAttribute(
+      "data-title",
+      "3 Fingers + 1 Thumb Comparison Chart",
+    );
     gripper_window.style.display = "block";
     // trFinger4.style.display = "none";
     document.getElementById("shape_name").innerText = "3 Fingers + 1 Thumb";
@@ -169,7 +162,7 @@ function showhidewindow(pno) {
 
 function updateSpringFields() {
   // alert("Update spring fields called");
-  console.log("Updating spring fields...");
+  //   console.log("Updating spring fields...");
   let gripper = sessionStorage.getItem("pno");
   let mode = document.querySelector('input[name="kmode"]:checked').value;
   // let container = document.getElementById("springInputs");
@@ -201,7 +194,7 @@ function updateSpringFields() {
       msg.innerHTML = "Alert, Select Gripper Type : 3 Fingers + 1 Thumb";
     }
   }
-  console.log("Mode:", mode, "Gripper:", gripper);
+  //   console.log("Mode:", mode, "Gripper:", gripper);
   if (mode == 3) {
     equal.style.display = "none";
     samefinger.style.display = "none";
@@ -219,27 +212,26 @@ function updateSpringFields() {
   }
 }
 
+// set Saved spring values into textboxes
 async function autoLoadSavedSpring() {
   let gripper = getCurrentGripper();
-  let shape = document.getElementById("shape").value;
 
-  let material = document.getElementById("material").value;
+  let shape = document.getElementById("shape").value;
 
   let func = document.getElementById("func").value;
 
+  let time = document.getElementById("time").value;
+
   let mode = document.querySelector('input[name="kmode"]:checked')?.value;
 
-  // fixed graph page time
-  // let time = 1;
-
   // validation
-  if (!shape || !material || !func || !mode) {
+  if (!shape || !time || !func || !mode) {
     clearSpringInputs();
 
     return;
   }
 
-  let response = await fetch("/get_saved_data_graph", {
+  let response = await fetch("/get_saved_data_compare", {
     method: "POST",
 
     headers: {
@@ -251,9 +243,9 @@ async function autoLoadSavedSpring() {
 
       shape: shape,
 
-      material: material,
-
       func: func,
+
+      time: time,
 
       mode: mode,
     }),
@@ -261,14 +253,14 @@ async function autoLoadSavedSpring() {
 
   let result = await response.json();
 
-  console.log(result);
+  //   console.log(result);
 
   // =========================
   // FOUND
   // =========================
 
   if (result.status === "found") {
-    clearSpringInputs();
+    // clearSpringInputs();
 
     let d = result.data;
 
@@ -344,7 +336,7 @@ async function autoLoadSavedSpring() {
       }
     });
 
-    calculate();
+    // calculate();
   }
 
   // =========================
@@ -412,27 +404,17 @@ function clearSpringInputs() {
     tbody.innerHTML = `
 
             <tr>
-                <td>1 sec</td>
+                <td>Rubber</td>
                 <td>-</td>
             </tr>
 
             <tr>
-                <td>2 sec</td>
+                <td>ABS</td>
                 <td>-</td>
             </tr>
 
             <tr>
-                <td>3 sec</td>
-                <td>-</td>
-            </tr>
-
-            <tr>
-                <td>4 sec</td>
-                <td>-</td>
-            </tr>
-
-            <tr>
-                <td>5 sec</td>
+                <td>Teflon</td>
                 <td>-</td>
             </tr>
 
@@ -530,17 +512,6 @@ function toggleTerms(count) {
     thirdGroup.style.display = "inline-flex";
   }
 }
-
-/* default load */
-// document.addEventListener(
-//     "DOMContentLoaded",
-//     function () {
-
-//         document.getElementById( "oneTerm" ).checked = true;
-
-//         toggleTerms(1);
-//     }
-// );
 
 function addCustomFunction() {
   let terms = [];
@@ -647,7 +618,6 @@ window.addEventListener("load", () => {
   // alert("Default terms initialized.");
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
   document.getElementById("selectevt").style.display = "none";
-
   saved.forEach((func) => {
     // addFunctionToDropdown(func);
     reloadDropdown();
@@ -807,28 +777,89 @@ function updateSelectionEvent() {
     selectevt.style.display = "none";
   }
 
-  loadAllSpringConstants();
+  // loadAllSpringConstants();
 }
+
 // updateSelectionEvent();
+// document.getElementById("selectevt").style.display = "none";
 
 // =========================
 // AUTO LOAD SAVED DATA
 // =========================
+document.getElementById("shape")?.addEventListener("change", async function () {
+  await loadComparisonTime();
 
-document
-  .getElementById("shape")
-  .addEventListener("change", autoLoadSavedSpring);
+  autoLoadSavedSpring();
+});
 
-document
-  .getElementById("material")
-  .addEventListener("change", autoLoadSavedSpring);
+document.getElementById("func")?.addEventListener("change", async function () {
+  await loadComparisonTime();
 
-document.getElementById("func").addEventListener("change", autoLoadSavedSpring);
+  autoLoadSavedSpring();
+});
+
+document.getElementById("time")?.addEventListener("change", async function () {
+  await loadAllComparisonSpringConstants();
+
+  await autoLoadSavedSpring();
+
+  calculate();
+});
+// document
+//   .getElementById("shape")
+//   ?.addEventListener("change", loadComparisonTime);
+
+// document.getElementById("func")?.addEventListener("change", loadComparisonTime);
+
+// document.getElementById("time")?.addEventListener("change", function () {
+//   loadAllComparisonSpringConstants();
+// });
+// document
+//   .getElementById("shape")
+//   .addEventListener("change", autoLoadSavedSpring);
+
+// document
+//   .getElementById("material")
+//   .addEventListener("change", autoLoadSavedSpring);
+
+// document.getElementById("func").addEventListener("change", autoLoadSavedSpring);
 
 // radio buttons
 document.querySelectorAll('input[name="kmode"]').forEach((r) => {
   r.addEventListener("change", autoLoadSavedSpring);
 });
+
+async function loadComparisonTime() {
+  let response = await fetch("/get_comparison_time", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: getCurrentGripper(),
+
+      shape: document.getElementById("shape").value,
+
+      func: document.getElementById("func").value,
+    }),
+  });
+
+  let result = await response.json();
+
+  console.log("Times:", result);
+
+  let ddl = document.getElementById("time");
+
+  ddl.innerHTML = '<option value="">Select Time</option>';
+
+  result.times.forEach((t) => {
+    ddl.innerHTML += `<option value="${t}">
+                ${t} sec
+             </option>`;
+  });
+}
 
 // ################# For Calculation Grapgh Page
 
@@ -837,7 +868,8 @@ function validateInputs() {
   let mode = document.querySelector('input[name="kmode"]:checked').value;
   let gripper = sessionStorage.getItem("pno");
   // let time = document.getElementById("time").value;
-  let material = document.getElementById("material").value;
+  //   let material = document.getElementById("material").value;
+  //   console.log("## Mode:", mode, "Gripper:", gripper);
   // let trFinger4 = document.getElementById("trFinger4");
   // let trThumb = document.getElementById("trThumb");
   let shape = +document.getElementById("shape").value;
@@ -860,10 +892,10 @@ function validateInputs() {
     markInvalid("shape");
     return false;
   }
-  if (material == "") {
-    markInvalid("material");
-    return false;
-  }
+  //   if (material == "") {
+  //     markInvalid("material");
+  //     return false;
+  //   }
   if (shape == 1) {
     let length = document.getElementById("length").value;
     let breadth = document.getElementById("breadth").value;
@@ -905,11 +937,11 @@ function validateInputs() {
   // }
   // alert("shape entered: " + shape);
 
-  if (!material) {
-    // alert("Please select Material");
-    markInvalid("material");
-    return false;
-  }
+  //   if (!material) {
+  //     // alert("Please select Material");
+  //     markInvalid("material");
+  //     return false;
+  //   }
 
   // Reset borders
   document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
@@ -1007,13 +1039,17 @@ function validateInputs() {
 
   return true;
 }
+
 function markInvalid(id) {
   let el = document.getElementById(id);
   el.focus();
   el.style.border = "2px solid red";
 }
+
 // Main Logic to call backend and calculate forces
 async function calculate() {
+  //   console.log("✅ Working calculate function called");
+  //   console.trace("✅ calculate called from");
   console.log("✅ Working calculate function called");
   // 🔥 VALIDATION FIRST
   // alert("Validation started");
@@ -1063,8 +1099,8 @@ async function calculate() {
     radius: +document.getElementById("radius").value,
     Rmajor: +document.getElementById("Rmajor").value,
     Rminor: +document.getElementById("Rminor").value,
-    material: document.getElementById("material").value,
-    // time: +document.getElementById("time").value,
+    material: "rubber", // fixed material for graph page
+    time: document.getElementById("time").value, // fixed time for graph page
     // func: document.getElementById("func").value,
     func: document.getElementById("func").value,
     gripper: sessionStorage.getItem("pno"),
@@ -1104,44 +1140,10 @@ async function calculate() {
     ],
   };
 
-  // let res = await fetch("/calculate_graph", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(data)
-  // });
-
-  // let result = await res.json();
-  // ✅ Set Time & Force in 5 rows
-  // document.getElementById("txttime1").value = result.time1?.toFixed(5) || "";
-  // document.getElementById("txtforce1").value = result.force1?.toFixed(5) || "";
-  // document.getElementById("txttime2").value = result.time2?.toFixed(5) || "";
-  // document.getElementById("txtforce2").value = result.force2?.toFixed(5) || "";
-  // document.getElementById("txttime3").value = result.time3?.toFixed(5) || "";
-  // document.getElementById("txtforce3").value = result.force3?.toFixed(5) || "";
-  // document.getElementById("txttime4").value = result.time4?.toFixed(5) || "";
-  // document.getElementById("txtforce4").value = result.force4?.toFixed(5) || "";
-  // document.getElementById("txttime5").value = result.time5?.toFixed(5) || "";
-  // document.getElementById("txtforce5").value = result.force5?.toFixed(5) ||"";
-
-  // ✅ Hide loader
-  // loader.style.display = "block";
-  // // ✅ Show execution time and Generate Graph Image (png) in fig1
-  // execTime.innerText = result.execution_time;
-  // let gripper = document.getElementById("gripper").value;
-  // // alert("gripper: " + gripper + " mode: " + mode);
-  // if (gripper == "1") {
-  //     document.getElementById("fig1").src = result.fig1;
-
-  // }
-  // else if (gripper == "2") {
-  //     document.getElementById("fig1").src = result.fig1;
-  // }
-  // console.log("Fig1 URL:", result.fig1);
-
-  // ================= TIME vs FORCE =================
+  // ================= Materials vs FORCE =================
   // ================= GRAPH API =================
 
-  let graphResponse = await fetch("/calculate_graph", {
+  let graphResponse = await fetch("/comparison_data", {
     method: "POST",
 
     headers: {
@@ -1152,19 +1154,31 @@ async function calculate() {
   });
 
   let graphResult = await graphResponse.json();
+  //   console.log(graphResult);
 
-  execTime.innerText = graphResult.execution_time;
-  execTime2.innerText = (graphResult.execution_time / 1000).toFixed(4);
+  //   execTime.innerText = graphResult.execution_time;
+  //   execTime2.innerText = (graphResult.execution_time / 1000).toFixed(4);
+
+  // change to create comparison chart
+  //   createBarChart(graphResult.time, graphResult.force);
+  let materials = graphResult.result.map((x) => x.material);
+
+  let forces = graphResult.result.map((x) => x.force);
+
+  createBarChart(materials, forces);
+
+  // change to updateGraphTable for comparison chart
+  //   updateGraphTable(graphResult.time, graphResult.force);
+  updateGraphTable(materials, forces);
+
+  execTime.innerText = graphResult.execution_time_us;
+  execTime2.innerText = (graphResult.execution_time_us / 1000).toFixed(3);
   loader.style.display = "none";
-
-  createBarChart(graphResult.time, graphResult.force);
-
-  updateGraphTable(graphResult.time, graphResult.force);
+  //   loadAllSpringConstants();
+  loadAllComparisonSpringConstants();
 }
 
 // ============================= New ===============
-// ================= BAR CHART =================
-
 // ================= BAR CHART =================
 
 let forceChart = null;
@@ -1246,7 +1260,7 @@ function createBarChart(timeData, forceData) {
             title: {
               display: true,
 
-              text: "Time (sec)",
+              text: "Materials",
 
               color: "#444",
 
@@ -1289,21 +1303,66 @@ function createBarChart(timeData, forceData) {
   }, 1000);
 }
 
-function updateGraphTable(timeData, forceData) {
+function updateGraphTable(materialData, forceData) {
   let tbody = document.getElementById("graphTableBody");
 
   tbody.innerHTML = "";
 
-  for (let i = 0; i < timeData.length; i++) {
+  for (let i = 0; i < materialData.length; i++) {
     tbody.innerHTML += `
 
-            <tr>
-                <td>${timeData[i]}</td>
-                <td>${forceData[i]} (N)</td>
-            </tr>
+        <tr>
+
+            <td>
+                ${materialData[i]}
+            </td>
+
+            <td>
+                ${forceData[i]}
+            </td>
+
+        </tr>
 
         `;
   }
+}
+
+function drawComparisonChart(data) {
+  const ctx = document.getElementById("forceChart").getContext("2d");
+
+  if (forceChart) {
+    forceChart.destroy();
+  }
+
+  forceChart = new Chart(ctx, {
+    type: "bar",
+
+    data: {
+      labels: data.labels,
+
+      datasets: [
+        {
+          label: "Force (N)",
+
+          data: data.values,
+
+          borderWidth: 1,
+        },
+      ],
+    },
+
+    options: {
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: true,
+        },
+      },
+    },
+  });
 }
 
 async function downloadGraphExcel() {
@@ -1352,17 +1411,16 @@ async function downloadGraphExcel() {
         document.getElementById("shape").selectedIndex
       ].text,
 
-    material:
-      document.getElementById("material").options[
-        document.getElementById("material").selectedIndex
-      ].text,
+    time: document.getElementById("time").options[
+      document.getElementById("time").selectedIndex
+    ].text,
 
     graphImage: document.getElementById("chartImage").value,
 
     tableData: tableData,
   };
 
-  let response = await fetch("/download_graph_excel", {
+  let response = await fetch("/download_compare_excel", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1452,17 +1510,16 @@ async function downloadGraphPdf() {
         document.getElementById("shape").selectedIndex
       ].text,
 
-    material:
-      document.getElementById("material").options[
-        document.getElementById("material").selectedIndex
-      ].text,
+    time: document.getElementById("time").options[
+      document.getElementById("time").selectedIndex
+    ].text,
 
     graphImage: document.getElementById("chartImage").value,
 
     tableData: tableData,
   };
 
-  let response = await fetch("/download_graph_pdf", {
+  let response = await fetch("/download_compare_pdf", {
     method: "POST",
 
     headers: {
@@ -1553,16 +1610,17 @@ async function loadSpringConstants(gripper) {
 
 // Auto complete for spring constants based on current gripper, shape, material, function and mode
 async function loadSpringAutocomplete(springKey, datalistId) {
+  //   console.log("Loading spring autocomplete for", springKey);
   let gripper = getCurrentGripper();
   let shape = document.getElementById("shape").value;
-  let material = document.getElementById("material").value;
+  //   let material = document.getElementById("material").value;
+  let material = "rubber"; // hardcoded for now to load spring constants without selecting material and shape
   // let time = document.getElementById("time").value;
   let func = document.getElementById("func").value;
   let spring_key = springKey;
   if (!shape || !material || !func) {
     return;
   }
-
   let response = await fetch("/get_spring_constants", {
     method: "POST",
     headers: {
@@ -1578,18 +1636,13 @@ async function loadSpringAutocomplete(springKey, datalistId) {
   });
 
   let result = await response.json();
+  //   console.log("Received spring constants:", result);
+  //   console.log("Count =", result.spring_values.length);
 
   let datalist = document.getElementById(datalistId);
 
   datalist.innerHTML = "";
 
-  // result.spring_values.forEach((value) => {
-  //   let option = document.createElement("option");
-
-  //   option.value = value;
-
-  //   datalist.appendChild(option);
-  // });
   result.spring_values.forEach((item) => {
     let option = document.createElement("option");
 
@@ -1601,6 +1654,7 @@ async function loadSpringAutocomplete(springKey, datalistId) {
   });
 }
 
+// call ALL spring autocomplete functions to load options for all fields
 function loadAllSpringConstants() {
   loadSpringAutocomplete("k_common", "k_common_options");
 
@@ -1633,4 +1687,91 @@ function loadAllSpringConstants() {
   loadSpringAutocomplete("Thk2", "Thk2_options");
 
   loadSpringAutocomplete("Thk3", "Thk3_options");
+}
+
+function loadAllComparisonSpringConstants() {
+  loadComparisonSpringAutocomplete("k_common", "k_common_options");
+
+  loadComparisonSpringAutocomplete("k_finger", "k_finger_options");
+
+  loadComparisonSpringAutocomplete("k_thumb", "k_thumb_options");
+
+  loadComparisonSpringAutocomplete("k_thumb2", "k_thumb2_options");
+
+  loadComparisonSpringAutocomplete("k_thumb3", "k_thumb3_options");
+
+  loadComparisonSpringAutocomplete("f1k1", "f1k1_options");
+
+  loadComparisonSpringAutocomplete("f1k2", "f1k2_options");
+
+  loadComparisonSpringAutocomplete("f2k1", "f2k1_options");
+
+  loadComparisonSpringAutocomplete("f2k2", "f2k2_options");
+
+  loadComparisonSpringAutocomplete("f3k1", "f3k1_options");
+
+  loadComparisonSpringAutocomplete("f3k2", "f3k2_options");
+
+  loadComparisonSpringAutocomplete("f4k1", "f4k1_options");
+
+  loadComparisonSpringAutocomplete("f4k2", "f4k2_options");
+
+  loadComparisonSpringAutocomplete("Thk1", "Thk1_options");
+
+  loadComparisonSpringAutocomplete("Thk2", "Thk2_options");
+
+  loadComparisonSpringAutocomplete("Thk3", "Thk3_options");
+}
+
+async function loadComparisonSpringAutocomplete(springKey, datalistId) {
+  let gripper = getCurrentGripper();
+
+  let shape = document.getElementById("shape").value;
+
+  let time = document.getElementById("time").value;
+
+  let func = document.getElementById("func").value;
+
+  if (!shape || !time || !func) {
+    return;
+  }
+
+  let response = await fetch("/get_spring_constants_comparison", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: gripper,
+
+      shape: shape,
+
+      func: func,
+
+      time: time,
+
+      spring_key: springKey,
+    }),
+  });
+
+  let result = await response.json();
+
+  console.log(">>>>> Received:", result);
+
+  let datalist = document.getElementById(datalistId);
+
+  datalist.innerHTML = "";
+
+  result.spring_values.forEach((item) => {
+    let option = document.createElement("option");
+    // console.log("@@@ 2 Spring Value:", item);
+
+    option.value = item.spring_value;
+
+    option.label = item.time_value + " sec";
+
+    datalist.appendChild(option);
+  });
 }
