@@ -3,6 +3,8 @@ __pycache__
 .env
 app1.py
 README.md
+.vscode
+run.bat
 gripper_results.xlsx
 static/generated/
 static/templates/

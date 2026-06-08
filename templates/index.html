@@ -89,8 +89,9 @@
                 hedTitle.textContent =
                     "Spring Structural Model of Robotic Gripper for 3 Finger + 1 Thumb";
                 // document.body.style.fontFamily = "Tahoma, sans-serif";
-                // document.body.style.fontFamily = "'Times New Roman', serif";
-                document.body.style.fontFamily = "Georgia, serif";
+                // document.body.style.fontFamily = "Times New Roman";
+                document.body.style.fontFamily = "sans-serif";
+                // document.body.style.fontFamily = "Georgia, serif";
             }
         }
         // applyGripperTheme();
@@ -899,7 +900,7 @@
                                 <div class="box">
                                     <h4>INPUT</h4>
 
-                                    <label>Object Shape22</label>
+                                    <label>Object Shape</label>
                                     <select id="shape" class="form-select" onchange="updateSelectionEvent()">
                                         <option value="">Select Shape</option>
                                         <option value="1">Rectangular Paralleopiped</option>
@@ -2410,7 +2411,10 @@
         // Main Logic to call backend and calculate forces
 
         async function calculate(clickType) {
-            console.log("✅ Working calculate function called clickType:", clickType);
+            console.log(
+                "✅ Working calculate function called clickType:",
+                clickType,
+            );
             // 🔥 VALIDATION FIRST
             // alert("Validation started");
             if (!validateInputs()) return;
@@ -2584,7 +2588,6 @@
             // ✅ Show execution time
             execTime.innerText = result.execution_time;
             execTime2.innerText = (result.execution_time / 1000).toFixed(4);
-
 
             // let isSaved = document.getElementById("isSaved").value;
             if (clickType == 1) {
