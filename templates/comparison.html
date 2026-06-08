@@ -16,10 +16,10 @@
     <style>
         .menu {
             position: relative;
-            border: 3px solid #2c3e50;
+            border: 2px solid #2c3e50;
             padding-top: 30px;
-            padding-left: 15px;
-            padding-right: 15px;
+            /* padding-left: 15px; */
+            /* padding-right: 15px; */
             border-radius: 0 0 10px 10px;
         }
 
@@ -41,6 +41,87 @@
             visibility: hidden;
         }
     </style>
+    <style>
+        .equation-builder {
+            display: flex;
+
+            flex-direction: row;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 12px;
+
+            width: 100%;
+
+            overflow-x: auto;
+
+            flex-wrap: nowrap;
+        }
+
+        #thirdTermGroup {
+            display: none;
+        }
+
+        .eq-block {
+            width: 100px;
+
+            min-width: 100px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+        }
+
+        .eq-select {
+            width: 100%;
+
+            text-align: center;
+
+            font-weight: 600;
+
+            border-radius: 10px;
+
+            /* padding: 5px; */
+        }
+
+        .eq-line {
+            width: 100%;
+
+            border: 2px solid #2c3e50;
+
+            opacity: 1;
+
+            margin: 8px 0;
+        }
+
+        .eq-operator {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .operator-select {
+            width: 65px;
+
+            min-width: 65px;
+
+            text-align: center;
+
+            font-size: 22px;
+            font-weight: 700;
+
+            border-radius: 12px;
+
+            /* background: #2c3e50; */
+            /* color: white; */
+
+            /* border: none; */
+        }
+    </style>
+
     <script>
         function applyGripperTheme() {
             const navbar = document.querySelector(".navbar");
@@ -85,6 +166,54 @@
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script> -->
+    <style>
+        /* body {
+            font-family: Arial;
+        } */
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 2px solid #023075;
+            /* background-color: #023075; */
+            background-color: #425b81;
+
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: white;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #9aabc5;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            /* background-color: #023075; */
+            background-color: #023075;
+            color: yellow;
+            font-weight: 600;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 0px 2px;
+            border: 2px solid #023075;
+            border-top: none;
+        }
+    </style>
 </head>
 
 <body class="theme-light">
@@ -877,13 +1006,9 @@
                 let gripper_window_head = document.getElementById(
                     "gripper_window_head",
                 );
-                // if(gripper == "")
-                // {
-                //     alert("Please select a gripper type to proceed.");
-                //     return;
-                // }
-                // alert("You have selected Gripper Type " + pno + ". Proceeding to Gripper System...");
+
                 showhidewindow(pno);
+                showhidewindow1(pno);
 
                 page1.style.display = "none";
                 page2.style.display = "none";
@@ -895,6 +1020,7 @@
             }
         </script>
         <div id="gripper_window_head" style="display: none">
+
             <div id="gripper_header_theme" class="hero-ai-bg">
                 <h2 style="padding: 5px" id="hedTitle">
                     Spring Structural Model of Robotic Gripper
@@ -902,375 +1028,627 @@
             </div>
             <hr />
 
-            <!-- <hr /> -->
+            <!-- ######## Tabs ########## -->
             <div class="menu" id="gripper_window" data-title="-" style="display: none">
-                <div class="row g-4">
-                    <div class="col-md-3 div2 p-0">
-                        <!-- LEFT SIDE (Merged INPUT) -->
-                        <div id="input" class="col-md-12">
-                            <div class="card p-0 h-100">
-                                <div class="box">
-                                    <h4>INPUT</h4>
+                <div class="tab">
+                    <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'Material')">Materials vs Force
+                    </button>
+                    <button class="tablinks" onclick="openCity(event, 'Spring')">Spring Constant vs Force</button>
+                </div>
+                <!-- tab 1 -->
+                <div id="Material" class="tabcontent">
+                    <div class="row g-4" style="margin: 0px;padding: 0px;">
+                        <div class="col-md-3 div2 p-0" style="margin-top: 2px;">
+                            <!-- LEFT SIDE (Merged INPUT) -->
+                            <div id="input" class="col-md-12">
+                                <div class="card p-0 h-100">
+                                    <div class="box">
+                                        <h4>INPUT</h4>
 
-                                    <label>Object Shape</label>
-                                    <select id="shape" class="form-select" onchange="updateSelectionEvent()">
-                                        <option value="">Select Shape</option>
-                                        <option value="1">Rectangular Paralleopiped</option>
-                                        <option value="2">Spherical</option>
-                                        <option value="3">Ellipsoidal</option>
-                                    </select>
-                                    <label id="selectevt">Selection Event</label>
-                                    <!-- <div id="selectionEvent"></div> -->
-                                    <!-- // Ellipsoidal → Major / Minor -->
-                                    <div id="ellipsEvent" style="display: none">
-                                        <div class="d-flex gap-3">
-                                            <div class="form-check">
-                                                <input id="rbmajor" class="form-check-input" type="radio" name="event"
-                                                    group="ellipsoidal" value="major" checked />
-                                                <label class="form-check-label">Major</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input id="rbminor" class="form-check-input" type="radio" name="event"
-                                                    group="ellipsoidal" value="minor" />
-                                                <label class="form-check-label">Minor</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- User i/p for Ellipsoidal -->
-                                    <div class="row g-2" id="ellipsInput" style="display: none">
-                                        <div class="col-md-6">
-                                            <label>Rmajor (mm)</label>
-                                            <input id="Rmajor" type="number" class="form-control" placeholder="50 mm"
-                                                min="1" step="1" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Rminor (mm)</label>
-                                            <input id="Rminor" type="number" class="form-control" placeholder="30 mm"
-                                                min="1" step="1" />
-                                        </div>
-                                    </div>
-
-                                    <!-- // Rectangular → Length / Breadth -->
-                                    <div id="rectangleEvent" style="display: none">
-                                        <div class="row mb-2">
-                                            <div class="col-md-12 d-flex align-items-center gap-4">
+                                        <label>Object Shape</label>
+                                        <select id="shape" class="form-select" onchange="updateSelectionEvent()">
+                                            <option value="">Select Shape</option>
+                                            <option value="1">Rectangular Paralleopiped</option>
+                                            <option value="2">Spherical</option>
+                                            <option value="3">Ellipsoidal</option>
+                                        </select>
+                                        <label id="selectevt">Selection Event</label>
+                                        <!-- <div id="selectionEvent"></div> -->
+                                        <!-- // Ellipsoidal → Major / Minor -->
+                                        <div id="ellipsEvent" style="display: none">
+                                            <div class="d-flex gap-3">
                                                 <div class="form-check">
-                                                    <input id="rblength" class="form-check-input" type="radio"
-                                                        name="event" value="length" group="rectangular" checked />
-                                                    <label class="form-check-label">Length</label>
+                                                    <input id="rbmajor" class="form-check-input" type="radio"
+                                                        name="event" group="ellipsoidal" value="major" checked />
+                                                    <label class="form-check-label">Major</label>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input id="rbbreadth" class="form-check-input" type="radio"
-                                                        name="event" group="rectangular" value="breadth" />
-                                                    <label class="form-check-label">Breadth</label>
+                                                    <input id="rbminor" class="form-check-input" type="radio"
+                                                        name="event" group="ellipsoidal" value="minor" />
+                                                    <label class="form-check-label">Minor</label>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <!-- User i/p for Rectangular -->
-                                    <div class="row g-2" id="rectangleInput" style="display: none">
-                                        <div class="col-md-4">
-                                            <label style="font-size: 15px">Length(mm)</label>
-                                            <input id="length" type="number" class="form-control" placeholder="100 mm"
-                                                min="1" step="1" />
+                                        <!-- User i/p for Ellipsoidal -->
+                                        <div class="row g-2" id="ellipsInput" style="display: none">
+                                            <div class="col-md-6">
+                                                <label>Rmajor (mm)</label>
+                                                <input id="Rmajor" type="number" class="form-control"
+                                                    placeholder="50 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Rminor (mm)</label>
+                                                <input id="Rminor" type="number" class="form-control"
+                                                    placeholder="30 mm" min="1" step="1" />
+                                            </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label style="font-size: 15px">Breadth(mm)</label>
-                                            <input id="breadth" type="number" class="form-control" placeholder="40 mm"
-                                                min="1" step="1" />
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label style="font-size: 15px">Width(mm)</label>
-                                            <input id="width" type="number" class="form-control" placeholder="20 mm"
-                                                min="1" step="1" />
-                                        </div>
-                                    </div>
-                                    <div class="row g-2" id="sphericalInput" style="display: none">
-                                        <div class="col-md-12">
-                                            <label>Radius (mm)</label>
-                                            <input id="radius" type="number" class="form-control" placeholder="50 mm"
-                                                min="1" step="1" />
-                                        </div>
-                                    </div>
 
-                                    <!-- <label>Time t (seconds)</label>
+                                        <!-- // Rectangular → Length / Breadth -->
+                                        <div id="rectangleEvent" style="display: none">
+                                            <div class="row mb-2">
+                                                <div class="col-md-12 d-flex align-items-center gap-4">
+                                                    <div class="form-check">
+                                                        <input id="rblength" class="form-check-input" type="radio"
+                                                            name="event" value="length" group="rectangular" checked />
+                                                        <label class="form-check-label">Length</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input id="rbbreadth" class="form-check-input" type="radio"
+                                                            name="event" group="rectangular" value="breadth" />
+                                                        <label class="form-check-label">Breadth</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- User i/p for Rectangular -->
+                                        <div class="row g-2" id="rectangleInput" style="display: none">
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Length(mm)</label>
+                                                <input id="length" type="number" class="form-control"
+                                                    placeholder="100 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Breadth(mm)</label>
+                                                <input id="breadth" type="number" class="form-control"
+                                                    placeholder="40 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Width(mm)</label>
+                                                <input id="width" type="number" class="form-control" placeholder="20 mm"
+                                                    min="1" step="1" />
+                                            </div>
+                                        </div>
+                                        <div class="row g-2" id="sphericalInput" style="display: none">
+                                            <div class="col-md-12">
+                                                <label>Radius (mm)</label>
+                                                <input id="radius" type="number" class="form-control"
+                                                    placeholder="50 mm" min="1" step="1" />
+                                            </div>
+                                        </div>
+
+                                        <!-- <label>Time t (seconds)</label>
                             <div class="form-control bg-light fw-bold text-secondary">1 - 5 sec </div> -->
-                                    <!-- <input id="time" type="number"  class="form-control"
+                                        <!-- <input id="time" type="number"  class="form-control"
                                 placeholder="eg. 1 - 5 sec" min="1" max="10" step="1"/> -->
 
-                                    <label>θ(t) Function</label>
-                                    <div class="row">
-                                        <div class="col-md-9">
-                                            <select id="func" class="form-select">
-                                                <option value="t/2 + t^2/3">t/2 + t²/3</option>
-                                                <option value="t/2 + t^2/3 + t^3/4">
-                                                    t/2 + t²/3 + t³/4
-                                                </option>
-                                                <option value="t/3 + t^2/4 + t^3/5">
-                                                    t/3 + t²/4 + t³/5
-                                                </option>
-                                            </select>
+                                        <label>θ(t) Function</label>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <select id="func" class="form-select">
+                                                    <option value="t/2 + t^2/3">t/2 + t²/3</option>
+                                                    <option value="t/2 + t^2/3 + t^3/4">
+                                                        t/2 + t²/3 + t³/4
+                                                    </option>
+                                                    <option value="t/3 + t^2/4 + t^3/5">
+                                                        t/3 + t²/4 + t³/5
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-dark" style="font-weight: 600"
+                                                    onclick="onMyPopupFun()">
+                                                    Add
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <button type="button" class="btn btn-dark" style="font-weight: 600"
-                                                onclick="onMyPopupFun()">
-                                                Add
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <label>Time t (seconds)</label>
-                                    <select id="time" class="form-select">
-                                        <option value="">Select Time</option>
-                                        <!-- <option value="1">1 sec</option>
+                                        <label>Time t (seconds)</label>
+                                        <select id="time" class="form-select">
+                                            <option value="">Select Time</option>
+                                            <!-- <option value="1">1 sec</option>
                                         <option value="2">2 sec</option>
                                         <option value="3">3 sec</option> -->
-                                    </select>
+                                        </select>
 
-                                    <label class="mt-2">Spring Constant Mode</label>
-                                    <div>
-                                        <input type="radio" name="kmode" value="1" checked
-                                            onclick="updateSpringFields()" />
-                                        All equal<br />
-                                        <div id="fingerthumb_hide">
-                                            <input type="radio" name="kmode" value="2" onclick="updateSpringFields()" />
-                                            Fingers same, Thumb different<br />
-                                        </div>
-                                        <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
-                                        All unequal
-                                    </div>
-                                    <div id="springInputs_equal" class="mt-2">
-                                        <label>Common K (N/m)</label>
-                                        <input id="k_common" type="number" class="form-control" placeholder="Common K"
-                                            min="1" step="1" list="k_common_options" />
-                                        <datalist id="k_common_options"> </datalist>
-                                    </div>
-                                    <div id="springInputs_samefinger" class="mt-2" style="display: none">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label>Finger Same K (N/m)</label>
-                                                <input id="k_finger" type="number" class="form-control"
-                                                    placeholder="Finger K" min="1" step="1" list="k_finger_options" />
-                                                <datalist id="k_finger_options"></datalist>
+                                        <label class="mt-2">Spring Constant Mode</label>
+                                        <div>
+                                            <input type="radio" name="kmode" value="1" checked
+                                                onclick="updateSpringFields()" />
+                                            All equal<br />
+                                            <div id="fingerthumb_hide">
+                                                <input type="radio" name="kmode" value="2"
+                                                    onclick="updateSpringFields()" />
+                                                Fingers same, Thumb different<br />
                                             </div>
-                                            <div class="col-md-12">
-                                                <label>Thumb Different K (N/m)</label>
+                                            <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
+                                            All unequal
+                                        </div>
+                                        <div id="springInputs_equal" class="mt-2">
+                                            <label>Common K (N/m)</label>
+                                            <input id="k_common" type="number" class="form-control"
+                                                placeholder="Common K" min="1" step="1" list="k_common_options" />
+                                            <datalist id="k_common_options"> </datalist>
+                                        </div>
+                                        <div id="springInputs_samefinger" class="mt-2" style="display: none">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>Finger Same K (N/m)</label>
+                                                    <input id="k_finger" type="number" class="form-control"
+                                                        placeholder="Finger K" min="1" step="1"
+                                                        list="k_finger_options" />
+                                                    <datalist id="k_finger_options"></datalist>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label>Thumb Different K (N/m)</label>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb" type="number" class="form-control"
+                                                                placeholder="K1" min="1" step="1"
+                                                                list="k_thumb_options" />
+                                                            <datalist id="k_thumb_options"></datalist>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb2" type="number" class="form-control"
+                                                                placeholder="K2" min="1" step="1"
+                                                                list="k_thumb2_options" />
+                                                            <datalist id="k_thumb2_options"></datalist>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb3" type="number" class="form-control"
+                                                                placeholder="K3" min="1" step="1"
+                                                                list="k_thumb3_options" />
+                                                            <datalist id="k_thumb3_options"></datalist>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="springInputs_msg" class="text-danger mt-2" style="display: none">
+                                            </div>
+                                        </div>
+                                        <div id="springInputs_unequal" class="mt-2" style="display: none">
+                                            <label>Finger 1 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f1k1" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f1k1_options" />
+                                                    <datalist id="f1k1_options"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f1k2" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f1k2_options" />
+                                                    <datalist id="f1k2_options"></datalist>
+                                                </div>
+                                            </div>
+                                            <label>Finger 2 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f2k1" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f2k1_options" />
+                                                    <datalist id="f2k1_options"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f2k2" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f2k2_options" />
+                                                    <datalist id="f2k2_options"></datalist>
+                                                </div>
+                                            </div>
+
+                                            <label>Finger 3 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f3k1" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f3k1_options" />
+                                                    <datalist id="f3k1_options"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f3k2" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f3k2_options" />
+                                                    <datalist id="f3k2_options"></datalist>
+                                                </div>
+                                            </div>
+
+                                            <div id="div_Finger4" style="display: none">
+                                                <label>Finger 4 K1 &amp; K2 (N/m)</label>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <input id="f4k1" class="form-control" placeholder="Spring 1"
+                                                            type="number" min="1" step="1" list="f4k1_options" />
+                                                        <datalist id="f4k1_options"></datalist>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input id="f4k2" class="form-control mb-2"
+                                                            placeholder="Spring 2" type="number" min="1" step="1"
+                                                            list="f4k2_options" />
+                                                        <datalist id="f4k2_options"></datalist>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div_Thumb" style="display: none">
+                                                <label>Thumb K1, K2 &amp; K3 (N/m)</label>
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <input id="k_thumb" type="number" class="form-control"
-                                                            placeholder="K1" min="1" step="1" list="k_thumb_options" />
-                                                        <datalist id="k_thumb_options"></datalist>
+                                                        <input id="Thk1" class="form-control" placeholder="Spring 1"
+                                                            type="number" min="1" step="1" list="Thk1_options" />
+                                                        <datalist id="Thk1_options"></datalist>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <input id="k_thumb2" type="number" class="form-control"
-                                                            placeholder="K2" min="1" step="1" list="k_thumb2_options" />
-                                                        <datalist id="k_thumb2_options"></datalist>
+                                                        <input id="Thk2" class="form-control" placeholder="Spring 2"
+                                                            type="number" min="1" step="1" list="Thk2_options" />
+                                                        <datalist id="Thk2_options"></datalist>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <input id="k_thumb3" type="number" class="form-control"
-                                                            placeholder="K3" min="1" step="1" list="k_thumb3_options" />
-                                                        <datalist id="k_thumb3_options"></datalist>
+                                                        <input id="Thk3" class="form-control mb-2"
+                                                            placeholder="Spring 3" type="number" min="1" step="1"
+                                                            list="Thk3_options" />
+                                                        <datalist id="Thk3_options"></datalist>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="springInputs_msg" class="text-danger mt-2" style="display: none"></div>
+                                        <!-- <div id="springInputs" class="mt-2"></div> -->
+
+                                        <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
+                                            Generate Comparison Chart
+                                        </button>
+                                        <div id="savedText" class="mt-2 text-success fw-bold"></div>
+                                        <p class="mt-2">
+                                            <b>Execution Time:</b><br />
+                                            <span id="executionTime">0</span> µs /
+                                            <span id="executionTime2">0</span> ms
+                                        </p>
+                                        <span id="loader" class="ms-2" style="display: none">
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                            Loading...
+                                        </span>
                                     </div>
-                                    <div id="springInputs_unequal" class="mt-2" style="display: none">
-                                        <label>Finger 1 K1 &amp; K2 (N/m)</label>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input id="f1k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f1k1_options" />
-                                                <datalist id="f1k1_options"></datalist>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input id="f1k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f1k2_options" />
-                                                <datalist id="f1k2_options"></datalist>
-                                            </div>
-                                        </div>
-                                        <label>Finger 2 K1 &amp; K2 (N/m)</label>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input id="f2k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f2k1_options" />
-                                                <datalist id="f2k1_options"></datalist>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input id="f2k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f2k2_options" />
-                                                <datalist id="f2k2_options"></datalist>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9 div2" style="margin-top: 2px;">
+                            <div class="row div2 p-0">
+                                <div id="output" class="col-md-12 div2 p-0">
+                                    <div class="card p-0 h-100">
+                                        <div class="box output mt-2">
+                                            <h4>OUTPUT</h4>
+                                            <style>
+                                                .bold {
+                                                    font-weight: 700;
+                                                }
 
-                                        <label>Finger 3 K1 &amp; K2 (N/m)</label>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input id="f3k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f3k1_options" />
-                                                <datalist id="f3k1_options"></datalist>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input id="f3k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f3k2_options" />
-                                                <datalist id="f3k2_options"></datalist>
-                                            </div>
-                                        </div>
-
-                                        <div id="div_Finger4" style="display: none">
-                                            <label>Finger 4 K1 &amp; K2 (N/m)</label>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <input id="f4k1" class="form-control" placeholder="Spring 1"
-                                                        type="number" min="1" step="1" list="f4k1_options" />
-                                                    <datalist id="f4k1_options"></datalist>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <input id="f4k2" class="form-control mb-2" placeholder="Spring 2"
-                                                        type="number" min="1" step="1" list="f4k2_options" />
-                                                    <datalist id="f4k2_options"></datalist>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="div_Thumb" style="display: none">
-                                            <label>Thumb K1, K2 &amp; K3 (N/m)</label>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <input id="Thk1" class="form-control" placeholder="Spring 1"
-                                                        type="number" min="1" step="1" list="Thk1_options" />
-                                                    <datalist id="Thk1_options"></datalist>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input id="Thk2" class="form-control" placeholder="Spring 2"
-                                                        type="number" min="1" step="1" list="Thk2_options" />
-                                                    <datalist id="Thk2_options"></datalist>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input id="Thk3" class="form-control mb-2" placeholder="Spring 3"
-                                                        type="number" min="1" step="1" list="Thk3_options" />
-                                                    <datalist id="Thk3_options"></datalist>
-                                                </div>
-                                            </div>
+                                                .bold600 {
+                                                    font-weight: 600;
+                                                }
+                                            </style>
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="bg-light">Materials</th>
+                                                        <th class="bg-light">Force (N)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="graphTableBody">
+                                                    <tr>
+                                                        <td>Rubber</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>ABS</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Teflon</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <style>
+                                                mjx-container {
+                                                    margin: 0px !important;
+                                                }
+                                            </style>
                                         </div>
                                     </div>
-                                    <!-- <div id="springInputs" class="mt-2"></div> -->
+                                </div>
+                            </div>
+                            <div class="row g-4" id="row4fingers" style="display: block">
+                                <div class="col-md-12 div2 p-0">
+                                    <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
+                                    <div class="card p-3" style="display: none">
+                                        <div class="graph-box">
+                                            <label style="font-size: 14px; height: 50px">
+                                                Fig. 1: Chart Representation of Spring structure Model :
+                                            </label>
+                                            <img id="fig1" src="static/img/basic.avif" id="myImg"
+                                                onclick="onMyPopup(this)" style="width: 100%; height: auto"
+                                                alt="basic.avif" />
+                                        </div>
+                                    </div>
+                                    <div class="card mt-3 p-3">
+                                        <h4 class="text-center">
+                                            Comparison Chart Representation of Spring Structure Model
+                                            (<span id="shape_name" class="fw-bold"> </span>)
+                                        </h4>
+                                        <div style="height: 500px">
+                                            <canvas id="forceChart"></canvas>
+                                            <input type="hidden" id="chartImage" />
+                                        </div>
+                                        <div class="row mt-3 g-3">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-success w-100" onclick="downloadGraphExcel(1)">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph Excel
+                                                </button>
+                                            </div>
 
-                                    <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
-                                        Generate Comparison Chart
-                                    </button>
-                                    <div id="savedText" class="mt-2 text-success fw-bold"></div>
-                                    <p class="mt-2">
-                                        <b>Execution Time:</b><br />
-                                        <span id="executionTime">0</span> µs /
-                                        <span id="executionTime2">0</span> ms
-                                    </p>
-                                    <span id="loader" class="ms-2" style="display: none">
-                                        <span class="spinner-border spinner-border-sm text-primary"></span>
-                                        Loading...
-                                    </span>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-danger w-100" onclick="downloadGraphPdf()">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph PDF
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="row mt-3 g-3">
+                                                <div class="col-md-12">
+                                                    <button id="btnMerge"
+                                                        class="btn btn-warning border border-3 border-dark btn-lg w-100"
+                                                        onclick="mergedAllExcels()">
+                                                        <span id="btnMergeText">
+                                                            <i class="bi bi-download me-2"></i>
+                                                            Download All Saved Changes
+                                                        </span>
+
+                                                        <span id="btnMergeLoader" style="display: none">
+                                                            <span class="spinner-border spinner-border-sm me-2"></span>
+                                                            Processing...
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-9 div2">
-                        <div class="row div2 p-0">
-                            <div id="output" class="col-md-12 div2 p-0">
+                </div>
+                <!-- tab 2 -->
+                <div id="Spring" class="tabcontent">
+                    <div class="row g-4" style="padding-left: 10px;padding-right: 10px;">
+                        <div class="col-md-3 div2 p-0">
+                            <!-- LEFT SIDE (Merged INPUT) -->
+                            <div id="input" class="col-md-12">
                                 <div class="card p-0 h-100">
-                                    <div class="box output mt-2">
-                                        <h4>OUTPUT</h4>
-                                        <style>
-                                            .bold {
-                                                font-weight: 700;
-                                            }
+                                    <div class="box">
+                                        <h4>INPUT</h4>
 
-                                            .bold600 {
-                                                font-weight: 600;
-                                            }
-                                        </style>
-                                        <table class="table table-bordered table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th class="bg-light">Materials</th>
-                                                    <th class="bg-light">Force (N)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="graphTableBody">
-                                                <tr>
-                                                    <td>Rubber</td>
-                                                    <td>-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>ABS</td>
-                                                    <td>-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Teflon</td>
-                                                    <td>-</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <style>
-                                            mjx-container {
-                                                margin: 0px !important;
-                                            }
-                                        </style>
+                                        <label>Object Shape</label>
+                                        <select id="shape1" class="form-select" onchange="updateSelectionEvent1()">
+                                            <option value="">Select Shape</option>
+                                            <option value="1">Rectangular Paralleopiped</option>
+                                            <option value="2">Spherical</option>
+                                            <option value="3">Ellipsoidal</option>
+                                        </select>
+                                        <label id="selectevt1" style="display: none;">Selection Event</label>
+                                        <!-- <div id="selectionEvent"></div> -->
+                                        <!-- // Ellipsoidal → Major / Minor -->
+                                        <div id="ellipsEvent1" style="display: none">
+                                            <div class="d-flex gap-3">
+                                                <div class="form-check">
+                                                    <input id="rbmajor1" class="form-check-input" type="radio"
+                                                        name="event" group="ellipsoidal" value="major" checked />
+                                                    <label class="form-check-label">Major</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input id="rbminor1" class="form-check-input" type="radio"
+                                                        name="event" group="ellipsoidal" value="minor" />
+                                                    <label class="form-check-label">Minor</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- User i/p for Ellipsoidal -->
+                                        <div class="row g-2" id="ellipsInput1" style="display: none">
+                                            <div class="col-md-6">
+                                                <label>Rmajor (mm)</label>
+                                                <input id="Rmajor1" type="number" class="form-control"
+                                                    placeholder="50 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Rminor (mm)</label>
+                                                <input id="Rminor1" type="number" class="form-control"
+                                                    placeholder="30 mm" min="1" step="1" />
+                                            </div>
+                                        </div>
+
+                                        <!-- // Rectangular → Length / Breadth -->
+                                        <div id="rectangleEvent1" style="display: none">
+                                            <div class="row mb-2">
+                                                <div class="col-md-12 d-flex align-items-center gap-4">
+                                                    <div class="form-check">
+                                                        <input id="rblength1" class="form-check-input" type="radio"
+                                                            name="event" value="length" group="rectangular" checked />
+                                                        <label class="form-check-label">Length</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input id="rbbreadth1" class="form-check-input" type="radio"
+                                                            name="event" group="rectangular" value="breadth" />
+                                                        <label class="form-check-label">Breadth</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- User i/p for Rectangular -->
+                                        <div class="row g-2" id="rectangleInput1" style="display: none">
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Length(mm)</label>
+                                                <input id="length1" type="number" class="form-control"
+                                                    placeholder="100 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Breadth(mm)</label>
+                                                <input id="breadth1" type="number" class="form-control"
+                                                    placeholder="40 mm" min="1" step="1" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label style="font-size: 15px">Width(mm)</label>
+                                                <input id="width1" type="number" class="form-control"
+                                                    placeholder="20 mm" min="1" step="1" />
+                                            </div>
+                                        </div>
+                                        <div class="row g-2" id="sphericalInput1" style="display: none">
+                                            <div class="col-md-12">
+                                                <label>Radius (mm)</label>
+                                                <input id="radius1" type="number" class="form-control"
+                                                    placeholder="50 mm" min="1" step="1" />
+                                            </div>
+                                        </div>
+                                        <label>Material</label>
+                                        <select id="material1" class="form-select">
+                                            <option value="">Select Material</option>
+                                            <option value="rubber">Rubber</option>
+                                            <option value="abs">ABS</option>
+                                            <option value="teflon">Teflon</option>
+                                        </select>
+                                        <label>θ(t) Function</label>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <select id="func1" class="form-select">
+                                                    <option value="t/2 + t^2/3">t/2 + t²/3</option>
+                                                    <option value="t/2 + t^2/3 + t^3/4">
+                                                        t/2 + t²/3 + t³/4
+                                                    </option>
+                                                    <option value="t/3 + t^2/4 + t^3/5">
+                                                        t/3 + t²/4 + t³/5
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-dark" style="font-weight: 600"
+                                                    onclick="onMyPopupFun()">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <label>Time t (seconds)</label>
+                                        <select id="time1" class="form-select">
+                                            <option value="">Select Time</option>
+
+                                        </select>
+                                        <!-- <label class="mt-2">Spring Constant Mode</label> -->
+
+                                        <button onclick="calculate1()" class="btn btn-primary mt-3 w-100 bold600">
+                                            Generate Comparison Chart
+                                        </button>
+                                        <div id="savedText1" class="mt-2 text-success fw-bold"></div>
+                                        <p class="mt-2">
+                                            <b>Execution Time:</b><br />
+                                            <span id="executionTime1">0</span> µs /
+                                            <span id="executionTime21">0</span> ms
+                                        </p>
+                                        <span id="loader1" class="ms-2" style="display: none">
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                            Loading...
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-4" id="row4fingers" style="display: block">
-                            <div class="col-md-12 div2 p-0">
-                                <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
-                                <div class="card p-3" style="display: none">
-                                    <div class="graph-box">
-                                        <label style="font-size: 14px; height: 50px">
-                                            Fig. 1: Chart Representation of Spring structure Model :
-                                        </label>
-                                        <img id="fig1" src="static/img/basic.avif" id="myImg" onclick="onMyPopup(this)"
-                                            style="width: 100%; height: auto" alt="basic.avif" />
+                        <div class="col-md-9 div2">
+                            <div class="row div2 p-0">
+                                <div id="output" class="col-md-12 div2 p-0">
+                                    <div class="card p-0 h-100">
+                                        <div class="box output mt-2">
+                                            <h4>OUTPUT</h4>
+                                            <style>
+                                                .bold {
+                                                    font-weight: 700;
+                                                }
+
+                                                .bold600 {
+                                                    font-weight: 600;
+                                                }
+                                            </style>
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="bg-light" style="width: 50%;">Spring Constant (All
+                                                            equal)</th>
+                                                        <th class="bg-light">Force (N)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="graphTableBody1">
+                                                    <tr>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                            <style>
+                                                mjx-container {
+                                                    margin: 0px !important;
+                                                }
+                                            </style>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card mt-3 p-3">
-                                    <h4 class="text-center">
-                                        Comparison Chart Representation of Spring Structure Model
-                                        (<span id="shape_name" class="fw-bold"> </span>)
-                                    </h4>
-                                    <div style="height: 500px">
-                                        <canvas id="forceChart"></canvas>
-                                        <input type="hidden" id="chartImage" />
-                                    </div>
-                                    <div class="row mt-3 g-3">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-success w-100" onclick="downloadGraphExcel(1)">
-                                                <i class="bi bi-download me-2"></i>
-                                                Download Graph Excel
-                                            </button>
-                                        </div>
+                            </div>
+                            <div class="row g-4" id="row4fingers1" style="display: block">
+                                <div class="col-md-12 div2 p-0">
+                                    <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
 
-                                        <div class="col-md-6">
-                                            <button class="btn btn-danger w-100" onclick="downloadGraphPdf()">
-                                                <i class="bi bi-download me-2"></i>
-                                                Download Graph PDF
-                                            </button>
+                                    <div class="card mt-3 p-3">
+                                        <h4 class="text-center">
+                                            Comparison Chart Representation of Spring Structure Model
+                                            (<span id="shape_name1" class="fw-bold"> </span>)
+                                        </h4>
+                                        <div style="height: 500px">
+                                            <canvas id="forceChart1"></canvas>
+                                            <input type="hidden" id="chartImage1" />
                                         </div>
-                                    </div>
-                                    <div>
                                         <div class="row mt-3 g-3">
-                                            <div class="col-md-12">
-                                                <button id="btnMerge"
-                                                    class="btn btn-warning border border-3 border-dark btn-lg w-100"
-                                                    onclick="mergedAllExcels()">
-                                                    <span id="btnMergeText">
-                                                        <i class="bi bi-download me-2"></i>
-                                                        Download All Saved Changes
-                                                    </span>
-
-                                                    <span id="btnMergeLoader" style="display:none;">
-                                                        <span class="spinner-border spinner-border-sm me-2"></span>
-                                                        Processing...
-                                                    </span>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-success w-100" onclick="downloadGraphExcel1(1)">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph Excel
                                                 </button>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <button class="btn btn-danger w-100" onclick="downloadGraphPdf1()">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph PDF
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="row mt-3 g-3">
+                                                <div class="col-md-12">
+                                                    <button id="btnMerge1"
+                                                        class="btn btn-warning border border-3 border-dark btn-lg w-100"
+                                                        onclick="mergedAllExcels1()">
+                                                        <span id="btnMergeText1">
+                                                            <i class="bi bi-download me-2"></i>
+                                                            Download All Saved Changes
+                                                        </span>
+
+                                                        <span id="btnMergeLoader1" style="display: none">
+                                                            <span class="spinner-border spinner-border-sm me-2"></span>
+                                                            Processing...
+                                                        </span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1288,86 +1666,7 @@
                 <button type="button" onclick="onDownloadPdf2()" class="close22">Save Pdf</button> -->
             <img class="modal-content" id="img01" style="margin-bottom: 50px" />
         </div>
-        <style>
-            .equation-builder {
-                display: flex;
 
-                flex-direction: row;
-
-                align-items: center;
-                justify-content: center;
-
-                gap: 12px;
-
-                width: 100%;
-
-                overflow-x: auto;
-
-                flex-wrap: nowrap;
-            }
-
-            #thirdTermGroup {
-                display: none;
-            }
-
-            .eq-block {
-                width: 100px;
-
-                min-width: 100px;
-
-                display: flex;
-                flex-direction: column;
-
-                align-items: center;
-            }
-
-            .eq-select {
-                width: 100%;
-
-                text-align: center;
-
-                font-weight: 600;
-
-                border-radius: 10px;
-
-                /* padding: 5px; */
-            }
-
-            .eq-line {
-                width: 100%;
-
-                border: 2px solid #2c3e50;
-
-                opacity: 1;
-
-                margin: 8px 0;
-            }
-
-            .eq-operator {
-                display: flex;
-
-                align-items: center;
-                justify-content: center;
-            }
-
-            .operator-select {
-                width: 65px;
-
-                min-width: 65px;
-
-                text-align: center;
-
-                font-size: 22px;
-                font-weight: 700;
-
-                border-radius: 12px;
-
-                /* background: #2c3e50; */
-                /* color: white; */
-
-                /* border: none; */
-            }
-        </style>
         <div id="myModalFun" class="modal">
             <span class="close" style="float: right">&times;</span>
             <div class="container box" style="width: 45% !important">
@@ -1375,15 +1674,7 @@
                 <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
                 <div class="d-flex justify-content-center gap-4 mb-3">
-                    <!-- <div class="form-check">
-                    
-                        <input class="form-check-input" type="radio" name="termCount" id="oneTerm" onchange="toggleTerms(1)">
-                    
-                        <label class="form-check-label fw-bold">
-                            1 Term
-                        </label>
-                    
-                    </div> -->
+
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="twoTerms"
                             onchange="toggleTerms(2)" />
@@ -1533,6 +1824,22 @@
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
     <script src="/static/js/tex-mml-chtml.js"></script>
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        document.getElementById("defaultOpen").click();
+    </script>
 </body>
 
 </html>

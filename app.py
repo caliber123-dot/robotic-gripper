@@ -56,8 +56,10 @@ from database import (
     get_spring_constants,
     get_saved_input_graph_all,
     get_comparison_time,
+    get_comparison_time1,
     get_spring_constants_comparison,
     get_saved_input_compare,
+    get_comparison_all_equal
 )
 
 app = Flask(__name__)
@@ -1456,8 +1458,13 @@ def download_compare_excel():
     # =========================================
     # TABLE HEADER
     # =========================================
+    tab = data.get("tab", "0")
+    if tab == 1:
+        ws["A9"] = "Materials"
+    else:
+        ws["A9"] = "All equal"
+        # ws["A9"].alignment = Alignment(horizontal="right")
 
-    ws["A9"] = "Materials"
     ws["B9"] = "Force (N)"
 
     # from openpyxl.styles import Alignment
@@ -1773,8 +1780,11 @@ def download_compare_pdf():
     # =========================================
     # TABLE
     # =========================================
-
-    table_data = [["Materials", "Force (N)"]]
+    tab = data.get("tab", "0")
+    if tab == 1:
+        table_data = [["Materials", "Force (N)"]]
+    else:
+        table_data = [["All equal", "Force (N)"]]
 
     for item in data["tableData"]:
 
@@ -1916,6 +1926,51 @@ def comparison_data():
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
 
+@app.route("/comparison_data1", methods=["POST"])
+def comparison_data1():
+    # print("comparison_data1 API called")
+    start = time.perf_counter()
+    # existing code
+
+    data = request.json
+
+    gripper = int(data.get("gripper", 0))
+    shape = int(data.get("shape", 0))
+    material = data.get("material", "")
+    theta_function = data.get("func", "")
+    time_value = float(data.get("time", 0))   
+
+    # Fetch all Spring Constant (All equal) from spring_constants where spring_key = 'k_common'
+    # print("gripper:", gripper)
+    # print("shape:", shape)
+    # print("material:", material)
+    # print("theta_function:", theta_function)
+    # print("time_value:", time_value)
+    values = get_comparison_all_equal(gripper, shape, material , theta_function, time_value)
+    # print("values:", values)
+    k_common_all = [row["spring_value"] for row in values]
+    # print("k_common_all>>>>" , k_common_all)
+
+    result = []
+
+    for k_common in k_common_all:
+
+        temp = dict(data)
+
+        temp["k_common"] = k_common
+        # print("temp =", temp)
+
+        total_force = perform_calculation(temp, float(data["time"]))
+
+        result.append({"k_common": k_common, "force": round(total_force, 4)})
+
+    # print("Comparison Result:", result)
+    elapsed_us = (time.perf_counter() - start) * 1_000_000  # Convert to microseconds
+
+    # return jsonify(result)
+    return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
+
+
 @app.route("/get_comparison_time", methods=["POST"])
 def get_comparison_time_api():
 
@@ -1932,6 +1987,26 @@ def get_comparison_time_api():
     result = [row["time_value"] for row in values]
 
     return jsonify({"times": result})
+
+@app.route("/get_comparison_time1", methods=["POST"])
+def get_comparison_time1_api():
+
+    data = request.json
+
+    gripper = int(data.get("gripper", 0))
+
+    shape = int(data.get("shape", 0))
+
+    material = data.get("material", 0)
+
+    theta_function = data.get("func", "")
+
+    values = get_comparison_time1(gripper, shape, material , theta_function)
+
+    result = [row["time_value"] for row in values]
+
+    return jsonify({"times": result})
+
 
 
 @app.route("/get_spring_constants_comparison", methods=["POST"])

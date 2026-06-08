@@ -3,7 +3,7 @@ __pycache__
 .env
 app1.py
 README.md
-.vscode
+.vscode/
 run.bat
 gripper_results.xlsx
 static/generated/

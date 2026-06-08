@@ -626,6 +626,57 @@ def get_comparison_time(gripper, shape, theta_function):
     conn.close()
 
     return rows
+# =====================================================================
+def get_comparison_time1(gripper, shape, material ,theta_function):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT DISTINCT time_value
+        FROM spring_constants
+        WHERE gripper = ?
+        AND shape = ?
+        AND material = ?
+        AND theta_function = ?
+        ORDER BY time_value
+    """,
+        (gripper, shape, material, theta_function),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+# ============================== Get ALl Equal=====================================
+def get_comparison_all_equal(gripper, shape, material ,theta_function, time_value):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT DISTINCT spring_value
+        FROM spring_constants
+        WHERE gripper = ?
+        AND shape = ?
+        AND material = ?
+        AND time_value = ?
+        AND theta_function = ?
+        ORDER BY spring_value
+    """,
+        (gripper, shape, material, time_value, theta_function),
+    )
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
 
 
 # ======================== New for Pending===========================

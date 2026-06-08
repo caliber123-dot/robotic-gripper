@@ -47,8 +47,8 @@ function showhidewindow(pno) {
 
   let fig1 = document.getElementById("fig1");
 
-  let txttime1 = document.getElementById("txttime1");
-  let txtforce1 = document.getElementById("txtforce1");
+  // let txttime1 = document.getElementById("txttime1");
+  // let txtforce1 = document.getElementById("txtforce1");
 
   let length = document.getElementById("length");
   let breadth = document.getElementById("breadth");
@@ -146,6 +146,7 @@ function showhidewindow(pno) {
     gripper_window.style.display = "block";
     // trFinger4.style.display = "table-row";
     document.getElementById("shape_name").innerText = "4 Fingers";
+    // document.getElementById("shape_name1").innerText = "4 Fingers";
     fingerthumb_hide.style.display = "none";
   } else if (gripper == 2) {
     gripper_window.setAttribute(
@@ -155,9 +156,93 @@ function showhidewindow(pno) {
     gripper_window.style.display = "block";
     // trFinger4.style.display = "none";
     document.getElementById("shape_name").innerText = "3 Fingers + 1 Thumb";
+    // document.getElementById("shape_name1").innerText = "3 Fingers + 1 Thumb";
     fingerthumb_hide.style.display = "block";
   }
   updateSpringFields();
+}
+
+function showhidewindow1(pno) {
+  // loadSpringConstants(pno);
+  //   loadAllSpringConstants();
+  // alert("Default terms initialized. 2222");
+  let gripper = pno;
+  let gripper_window = document.getElementById("gripper_window");
+
+  // let fig1 = document.getElementById("fig1");
+
+  // let txttime1 = document.getElementById("txttime1");
+  // let txtforce1 = document.getElementById("txtforce1");
+
+  let length = document.getElementById("length1");
+  let breadth = document.getElementById("breadth1");
+  let width = document.getElementById("width1");
+  let radius = document.getElementById("radius1");
+  let Rmajor = document.getElementById("Rmajor1");
+  let Rminor = document.getElementById("Rminor1");
+  // let time = document.getElementById("time");
+
+  length.value = "100";
+  breadth.value = "40";
+  width.value = "20";
+  radius.value = "50";
+  Rmajor.value = "50";
+  Rminor.value = "30";
+  // let time = document.getElementById("time");
+
+  // ================= TABLE =================
+
+  document.getElementById("graphTableBody1").innerHTML = `
+
+        <tr>
+            <td>-</td>
+            <td>-</td>
+        </tr>      
+
+    `;
+  // ================= CHART =================
+
+  if (forceChart) {
+    forceChart.destroy();
+
+    forceChart = null;
+  }
+
+  // clear canvas
+  let canvas = document.getElementById("forceChart1");
+
+  let ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  document.getElementById("shape_name1").innerText = "-";
+  // fig1.src = "static/img/basic.avif";
+  // let fingerthumb_hide = document.getElementById("fingerthumb_hide");
+  // alert("You have selected Gripper Type " + gripper + ". Click OK to proceed.");
+  if (!gripper) {
+    gripper_window.setAttribute("data-title", "-");
+    gripper_window.style.display = "none";
+    // fingerthumb_hide.style.display = "none";
+  } else if (gripper == 1) {
+    gripper_window.setAttribute("data-title", "4 Fingers Comparison Chart");
+    gripper_window.style.display = "block";
+    // trFinger4.style.display = "table-row";
+    // document.getElementById("shape_name").innerText = "4 Fingers";
+    document.getElementById("shape_name1").innerText = "4 Fingers";
+    // fingerthumb_hide.style.display = "none";
+  } else if (gripper == 2) {
+    gripper_window.setAttribute(
+      "data-title",
+      "3 Fingers + 1 Thumb Comparison Chart",
+    );
+    gripper_window.style.display = "block";
+    // trFinger4.style.display = "none";
+    // document.getElementById("shape_name").innerText = "3 Fingers + 1 Thumb";
+    document.getElementById("shape_name1").innerText = "3 Fingers + 1 Thumb";
+    // fingerthumb_hide.style.display = "block";
+  }
+  // ==================== pause updateSpringFields()====
+  // updateSpringFields();
 }
 
 function updateSpringFields() {
@@ -780,6 +865,57 @@ function updateSelectionEvent() {
   // loadAllSpringConstants();
 }
 
+function updateSelectionEvent1() {
+  let shape = document.getElementById("shape1").value;
+  // let container = document.getElementById("selectionEvent");
+  let ellipsEvent = document.getElementById("ellipsEvent1");
+  let rectangleEvent = document.getElementById("rectangleEvent1");
+  let rectangleInput = document.getElementById("rectangleInput1");
+  let ellipsInput = document.getElementById("ellipsInput1");
+  let sphericalInput = document.getElementById("sphericalInput1");
+  let selectevt = document.getElementById("selectevt1");
+  // container.innerHTML = "";
+  // Hide all first
+  ellipsEvent.style.display = "none";
+  rectangleEvent.style.display = "none";
+  rectangleInput.style.display = "none";
+  ellipsInput.style.display = "none";
+  sphericalInput.style.display = "none";
+  // selectevt.style.display = "block";
+  // Ellipsoidal → Major / Minor
+  if (shape == 3) {
+    // Ellipsoidal
+    ellipsEvent.style.display = "flex";
+    selectevt.style.display = "block";
+    ellipsEvent
+      .querySelectorAll("input")
+      .forEach((input) => (input.checked = false));
+    document.getElementById("rbmajor1").checked = true; // default selection
+    ellipsInput.style.display = "flex";
+  }
+  // Rectangular → Length / Breadth
+  else if (shape == 1) {
+    // Rectangular
+    rectangleEvent.style.display = "flex";
+    selectevt.style.display = "block";
+    rectangleEvent
+      .querySelectorAll("input")
+      .forEach((input) => (input.checked = false));
+    document.getElementById("rblength1").checked = true; // default selection
+    rectangleInput.style.display = "flex";
+  }
+  // Spherical
+  else if (shape == 2) {
+    sphericalInput.style.display = "flex";
+    selectevt.style.display = "none";
+    // container.innerHTML = `<small class="text-muted">No selection required</small>`;
+    ellipsEvent.style.display = "none";
+    rectangleEvent.style.display = "none";
+  } else {
+    selectevt.style.display = "none";
+  }
+  // loadAllSpringConstants();
+}
 // updateSelectionEvent();
 // document.getElementById("selectevt").style.display = "none";
 
@@ -788,22 +924,40 @@ function updateSelectionEvent() {
 // =========================
 document.getElementById("shape")?.addEventListener("change", async function () {
   await loadComparisonTime();
-
   autoLoadSavedSpring();
 });
 
+document
+  .getElementById("shape1")
+  ?.addEventListener("change", async function () {
+    await loadComparisonTime1();
+    // autoLoadSavedSpring();
+  });
+document
+  .getElementById("material1")
+  ?.addEventListener("change", async function () {
+    await loadComparisonTime1();
+    // autoLoadSavedSpring();
+  });
+
 document.getElementById("func")?.addEventListener("change", async function () {
   await loadComparisonTime();
-
   autoLoadSavedSpring();
+});
+
+document.getElementById("func1")?.addEventListener("change", async function () {
+  await loadComparisonTime1();
+  // autoLoadSavedSpring();
 });
 
 document.getElementById("time")?.addEventListener("change", async function () {
   await loadAllComparisonSpringConstants();
-
   await autoLoadSavedSpring();
-
   calculate();
+});
+
+document.getElementById("time1")?.addEventListener("change", async function () {
+  calculate1();
 });
 // document
 //   .getElementById("shape")
@@ -851,6 +1005,40 @@ async function loadComparisonTime() {
   console.log("Times:", result);
 
   let ddl = document.getElementById("time");
+
+  ddl.innerHTML = '<option value="">Select Time</option>';
+
+  result.times.forEach((t) => {
+    ddl.innerHTML += `<option value="${t}">
+                ${t} sec
+             </option>`;
+  });
+}
+
+async function loadComparisonTime1() {
+  let response = await fetch("/get_comparison_time1", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: getCurrentGripper(),
+
+      shape: document.getElementById("shape1").value,
+
+      material: document.getElementById("material1").value,
+
+      func: document.getElementById("func1").value,
+    }),
+  });
+
+  let result = await response.json();
+
+  console.log("Times1:", result);
+
+  let ddl = document.getElementById("time1");
 
   ddl.innerHTML = '<option value="">Select Time</option>';
 
@@ -930,18 +1118,6 @@ function validateInputs() {
       return false;
     }
   }
-  // if (!time) {
-  //     // alert("Please enter Time");
-  //     markInvalid("time");
-  //     return false;
-  // }
-  // alert("shape entered: " + shape);
-
-  //   if (!material) {
-  //     // alert("Please select Material");
-  //     markInvalid("material");
-  //     return false;
-  //   }
 
   // Reset borders
   document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
@@ -1005,14 +1181,12 @@ function validateInputs() {
         // alert(`Enter Finger ${i} Spring 1`);
         return false;
       }
-
       if (!k2) {
         invalid(`f${i}k2`);
         // alert(`Enter Finger ${i} Spring 2`);
         return false;
       }
     }
-
     // Thumb (only if gripper = 3+1)
     if (gripper == "2") {
       let t1 = document.getElementById("Thk1")?.value;
@@ -1036,9 +1210,94 @@ function validateInputs() {
       }
     }
   }
+  return true;
+}
+
+function validateInputs1() {
+  // alert("Validating inputs...");
+
+  let gripper = sessionStorage.getItem("pno");
+  let time = document.getElementById("time1").value;
+  let material = document.getElementById("material1").value;
+  //   console.log("## Mode:", mode, "Gripper:", gripper);
+  let shape = +document.getElementById("shape1").value;
+  if (gripper == "") {
+    // markInvalid("gripper");
+    alert("Select Gripper Type");
+    return false;
+  }
+
+  // if Select Shape then validate shape parameters
+  if (!shape) {
+    markInvalid("shape1");
+    return false;
+  }
+
+  if (shape == 1) {
+    let length = document.getElementById("length1").value;
+    let breadth = document.getElementById("breadth1").value;
+    let width = document.getElementById("width1").value;
+    if (!length) {
+      markInvalid("length1");
+      return false;
+    }
+    if (!breadth) {
+      markInvalid("breadth1");
+      return false;
+    }
+    if (!width) {
+      markInvalid("width1");
+      return false;
+    }
+  } else if (shape == 2) {
+    let radius = document.getElementById("radius1").value;
+    if (!radius) {
+      markInvalid("radius1");
+      return false;
+    }
+  } else if (shape == 3) {
+    let Rmajor = document.getElementById("Rmajor1").value;
+    let Rminor = document.getElementById("Rminor1").value;
+    if (!Rmajor) {
+      markInvalid("Rmajor1");
+      return false;
+    }
+    if (!Rminor) {
+      markInvalid("Rminor1");
+      return false;
+    }
+  }
+  if (!time) {
+    // alert("Please enter Time");
+    markInvalid("time1");
+    return false;
+  }
+
+  if (!material) {
+    // alert("Please select Material");
+    markInvalid("material1");
+    return false;
+  }
+
+  // Reset borders
+  document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
+
+  function invalid(id) {
+    let el = document.getElementById(id);
+    el.focus();
+    if (el) el.style.border = "2px solid red";
+  }
+
+  // ===== MODE 1: ALL EQUAL =====
+
+  // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
+
+  // ===== MODE 3: ALL UNEQUAL =====
 
   return true;
 }
+
+// =============END=============
 
 function markInvalid(id) {
   let el = document.getElementById(id);
@@ -1085,10 +1344,7 @@ async function calculate() {
   } else {
     event = "none"; // spherical
   }
-  // if (!event) {
-  //     alert("Please select Selection Event");
-  //     return;
-  // }
+
   let mode = document.querySelector('input[name="kmode"]:checked').value;
   let data = {
     shape: +shape,
@@ -1154,13 +1410,7 @@ async function calculate() {
   });
 
   let graphResult = await graphResponse.json();
-  //   console.log(graphResult);
 
-  //   execTime.innerText = graphResult.execution_time;
-  //   execTime2.innerText = (graphResult.execution_time / 1000).toFixed(4);
-
-  // change to create comparison chart
-  //   createBarChart(graphResult.time, graphResult.force);
   let materials = graphResult.result.map((x) => x.material);
 
   let forces = graphResult.result.map((x) => x.force);
@@ -1182,11 +1432,102 @@ async function calculate() {
     downloadGraphExcel(2);
   }, 1500);
 }
+// =============== END Calculate() ==============
 
+async function calculate1() {
+  //   console.log("✅ Working calculate1 function called");
+  console.log("✅ Working calculate_1 function called");
+  // 🔥 VALIDATION FIRST
+  // alert("Validation started");
+  if (!validateInputs1()) return;
+  console.log("Validation 1 Passed ✅");
+  let loader = document.getElementById("loader1");
+  let execTime = document.getElementById("executionTime1");
+  let execTime2 = document.getElementById("executionTime21");
+  // 🔥 SHOW LOADER
+  loader.style.display = "inline-block";
+  execTime.innerText = "0";
+  execTime2.innerText = "0";
+  let shape = +document.getElementById("shape1").value;
+
+  // 🔥 GET SELECTION EVENT
+  let event = "";
+
+  if (shape == "3") {
+    // Ellipsoidal
+    if (document.getElementById("rbmajor1").checked) {
+      event = "major";
+    } else if (document.getElementById("rbminor1").checked) {
+      event = "minor";
+    }
+  } else if (shape == "1") {
+    // Rectangular
+    if (document.getElementById("rblength1").checked) {
+      event = "length";
+    } else if (document.getElementById("rbbreadth1").checked) {
+      event = "breadth";
+    }
+    // alert("Event: " + event);
+  } else {
+    event = "none"; // spherical
+  }
+  // let mode = document.querySelector('input[name="kmode"]:checked').value;
+  let data = {
+    shape: +shape,
+    event: event, // 🔥 SEND TO BACKEND
+    length: +document.getElementById("length1").value,
+    breadth: +document.getElementById("breadth1").value,
+    width: +document.getElementById("width1").value,
+    radius: +document.getElementById("radius1").value,
+    Rmajor: +document.getElementById("Rmajor1").value,
+    Rminor: +document.getElementById("Rminor1").value,
+    material: document.getElementById("material1").value,
+    time: document.getElementById("time1").value, // fixed time for graph page
+    mode: "1", // All equal
+    func: document.getElementById("func1").value,
+    gripper: sessionStorage.getItem("pno"),
+  };
+  // ================= All equal vs FORCE =================
+  // ================= GRAPH API =================
+  let graphResponse = await fetch("/comparison_data1", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(data),
+  });
+
+  let graphResult = await graphResponse.json();
+
+  let k_common = graphResult.result.map((x) => x.k_common);
+
+  let forces = graphResult.result.map((x) => x.force);
+
+  createBarChart1(k_common, forces);
+
+  // change to updateGraphTable for comparison chart
+  //   updateGraphTable(graphResult.time, graphResult.force);
+  updateGraphTable1(k_common, forces);
+
+  execTime.innerText = graphResult.execution_time_us;
+  execTime2.innerText = (graphResult.execution_time_us / 1000).toFixed(3);
+  loader.style.display = "none";
+  //   loadAllSpringConstants();
+  // loadAllComparisonSpringConstants();
+  // downloadGraphExcel(2);
+
+  setTimeout(() => {
+    downloadGraphExcel1(2);
+  }, 1500);
+}
+// ============= END calculate1() ==========
 // ============================= New ===============
 // ================= BAR CHART =================
 
-let forceChart = null;
+let forceChart = null; // Tab 1
+let forceChart1 = null; // Tab 2
 
 function createBarChart(timeData, forceData) {
   const canvas = document.getElementById("forceChart");
@@ -1336,8 +1677,180 @@ function createBarChart(timeData, forceData) {
   }, 1000);
 }
 
+function createBarChart1(timeData, forceData) {
+  const canvas = document.getElementById("forceChart1");
+
+  const ctx = canvas.getContext("2d");
+
+  // destroy previous chart
+  if (forceChart1) {
+    forceChart1.destroy();
+  }
+
+  let gripper = sessionStorage.getItem("pno"); // "1" or "2"
+  let bgColors;
+  let anchor;
+  let align;
+  let color;
+  if (gripper === "1") {
+    bgColors = ["#4e79a7", "#59a14f", "#f28e2b", "#e15759", "#b07aa1"];
+    anchor = "center";
+    align = "center";
+    color = "white";
+  } else {
+    bgColors = [
+      "#265294", // blue
+      "#9670ca", // Violet
+      "#bd6162", // Blue
+      "#326d2a", // Orange
+      "#FFBE0B", // Yellow
+    ];
+    anchor = "end";
+    align = "top";
+    color = "black";
+
+    const bgColors2 = [
+      "#00A8E8", // Sky Blue
+      "#FF6B6B", // Coral Red
+      "#FFD166", // Golden Yellow
+      "#06D6A0", // Mint Green
+      "#9B5DE5", // Purple
+    ];
+  }
+  // IMPORTANT FIX
+  setTimeout(() => {
+    forceChart1 = new Chart(ctx, {
+      type: "bar",
+
+      data: {
+        labels: timeData,
+
+        datasets: [
+          {
+            label: "Force",
+
+            data: forceData,
+
+            borderWidth: 2,
+
+            borderColor: "#000",
+
+            barThickness: 150, // fixed width
+            maxBarThickness: 200, // prevent oversized bars
+
+            backgroundColor: bgColors,
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+          legend: {
+            display: true,
+          },
+
+          datalabels: {
+            // anchor: "end",
+            // align: "top",
+            // color: "black",
+            anchor: anchor,
+            align: align,
+            color: color,
+
+            font: {
+              weight: "bold",
+
+              size: 12,
+            },
+
+            formatter: function (value) {
+              return Number(value).toLocaleString();
+            },
+          },
+        },
+
+        animation: {
+          duration: 1000,
+        },
+
+        scales: {
+          x: {
+            title: {
+              display: true,
+
+              text: "Spring Constant (All equal)",
+
+              color: "#444",
+
+              font: {
+                size: 16,
+                weight: "bold",
+              },
+            },
+          },
+
+          y: {
+            type: "logarithmic",
+            beginAtZero: true,
+
+            title: {
+              display: true,
+
+              text: "Force (N)",
+
+              color: "#444",
+
+              font: {
+                size: 16,
+                weight: "bold",
+              },
+            },
+          },
+        },
+      },
+    });
+  }, 200); // small render delay
+
+  // save chart image
+  setTimeout(() => {
+    let chartBase64 = document
+      .getElementById("forceChart1")
+      .toDataURL("image/png");
+
+    document.getElementById("chartImage1").value = chartBase64;
+  }, 1000);
+}
+
 function updateGraphTable(materialData, forceData) {
   let tbody = document.getElementById("graphTableBody");
+
+  tbody.innerHTML = "";
+
+  for (let i = 0; i < materialData.length; i++) {
+    tbody.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${materialData[i]}
+            </td>
+
+            <td>
+                ${forceData[i]}
+            </td>
+
+        </tr>
+
+        `;
+  }
+}
+
+function updateGraphTable1(materialData, forceData) {
+  let tbody = document.getElementById("graphTableBody1");
 
   tbody.innerHTML = "";
 
@@ -1453,6 +1966,117 @@ async function downloadGraphExcel(mStatus) {
 
     tableData: tableData,
     mStatus: mStatus,
+    tab: 1,
+  };
+  console.log("Empty graphImage length:", payload.graphImage?.length);
+  let response = await fetch("/download_compare_excel", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  // console.log("Status:", response.status);
+  // console.log("Content-Type:", response.headers.get("content-type"));
+  if (mStatus == 2) {
+    //Save to localStorage for Merging Excel
+    const result = await response.json();
+    if (result.status === "success") {
+      addGeneratedFile(result.filename, "Compare_Chart");
+      console.log(result.message, "mStatus:", mStatus);
+      // console.table(localStorage);
+      console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
+      // Object.entries(localStorage).forEach(([key, value]) => {
+      //   console.log(key, JSON.parse(value));
+      // });
+    }
+  } else {
+    if (!response.ok) {
+      let txt = await response.text();
+      console.log(txt);
+      alert("Server Error");
+      return;
+    }
+
+    let blob = await response.blob();
+
+    console.log("Blob Size:", blob.size);
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    // a.download = "Graph_Report.xlsx";
+    let disposition = response.headers.get("Content-Disposition");
+
+    let filename = "Graph_Report.xlsx";
+
+    if (disposition && disposition.includes("filename=")) {
+      filename = disposition.split("filename=")[1].replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    a.click();
+  }
+}
+
+async function downloadGraphExcel1(mStatus) {
+  let tableRows = document.querySelectorAll("#graphTableBody1 tr");
+
+  let tableData = [];
+
+  tableRows.forEach((row) => {
+    let cols = row.querySelectorAll("td");
+
+    let forceValue = cols[1].innerText.trim();
+
+    // skip empty rows
+    if (forceValue === "-" || forceValue === "") {
+      return;
+    }
+
+    tableData.push({
+      time: cols[0].innerText,
+
+      force: forceValue,
+    });
+  });
+  if (tableData.length === 0) {
+    alert("Please generate graph first.");
+
+    return;
+  }
+  let graphImage = document
+    .getElementById("forceChart1")
+    .toDataURL("image/png");
+  let payload = {
+    func: document.getElementById("func1").value,
+    // alert("sss" + localStorage.getItem("pno") || "0")
+    mode_name: "All equal", // All equal
+
+    gripper_name:
+      sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
+    shape_name: document.getElementById("shape_name1").innerText,
+
+    object_shape:
+      document.getElementById("shape1").options[
+        document.getElementById("shape1").selectedIndex
+      ].text,
+
+    time: document.getElementById("time1").options[
+      document.getElementById("time1").selectedIndex
+    ].text,
+
+    // graphImage: document.getElementById("chartImage").value,
+    graphImage: graphImage,
+
+    tableData: tableData,
+    mStatus: mStatus,
+    tab: 2,
   };
   console.log("Empty graphImage length:", payload.graphImage?.length);
   let response = await fetch("/download_compare_excel", {
@@ -1578,6 +2202,90 @@ async function downloadGraphPdf() {
     graphImage: document.getElementById("chartImage").value,
 
     tableData: tableData,
+    tab: 1,
+  };
+
+  let response = await fetch("/download_compare_pdf", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(payload),
+  });
+
+  let blob = await response.blob();
+
+  let url = window.URL.createObjectURL(blob);
+
+  let a = document.createElement("a");
+
+  a.href = url;
+
+  let disposition = response.headers.get("Content-Disposition");
+
+  let filename = "Graph_Report.pdf";
+
+  if (disposition && disposition.includes("filename=")) {
+    filename = disposition.split("filename=")[1].replace(/"/g, "");
+  }
+
+  a.download = filename;
+
+  a.click();
+}
+
+async function downloadGraphPdf1() {
+  let tableRows = document.querySelectorAll("#graphTableBody1 tr");
+
+  let tableData = [];
+
+  tableRows.forEach((row) => {
+    let cols = row.querySelectorAll("td");
+
+    let forceValue = cols[1].innerText.trim();
+
+    // skip empty rows
+    if (forceValue === "-" || forceValue === "") {
+      return;
+    }
+
+    tableData.push({
+      time: cols[0].innerText,
+
+      force: forceValue,
+    });
+  });
+
+  // VALIDATION SAME AS EXCEL
+  if (tableData.length === 0) {
+    alert("Please generate graph first.");
+    return;
+  }
+
+  let payload = {
+    func: document.getElementById("func1").value,
+
+    mode_name: "All equal",
+
+    gripper_name:
+      sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
+    shape_name: document.getElementById("shape_name1").innerText,
+
+    object_shape:
+      document.getElementById("shape1").options[
+        document.getElementById("shape1").selectedIndex
+      ].text,
+
+    time: document.getElementById("time1").options[
+      document.getElementById("time1").selectedIndex
+    ].text,
+
+    graphImage: document.getElementById("chartImage1").value,
+
+    tableData: tableData,
+    tab: 2,
   };
 
   let response = await fetch("/download_compare_pdf", {
@@ -1994,6 +2702,81 @@ async function mergedAllExcels() {
   const btn = document.getElementById("btnMerge");
   const btnText = document.getElementById("btnMergeText");
   const btnLoader = document.getElementById("btnMergeLoader");
+
+  btn.disabled = true;
+  btnText.style.display = "none";
+  btnLoader.style.display = "inline";
+
+  try {
+    const response = await fetch("/merge_excels", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ files }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to merge files");
+    }
+
+    const blob = await response.blob();
+
+    let filename = "Merged.xlsx";
+    const disposition = response.headers.get("Content-Disposition");
+
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    alert("Error merging files.");
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = "inline";
+    btnLoader.style.display = "none";
+    localStorage.removeItem("generatedFiles");
+    updateDirtyState();
+  }
+}
+
+async function mergedAllExcels1() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  if (!files || files.length === 0) {
+    alert("No files available to merge.");
+    return;
+  }
+
+  let fileList = files
+    .map((file, index) => `${index + 1}. ${file.filename}`)
+    .join("\n");
+
+  if (
+    !confirm(
+      "The following files will be merged:\n\n" +
+        fileList +
+        "\n\nDo you want to continue?",
+    )
+  ) {
+    return;
+  }
+
+  const btn = document.getElementById("btnMerge1");
+  const btnText = document.getElementById("btnMergeText1");
+  const btnLoader = document.getElementById("btnMergeLoader1");
 
   btn.disabled = true;
   btnText.style.display = "none";
