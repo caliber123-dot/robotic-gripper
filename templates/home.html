@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Robotic Gripper Force Estimation</title>
 
@@ -14,976 +13,1144 @@
     <link rel="stylesheet" href="/static/css/bootstrap-icons.css" />
     <link rel="stylesheet" href="/static/css/model.css" />
     <style>
-        .menu {
-            position: relative;
-            border: 3px solid #2c3e50;
-            padding-top: 30px;
-            padding-left: 15px;
-            padding-right: 15px;
-            border-radius: 0 0 10px 10px;
-        }
-    
-        .menu:before {
-            content: attr(data-title);
-            background: #2c3e50;
-            position: absolute;
-            padding: 0 20px;
-            color: #fff;
-            left: 0;
-            top: 0;
-    
-        }
-    
-        .menu ul {
-            margin: 0;
-        }
-    
-        .table {
-            border: 2px solid #000;
-        }
-    
-        .table th,
-        .table td {
-            border: 1.5px solid #000 !important;
-            vertical-align: middle;
-        }
-    
-        .table thead {
-            background: #dcdcdc;
-        }
-    
-        .table input {
-            border: 0px solid #000 !important;
-        }
-    </style>
-   
-</head>
+      .menu {
+        position: relative;
+        border: 3px solid #2c3e50;
+        padding-top: 30px;
+        padding-left: 15px;
+        padding-right: 15px;
+        border-radius: 0 0 10px 10px;
+      }
 
-<body class="theme-light">
+      .menu:before {
+        content: attr(data-title);
+        background: #2c3e50;
+        position: absolute;
+        padding: 0 20px;
+        color: #fff;
+        left: 0;
+        top: 0;
+      }
+
+      .menu ul {
+        margin: 0;
+      }
+
+      .table {
+        border: 2px solid #000;
+      }
+
+      .table th,
+      .table td {
+        border: 1.5px solid #000 !important;
+        vertical-align: middle;
+      }
+
+      .table thead {
+        background: #dcdcdc;
+      }
+
+      .table input {
+        border: 0px solid #000 !important;
+      }
+    </style>
+  </head>
+
+  <body class="theme-light">
     <!-- NAVBAR WITH ICONS -->
     <!-- PREMIUM NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
-        <div class="container-fluid">
-            <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-robot"></i> Gripper System
-            </a>
+      <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="/">
+          <i class="bi bi-robot"></i> Gripper System
+        </a>
 
-            <!-- Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- Toggle -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <!-- Menu -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">
-                            <i class="bi bi-house-door"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href="/input">
-                            <i class="bi bi-sliders"></i> Input
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/graph">
-                            <i class="bi bi-graph-up"></i> Bar Chart
-                        </a>
-                    </li>                   
+        <!-- Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="/home">
+                <i class="bi bi-house-door"></i> Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/input">
+                <i class="bi bi-sliders"></i> Input
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/graph">
+                <i class="bi bi-graph-up"></i> Bar Chart
+              </a>
+            </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/comparison">
-                            <i class="bi bi-graph-up"></i> Comparison Chart
-                        </a>
-                    </li>
-                   
-                    <li class="nav-item ms-3 d-flex align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="/comparison">
+                <i class="bi bi-graph-up"></i> Comparison Chart
+              </a>
+            </li>
 
-    <i class="bi bi-sun-fill theme-icon-light"></i>
+            <li class="nav-item ms-3 d-flex align-items-center">
+              <i class="bi bi-sun-fill theme-icon-light"></i>
 
-    <div class="form-check form-switch mx-2">
-        <input class="form-check-input custom-theme-switch"
-               type="checkbox"
-               id="themeToggle"
-               onchange="toggleTheme()">
-    </div>
+              <div class="form-check form-switch mx-2">
+                <input
+                  class="form-check-input custom-theme-switch"
+                  type="checkbox"
+                  id="themeToggle"
+                  onchange="toggleTheme()"
+                />
+              </div>
 
-    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+              <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+            </li>
+            <li>
+              <div class="dropdown d-inline-block ms-2">
+                <button
+                  class="btn btn-dark dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  Choose theme
+                </button>
+                <ul class="dropdown-menu p-3">
+                  <div class="d-flex flex-wrap gap-2">
+                    <style>
+                      .custom-theme-switch {
+                        width: 58px !important;
+                        height: 30px;
 
-</li>
-                    <li>
-                        <div class="dropdown d-inline-block ms-2">
-                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                Choose theme
-                            </button>
-                            <ul class="dropdown-menu p-3">
-                                <div class="d-flex flex-wrap gap-2">                                    
+                        border-radius: 50px !important;
 
-                                    <style>
-                                        .custom-theme-switch {
-                                            width: 58px !important;
-                                            height: 30px;
-                                    
-                                            border-radius: 50px !important;
-                                    
-                                            cursor: pointer;
-                                    
-                                            border: none !important;
-                                    
-                                            background-color: #f8f9fa;
-                                    
-                                            transition: all 0.3s ease;
-                                    
-                                            box-shadow:
-                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
-                                                0 0 10px rgba(0, 212, 255, 0.3);
-                                        }
-                                    
-                                        /* LIGHT MODE circle = black */
-                                        .custom-theme-switch:not(:checked) {
-                                            background-color: #e9ecef;
-                                    
-                                            background-image:
-                                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='rgba(0%2C0%2C0%2C0.75)'/%3E%3C/svg%3E");
-                                        }
-                                    
-                                        /* DARK MODE circle = white */
-                                        .custom-theme-switch:checked {
-                                            background-color: #121212;
-                                        }
-                                    
-                                        /* remove bootstrap glow */
-                                        .custom-theme-switch:focus {
-                                            box-shadow:
-                                                inset 0 0 5px rgba(0, 0, 0, 0.2),
-                                                0 0 12px rgba(0, 212, 255, 0.5);
-                                        }
-                                    
-                                        .custom-theme-switch:checked {
-                                            background-color: #121212;
-                                        }
-                                    
-                                        .custom-theme-switch:focus {
-                                            box-shadow:
-                                                0 0 12px rgba(0, 212, 255, 0.7);
-                                        }
-                                    
-                                        .theme-icon-light {
-                                            color: #ffd43b;
-                                            font-size: 18px;
-                                    
-                                            filter: drop-shadow(0 0 5px rgba(255, 212, 59, 0.8));
-                                        }
-                                    
-                                        .theme-icon-dark {
-                                            color: #d0d7ff;
-                                            font-size: 18px;
-                                    
-                                            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
-                                        }
-                                    
-                                        .color-panel1 {
-                                            width: 100px;
-                                            height: 30px;
-                                            padding: 3px;
-                                            margin-right: 15px;
-                                            cursor: pointer;
-                                            margin-right: 0px;
-                                    
-                                        }
-                                        .color-panel{
-    width: 100px;
-    height: 35px;
+                        cursor: pointer;
 
-    border: 2px solid rgba(255,255,255,0.25);
-    border-radius: 8px;
+                        border: none !important;
 
-    cursor: pointer;
+                        background-color: #f8f9fa;
 
-    padding: 0;
+                        transition: all 0.3s ease;
 
-    background:
-        linear-gradient(
-            90deg,
-            red,
-            orange,
-            yellow,
-            lime,
-            cyan,
-            blue,
-            violet,
-            red
-        );
+                        box-shadow:
+                          inset 0 0 5px rgba(0, 0, 0, 0.2),
+                          0 0 10px rgba(0, 212, 255, 0.3);
+                      }
 
-    box-shadow:
-        0 0 10px rgba(0,0,0,0.15);
+                      /* LIGHT MODE circle = black */
+                      .custom-theme-switch:not(:checked) {
+                        background-color: #e9ecef;
 
-    overflow: hidden;
-}
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='rgba(0%2C0%2C0%2C0.75)'/%3E%3C/svg%3E");
+                      }
 
-/* hide default browser color UI */
-.color-panel::-webkit-color-swatch-wrapper{
-    padding: 0;
-}
+                      /* DARK MODE circle = white */
+                      .custom-theme-switch:checked {
+                        background-color: #121212;
+                      }
 
-.color-panel::-webkit-color-swatch{
-    border: none;
-    border-radius: 6px;
+                      /* remove bootstrap glow */
+                      .custom-theme-switch:focus {
+                        box-shadow:
+                          inset 0 0 5px rgba(0, 0, 0, 0.2),
+                          0 0 12px rgba(0, 212, 255, 0.5);
+                      }
 
-    opacity: 0; /* hide solid selected color */
-}
-                                    
-                                        .color-box2 {
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 10px;
-                                            /* spacing between input and button */
-                                    
-                                        }
-                                    </style>
-                                    <div class="color-box2">                                        
-                                        <input type="color" class="color-panel" id="startColor" value="#f1f1f1" onchange="changeBackground()">
-                                        <!-- <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
+                      .custom-theme-switch:checked {
+                        background-color: #121212;
+                      }
+
+                      .custom-theme-switch:focus {
+                        box-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
+                      }
+
+                      .theme-icon-light {
+                        color: #ffd43b;
+                        font-size: 18px;
+
+                        filter: drop-shadow(0 0 5px rgba(255, 212, 59, 0.8));
+                      }
+
+                      .theme-icon-dark {
+                        color: #d0d7ff;
+                        font-size: 18px;
+
+                        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+                      }
+
+                      .color-panel1 {
+                        width: 100px;
+                        height: 30px;
+                        padding: 3px;
+                        margin-right: 15px;
+                        cursor: pointer;
+                        margin-right: 0px;
+                      }
+
+                      .color-panel {
+                        width: 100px;
+                        height: 35px;
+
+                        border: 2px solid rgba(255, 255, 255, 0.25);
+                        border-radius: 8px;
+
+                        cursor: pointer;
+
+                        padding: 0;
+
+                        background: linear-gradient(
+                          90deg,
+                          red,
+                          orange,
+                          yellow,
+                          lime,
+                          cyan,
+                          blue,
+                          violet,
+                          red
+                        );
+
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+
+                        overflow: hidden;
+                      }
+
+                      /* hide default browser color UI */
+                      .color-panel::-webkit-color-swatch-wrapper {
+                        padding: 0;
+                      }
+
+                      .color-panel::-webkit-color-swatch {
+                        border: none;
+                        border-radius: 6px;
+
+                        opacity: 0;
+                        /* hide solid selected color */
+                      }
+
+                      .color-box2 {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        /* spacing between input and button */
+                      }
+                    </style>
+                    <div class="color-box2">
+                      <input
+                        type="color"
+                        class="color-panel"
+                        id="startColor"
+                        value="#f1f1f1"
+                        onchange="changeBackground()"
+                      />
+                      <!-- <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
                                             Apply
                                         </button> -->
-                                    </div>
-                                    
-                                </div>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-
-    <div class="container mt-4" style="min-width: 100% !important;">        
-        
-        <style>
-            .hero-ai-bg {
-                position: relative;
-                overflow: hidden;
-        
-                background:
-                    linear-gradient(135deg,
-                        #16222a,
-                        #203a43,
-                        #2c5364);
-        
-                border-radius: 14px;
-                padding: 18px;
-        
-                text-align: center;
-                color: white;
-        
-                border: 2px solid rgba(0, 212, 255, 0.25);
-        
-                box-shadow:
-                    0 0 20px rgba(0, 212, 255, 0.15),
-                    0 0 40px rgba(0, 212, 255, 0.08);
-        
-                z-index: 1;
-            }
-        
-            /* animated glowing grid */
-            .hero-ai-bg::before {
-                content: "";
-        
-                position: absolute;
-                inset: 0;
-        
-                background-image:
-                    linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
-        
-                background-size: 40px 40px;
-        
-                animation: gridMove 8s linear infinite;
-        
-                z-index: -2;
-            }
-        
-            /* glowing AI orb */
-            .hero-ai-bg::after {
-                content: "";
-        
-                position: absolute;
-        
-                width: 500px;
-                height: 500px;
-        
-                background:
-                    radial-gradient(circle,
-                        rgba(0, 212, 255, 0.22) 0%,
-                        transparent 70%);
-        
-                top: -180px;
-                right: -120px;
-        
-                animation: glowPulse 6s ease-in-out infinite alternate;
-        
-                z-index: -1;
-            }
-        
-            /* moving grid */
-            @keyframes gridMove {
-                from {
-                    transform: translateY(0px);
-                }
-        
-                to {
-                    transform: translateY(40px);
-                }
-            }
-        
-            /* glow pulse */
-            @keyframes glowPulse {
-                from {
-                    transform: scale(1);
-                    opacity: 0.5;
-                }
-        
-                to {
-                    transform: scale(1.25);
-                    opacity: 1;
-                }
-            }
-        
-            /* BIG highlighted title */
-            .hero-ai-bg h2 {
-                font-size: 2.5rem;
-                font-weight: 800;
-        
-                letter-spacing: 1px;
-        
-                color: #ffffff;
-        
-                text-shadow:
-                    0 0 10px rgba(255, 255, 255, 0.4),
-                    0 0 20px rgba(0, 212, 255, 0.7),
-                    0 0 40px rgba(0, 212, 255, 0.5);
-        
-                animation: titleGlow 3s ease-in-out infinite alternate;
-            }
-        
-            /* highlighted subtitle */
-            .hero-ai-bg h4 {
-                font-weight: 700;
-        
-                color: #dff6ff;
-        
-                text-shadow:
-                    0 0 10px rgba(0, 212, 255, 0.5);
-            }
-        
-            /* formula highlight */
-            .hero-ai-bg img {
-                filter:
-                    drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
-        
-                animation: formulaFloat 3s ease-in-out infinite;
-            }
-        
-            /* title glow animation */
-            @keyframes titleGlow1 {
-                from {
-                    text-shadow:
-                        0 0 10px rgba(255, 255, 255, 0.4),
-                        0 0 20px rgba(0, 212, 255, 0.5);
-                }
-        
-                to {
-                    text-shadow:
-                        0 0 20px rgba(255, 255, 255, 0.7),
-                        0 0 40px rgba(0, 212, 255, 1),
-                        0 0 60px rgba(0, 212, 255, 0.8);
-                }
-            }
-        
-            /* floating formula */
-            @keyframes formulaFloat2 {
-                0% {
-                    transform: translateY(0px);
-                }
-        
-                50% {
-                    transform: translateY(-5px);
-                }
-        
-                100% {
-                    transform: translateY(0px);
-                }
-            }
-        
-            .hero-ai-bg {
-                position: relative;
-                overflow: hidden;
-        
-                background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735);
-        
-                border-radius: 14px;
-                padding: 18px;
-        
-                text-align: center;
-                color: white;
-            }
-        
-            /* particles container */
-            .particles {
-                position: absolute;
-                inset: 0;
-                overflow: hidden;
-                z-index: 0;
-            }
-        
-            /* particle circles */
-            .particles span {
-                position: absolute;
-                display: block;
-        
-                width: 12px;
-                height: 12px;
-        
-                background: rgba(0, 212, 255, 0.35);
-        
-                border-radius: 50%;
-        
-                box-shadow:
-                    0 0 10px rgba(0, 212, 255, 0.8),
-                    0 0 20px rgba(0, 212, 255, 0.5);
-        
-                animation: floatParticle linear infinite;
-            }
-        
-            /* different particle positions */
-            .particles span:nth-child(1) {
-                left: 10%;
-                animation-duration: 10s;
-                animation-delay: 0s;
-            }
-        
-            .particles span:nth-child(2) {
-                left: 25%;
-                width: 18px;
-                height: 18px;
-                animation-duration: 14s;
-            }
-        
-            .particles span:nth-child(3) {
-                left: 40%;
-                animation-duration: 12s;
-            }
-        
-            .particles span:nth-child(4) {
-                left: 55%;
-                width: 8px;
-                height: 8px;
-                animation-duration: 9s;
-            }
-        
-            .particles span:nth-child(5) {
-                left: 70%;
-                animation-duration: 15s;
-            }
-        
-            .particles span:nth-child(6) {
-                left: 82%;
-                width: 16px;
-                height: 16px;
-                animation-duration: 11s;
-            }
-        
-            .particles span:nth-child(7) {
-                left: 92%;
-                animation-duration: 13s;
-            }
-        
-            .particles span:nth-child(8) {
-                left: 50%;
-                width: 20px;
-                height: 20px;
-                animation-duration: 18s;
-            }
-        
-            /* floating animation */
-            @keyframes floatParticle {
-        
-                0% {
-                    transform: translateY(100%) scale(0.5);
-                    opacity: 0;
-                }
-        
-                20% {
-                    opacity: 1;
-                }
-        
-                80% {
-                    opacity: 1;
-                }
-        
-                100% {
-                    transform: translateY(-900%) scale(1.2);
-                    opacity: 0;
-                }
-            }
-        
-            /* keep content above particles */
-            .hero-ai-bg h2,
-            .hero-ai-bg h4,
-            .hero-ai-bg img,
-            .formula-details-container {
-                position: relative;
-                z-index: 2;
-            }
-        </style>
-        <style>
-            .formula-details-container {
-                width: 70%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-        
-            .formula-details {
-                background: rgba(255, 255, 255, 0.08);
-                border-radius: 10px;
-                padding: 12px;
-                margin-top: 10px;
-                color: white;
-                width: 90%;
-                overflow: hidden;
-                transition: all 0.4s ease;
-            }
-        
-            .formula-details.collapsed {
-                max-height: 90px;
-                /* show only 2-3 items */
-            }
-        
-            .formula-details.expanded {
-                max-height: 1000px;
-            }
-        
-            .detail-item {
-                padding: 6px 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-                text-align: left;
-                font-size: 15px;
-            }
-        
-            .detail-item:last-child {
-                border-bottom: none;
-            }
-        
-            .formula-toggle-btn {
-                border: none;
-                background: white;
-                color: #2c3e50;
-                padding: 6px 12px;
-                border-radius: 8px;
-                font-weight: 600;
-        
-                display: flex;
-                align-items: center;
-                gap: 12px;
-        
-                transition: all 0.3s ease;
-            }
-        
-            .formula-toggle-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            }
-        
-            .arrow-icon {
-                transition: transform 0.4s ease;
-            }
-        
-            .arrow-icon.rotate {
-                transform: rotate(180deg);
-            }
-        
-            .formula-icon {
-                margin-right: 10px;
-                color: #90caf9;
-                font-size: 16px;
-                width: 20px;
-            }
-        
-            .div1 {
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.23);
-                /* Multiple shadows for depth */
-                border-radius: 10px;
-            }
-        
-            .div2 {
-                border: #939da8 1px solid;
-                padding: 10px;
-                padding-top: 0px;
-                padding-bottom: 0px;
-            }
-        
-            .bold-option {
-                font-weight: 600;
-            }
-        </style>
-        <div id="page_window1" class="hero-ai-bg" style="border-radius: 10px;padding: 10px;text-align: center;color: white;">
-            <div class="particles">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
-            <h4>According to this equation:</h4>
-            <img src="static/img/formula_14.png" alt="" height="80">
-            <!-- Formula Details -->
-            <div class="w-100 text-center d-flex justify-content-center">
-                <div class="formula-details-container mt-3">
-        
-                    <div class="formula-details collapsed1" id="formulaDetails">
-        
-                        <div class="detail-item">
-                            <i class="bi bi-box-seam formula-icon"></i>
-                            <b>m</b> = mass of the object
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-globe2 formula-icon"></i>
-                            <b>g</b> = acceleration due to gravity = 9.8 m/s²
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-arrows-angle-expand formula-icon"></i>
-                            <b>r</b> = distance of finger from joint to contact point
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-compass formula-icon"></i>
-                            <b>θ</b> = angle of contact
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-diagram-3 formula-icon"></i>
-                            <b>k</b> = spring constant
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-graph-up-arrow formula-icon"></i>
-                            <b>dθ/dt</b> = first derivative angle of contact with respective to time
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-activity formula-icon"></i>
-                            <b>d²θ/dt²</b> = second derivative angle of contact with respective to time
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-arrow-left-right formula-icon"></i>
-                            <b>r sinθ</b> = linear deflection
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-calculator formula-icon"></i>
-                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
-                        </div>
-        
-                        <div class="detail-item">
-                            <i class="bi bi-hand-index-thumb formula-icon"></i>
-                            <b>Fᵢ(t)</b> = Grasp Force
-                        </div>
-        
                     </div>
-        
-                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()" style="display: none;">        
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            More Details
-                        </span>        
-                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>        
-                    </button>
-            <div class="row w-75" style="border: #121212; border-width: 0px; border-style: solid;">
-                <div class="col-md-6">
-                    <button class="btn btn-primary mt-2" id="btnpage_window1" title="4 Finger gripper" onclick="hidePages(1)">
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            Start 4 Fingers Gripper
-                        </span>
-                        <i class="bi bi-arrow-right arrow-icon"></i>
-                    </button>
-                </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary mt-2" id="btnpage_window2" title="3 Fingers + 1 Thumb" tag="2" onclick="hidePages(2)">
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            Start 3 Fingers + 1 Thumb
-                        </span>
-                        <i class="bi bi-arrow-right arrow-icon"></i>
-                    </button>
-                </div>
+                  </div>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
+    <div class="container mt-4" style="min-width: 100% !important">
+      <style>
+        .hero-ai-bg,
+        .hero-ai-bg2 {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+        }
+
+        .hero-ai-bg::before,
+        .hero-ai-bg2::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          /* NOT -2 */
+          pointer-events: none;
+        }
+
+        /* 1 */
+
+        .hero-ai-bg {
+          position: relative;
+          overflow: hidden;
+          background: linear-gradient(135deg, #99474e, #80494e, #000205);
+          /* background: linear-gradient(135deg, #16222a, #203a43, #2c5364); */
+
+          border-radius: 14px;
+          padding: 18px;
+
+          text-align: center;
+          color: white;
+
+          border: 2px solid rgba(0, 212, 255, 0.25);
+
+          box-shadow:
+            0 0 20px rgba(0, 212, 255, 0.15),
+            0 0 40px rgba(0, 212, 255, 0.08);
+
+          z-index: 1;
+        }
+
+        /* animated glowing grid */
+        .hero-ai-bg::before {
+          content: "";
+
+          position: absolute;
+          inset: 0;
+
+          /* background-image:
+          linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px); */
+          background-image:
+            linear-gradient(rgba(255, 180, 180, 0.05) 2px, transparent 1px),
+            linear-gradient(
+              90deg,
+              rgba(255, 180, 180, 0.05) 2px,
+              transparent 1px
+            );
+
+          background-size: 40px 40px;
+
+          animation: gridMove 8s linear infinite;
+
+          z-index: -2;
+        }
+
+        /* Project-2 */
+        .hero-ai-bg2::before {
+          content: "";
+
+          position: absolute;
+          inset: 0;
+
+          /* background-image:
+          linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
+
+        background-size: 40px 40px; */
+          background:
+            linear-gradient(
+              30deg,
+              #ffffff10 12%,
+              transparent 12.5%,
+              transparent 87%,
+              #ffffff10 87.5%,
+              #ffffff10
+            ),
+            linear-gradient(
+              150deg,
+              #ffffff10 12%,
+              transparent 12.5%,
+              transparent 87%,
+              #ffffff10 87.5%,
+              #ffffff10
+            ),
+            linear-gradient(
+              90deg,
+              #ffffff08 2%,
+              transparent 2.5%,
+              transparent 97%,
+              #ffffff08 97.5%,
+              #ffffff08
+            );
+
+          background-size: 60px 104px;
+
+          /* animation: gridMove 18s linear infinite; */
+
+          z-index: -2;
+        }
+
+        /* glowing AI orb */
+        .hero-ai-bg::after {
+          content: "";
+
+          position: absolute;
+
+          width: 500px;
+          height: 500px;
+
+          background: radial-gradient(
+            circle,
+            rgba(0, 212, 255, 0.22) 0%,
+            transparent 70%
+          );
+
+          top: -180px;
+          right: -120px;
+
+          animation: glowPulse 6s ease-in-out infinite alternate;
+
+          z-index: -1;
+        }
+
+        /* moving grid */
+        @keyframes gridMove {
+          from {
+            transform: translateY(0px);
+          }
+
+          to {
+            transform: translateY(40px);
+          }
+        }
+
+        /* glow pulse */
+        @keyframes glowPulse {
+          from {
+            transform: scale(1);
+            opacity: 0.5;
+          }
+
+          to {
+            transform: scale(1.25);
+            opacity: 1;
+          }
+        }
+
+        /* BIG highlighted title */
+        .hero-ai-bg h2 {
+          font-size: 2.1rem;
+          font-weight: 800;
+
+          letter-spacing: 1px;
+
+          color: #ffffff;
+
+          text-shadow:
+            0 0 10px rgba(255, 255, 255, 0.4),
+            0 0 20px rgba(0, 212, 255, 0.7),
+            0 0 40px rgba(0, 212, 255, 0.5);
+
+          animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .hero-ai-bg2 h2 {
+          font-size: 2.1rem;
+          font-weight: 800;
+
+          letter-spacing: 1px;
+
+          color: #ffffff;
+
+          text-shadow:
+            0 0 10px rgba(255, 255, 255, 0.4),
+            0 0 20px rgba(0, 212, 255, 0.7),
+            0 0 40px rgba(0, 212, 255, 0.5);
+
+          animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        /* highlighted subtitle */
+        .hero-ai-bg h4 {
+          font-weight: 700;
+
+          color: #dff6ff;
+
+          text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* formula highlight */
+        .hero-ai-bg img {
+          filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))
+            drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+
+          animation: formulaFloat 3s ease-in-out infinite;
+        }
+
+        .hero-ai-bg2 img {
+          /* filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3)); */
+          filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.7))
+            drop-shadow(0 0 20px rgba(0, 212, 255, 0.5))
+            drop-shadow(0 0 40px rgba(0, 120, 255, 0.35));
+          animation: formulaFloat 3s ease-in-out infinite;
+        }
+
+        /* title glow animation */
+        @keyframes titleGlow1 {
+          from {
+            text-shadow:
+              0 0 10px rgba(255, 255, 255, 0.4),
+              0 0 20px rgba(0, 212, 255, 0.5);
+          }
+
+          to {
+            text-shadow:
+              0 0 20px rgba(255, 255, 255, 0.7),
+              0 0 40px rgba(0, 212, 255, 1),
+              0 0 60px rgba(0, 212, 255, 0.8);
+          }
+        }
+
+        /* floating formula */
+        @keyframes formulaFloat2 {
+          0% {
+            transform: translateY(0px);
+          }
+
+          50% {
+            transform: translateY(-5px);
+          }
+
+          100% {
+            transform: translateY(0px);
+          }
+        }
+
+        /* 2 */
+
+        .hero-ai-bg2 {
+          position: relative;
+          overflow: hidden;
+
+          background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735);
+          /* background: linear-gradient(135deg, #99474e, #80494e, #000205); */
+
+          border-radius: 14px;
+          padding: 18px;
+
+          text-align: center;
+          color: white;
+        }
+
+        .hero-ai-bg222 {
+          position: relative;
+          overflow: hidden;
+
+          /* background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735); */
+          /* background: linear-gradient(135deg, #99474e, #80494e, #000205); */
+          /* background: linear-gradient(45deg, #99474e, #80494e, #000205); */
+
+          border-radius: 14px;
+          padding: 18px;
+
+          text-align: center;
+          color: white;
+        }
+
+        /* particles container */
+        .particles {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          z-index: 0;
+        }
+
+        /* particle circles */
+        .particles span {
+          position: absolute;
+          display: block;
+
+          width: 12px;
+          height: 12px;
+
+          background: rgba(0, 212, 255, 0.35);
+
+          border-radius: 50%;
+
+          box-shadow:
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 0 20px rgba(0, 212, 255, 0.5);
+
+          animation: floatParticle linear infinite;
+        }
+
+        /* different particle positions */
+        .particles span:nth-child(1) {
+          left: 10%;
+          animation-duration: 10s;
+          animation-delay: 0s;
+        }
+
+        .particles span:nth-child(2) {
+          left: 25%;
+          width: 18px;
+          height: 18px;
+          animation-duration: 14s;
+        }
+
+        .particles span:nth-child(3) {
+          left: 40%;
+          animation-duration: 12s;
+        }
+
+        .particles span:nth-child(4) {
+          left: 55%;
+          width: 8px;
+          height: 8px;
+          animation-duration: 9s;
+        }
+
+        .particles span:nth-child(5) {
+          left: 70%;
+          animation-duration: 15s;
+        }
+
+        .particles span:nth-child(6) {
+          left: 82%;
+          width: 16px;
+          height: 16px;
+          animation-duration: 11s;
+        }
+
+        .particles span:nth-child(7) {
+          left: 92%;
+          animation-duration: 13s;
+        }
+
+        .particles span:nth-child(8) {
+          left: 50%;
+          width: 20px;
+          height: 20px;
+          animation-duration: 18s;
+        }
+
+        /* floating animation */
+        @keyframes floatParticle {
+          0% {
+            transform: translateY(100%) scale(0.5);
+            opacity: 0;
+          }
+
+          20% {
+            opacity: 1;
+          }
+
+          80% {
+            opacity: 1;
+          }
+
+          100% {
+            transform: translateY(-900%) scale(1.2);
+            opacity: 0;
+          }
+        }
+
+        /* keep content above particles */
+        .hero-ai-bg h2,
+        .hero-ai-bg h4,
+        .hero-ai-bg img,
+        .formula-details-container {
+          position: relative;
+          z-index: 2;
+        }
+      </style>
+      <style>
+        .formula-details-container {
+          width: 110%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .formula-details {
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 10px;
+          padding: 12px;
+          margin-top: 10px;
+          color: white;
+          width: 100%;
+          overflow: hidden;
+          transition: all 0.4s ease;
+        }
+
+        .formula-details.collapsed {
+          max-height: 90px;
+          /* show only 2-3 items */
+        }
+
+        .formula-details.expanded {
+          max-height: 1000px;
+        }
+
+        .detail-item {
+          padding: 6px 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          text-align: left;
+          font-size: 15px;
+        }
+
+        .detail-item:last-child {
+          border-bottom: none;
+        }
+
+        .formula-toggle-btn {
+          border: none;
+          background: white;
+          color: #2c3e50;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-weight: 600;
+
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          transition: all 0.3s ease;
+        }
+
+        .formula-toggle-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .arrow-icon {
+          transition: transform 0.4s ease;
+        }
+
+        .arrow-icon.rotate {
+          transform: rotate(180deg);
+        }
+
+        .formula-icon {
+          margin-right: 10px;
+          color: #90caf9;
+          font-size: 16px;
+          width: 20px;
+        }
+
+        .div1 {
+          box-shadow:
+            0 4px 8px rgba(0, 0, 0, 0.16),
+            0 4px 8px rgba(0, 0, 0, 0.23);
+          /* Multiple shadows for depth */
+          border-radius: 10px;
+        }
+
+        .div2 {
+          border: #939da8 1px solid;
+          padding: 10px;
+          padding-top: 0px;
+          padding-bottom: 0px;
+        }
+
+        .bold-option {
+          font-weight: 600;
+        }
+      </style>
+      <div
+        id="page_window1"
+        class="hero-ai-bg"
+        style="
+          border-radius: 10px;
+          padding: 10px;
+          text-align: center;
+          color: white;
+        "
+      >
+        <div class="particles">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h2 style="padding: 5px" id="project_title">
+          Spring Structural Model of Robotic Gripper
+        </h2>
+        <h4>According to this equation:</h4>
+        <img src="static/img/formula_14.png" alt="" height="80" />
+        <!-- Formula Details -->
+        <div class="w-100 text-center d-flex justify-content-center">
+          <div class="row align-items-center">
+            <!-- two column -->
+            <div class="col-md-6 text-right">
+              <img
+                id="industrial_img"
+                src="/static/img/4Finger2_3_4.png"
+                alt="Formula"
+                class="img-fluid"
+                style="
+                  max-width: 100%;
+                  height: auto;
+                  margin-top: 30px;
+                  border-radius: 10px;
+                "
+              />
             </div>
-                   
-                   
+            <div class="col-md-6 text-left">
+              <div class="formula-details-container mt-3">
+                <div class="formula-details collapsed1" id="formulaDetails">
+                  <div class="detail-item">
+                    <i class="bi bi-box-seam formula-icon"></i>
+                    <b>m</b> = mass of the object
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-globe2 formula-icon"></i>
+                    <b>g</b> = acceleration due to gravity = 9.8 m/s²
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-arrows-angle-expand formula-icon"></i>
+                    <b>r</b> = distance of finger from joint to contact point
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-compass formula-icon"></i>
+                    <b>θ</b> = angle of contact
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-diagram-3 formula-icon"></i>
+                    <b>k</b> = spring constant
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-graph-up-arrow formula-icon"></i>
+                    <b>dθ/dt</b> = first derivative angle of contact with
+                    respective to time
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-activity formula-icon"></i>
+                    <b>d²θ/dt²</b> = second derivative angle of contact with
+                    respective to time
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-arrow-left-right formula-icon"></i>
+                    <b>r sinθ</b> = linear deflection
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-calculator formula-icon"></i>
+                    <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion
+                    of sin
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="bi bi-hand-index-thumb formula-icon"></i>
+                    <b>Fᵢ(t)</b> = Grasp Force
+                  </div>
                 </div>
+
+                <button
+                  class="formula-toggle-btn mt-2"
+                  id="toggleFormulaBtn"
+                  onclick="toggleFormulaDetails()"
+                  style="display: none"
+                >
+                  <span>
+                    <i class="bi bi-journal-richtext me-1"></i>
+                    More Details
+                  </span>
+                  <i
+                    class="bi bi-chevron-down arrow-icon"
+                    id="formulaArrow"
+                  ></i>
+                </button>
+              </div>
             </div>
-        </div>       
-        
-        <script>
-            // let CURRENT_GRIPPER = 0;
-            // let page1 = document.getElementById("page_window1");
-            // let page2 = document.getElementById("page_window2");
-            
-            function hidePages(pageNumber)
-            {
-                // this function is called when user click on start gripper button
-                // pageNumber = 1 for 4 finger gripper
-                // pageNumber = 2 for 3 finger + 1 thumb gripper
-                // after click function this page open in new tab next
-                // open("/", "_blank");
+            <div
+              class="row w-100"
+              style="border: #121212; border-width: 0px; border-style: solid"
+            >
+              <div class="col-md-12">
+                <a
+                  id="btnGetstart"
+                  href="/input"
+                  class="btn btn-primary btn-lg mt-2 w-50"
+                  style="position: relative; z-index: 99999"
+                >
+                  <i class="bi bi-journal-richtext me-1"></i> Get Started
+                  <i class="bi bi-arrow-right arrow-icon"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                // let gripper = document.getElementById("gripper").value;
-                // let gripper_window_head = document.getElementById("gripper_window_head");
-                 // memory variable
-                // CURRENT_GRIPPER = pageNumber;         
-                // localStorage.setItem("pno", pageNumber);
-                sessionStorage.setItem(
-                    "pno",
-                    pageNumber
-                );
-                // after set session storage open same tab with input page
-                // window.open("/input", "_blank");
-                window.open("/input", "_self");
-                // showhidewindow(pageNumber);
-                
-                // page1.style.display = "none";
-                // page2.style.display = "none";
-                
-                // gripper_window_head.style.display = "block";
-            }  
-            function getCurrentGripper(){
+      <script>
+        function hidePages(pageNumber) {
+          sessionStorage.setItem("pno", pageNumber);
+          // after set session storage open same tab with input page
+          // window.open("/input", "_blank");
+          window.open("/input", "_self");
+        }
+        function getCurrentGripper() {
+          return parseInt(sessionStorage.getItem("pno")) || 0;
+        }
+        function changetitle() {
+          let title = document.getElementById("project_title");
+          let industrial_img = document.getElementById("industrial_img");
+          let btnGetstart = document.getElementById("btnGetstart");
+          if (getCurrentGripper() === 1) {
+            title.textContent =
+              "Spring Structural Model of Robotic Gripper for 4 Finger";
+            industrial_img.src = "/static/img/4Finger2_3_4.png";
+            btnGetstart.className =
+              "btn btn-danger btn-lg mt-3 mb-2 w-50 border border-3 border-light";
+          } else if (getCurrentGripper() === 2) {
+            title.textContent =
+              "Spring Structural Model of Robotic Gripper for 3 Finger + 1 Thumb";
+            industrial_img.src = "/static/img/3finger1thumb_4_3.png";
+            btnGetstart.className =
+              "btn btn-primary btn-lg mt-3 mb-2 w-50 border border-3 border-light";
+          } else {
+            title.textContent = "New Title";
+          }
+        }
+        // At page Load
+        changetitle();
+        applyGripperTheme();
 
-                return parseInt(
-                    sessionStorage.getItem("pno")
-                ) || 0;
-            }
-        </script>
-            
-<style>
-    .equation-builder {
-        display: flex;
+        // function startPages() {
+        //   window.open("/input", "_self");
 
-        flex-direction: row;
+        // }
 
-        align-items: center;
-        justify-content: center;
+        // window.addEventListener("load", () => {
+        //    changetitle();
+        // });
+        function applyGripperTheme() {
+          const navbar = document.querySelector(".navbar");
+          const hero = document.getElementById("page_window1");
 
-        gap: 12px;
+          navbar.classList.remove("custom-navbar", "custom-navbar2");
+          hero.classList.remove("hero-ai-bg", "hero-ai-bg2");
 
-        width: 100%;
+          if (getCurrentGripper() === 1) {
+            navbar.classList.add("custom-navbar");
+            hero.classList.add("hero-ai-bg");
+            document.body.style.fontFamily = "'Segoe UI', sans-serif";
+          } else if (getCurrentGripper() === 2) {
+            navbar.classList.add("custom-navbar2");
+            hero.classList.add("hero-ai-bg2");
+            // document.body.style.fontFamily = "Tahoma, sans-serif";
+            // document.body.style.fontFamily = "'Times New Roman', serif";
+            document.body.style.fontFamily = "Georgia, serif";
+          }
+        }
+      </script>
 
-        overflow-x: auto;
+      <style>
+        .equation-builder {
+          display: flex;
 
-        flex-wrap: nowrap;
-    }
+          flex-direction: row;
 
-    #thirdTermGroup {
-        display: none;
-    }
+          align-items: center;
+          justify-content: center;
 
-    .eq-block {
-        width: 100px;
+          gap: 12px;
 
-        min-width: 100px;
+          width: 100%;
 
-        display: flex;
-        flex-direction: column;
+          overflow-x: auto;
 
-        align-items: center;
-    }
+          flex-wrap: nowrap;
+        }
 
-    .eq-select {
-        width: 100%;
+        #thirdTermGroup {
+          display: none;
+        }
 
-        text-align: center;
+        .eq-block {
+          width: 100px;
 
-        font-weight: 600;
+          min-width: 100px;
 
-        border-radius: 10px;
+          display: flex;
+          flex-direction: column;
 
-        /* padding: 5px; */
-    }
+          align-items: center;
+        }
 
-    .eq-line {
-        width: 100%;
+        .eq-select {
+          width: 100%;
 
-        border: 2px solid #2c3e50;
+          text-align: center;
 
-        opacity: 1;
+          font-weight: 600;
 
-        margin: 8px 0;
-    }
+          border-radius: 10px;
 
-    .eq-operator {
-        display: flex;
+          /* padding: 5px; */
+        }
 
-        align-items: center;
-        justify-content: center;
-    }
+        .eq-line {
+          width: 100%;
 
-    .operator-select {
-        width: 65px;
+          border: 2px solid #2c3e50;
 
-        min-width: 65px;
+          opacity: 1;
 
-        text-align: center;
+          margin: 8px 0;
+        }
 
-        font-size: 22px;
-        font-weight: 700;
+        .eq-operator {
+          display: flex;
 
-        border-radius: 12px;
+          align-items: center;
+          justify-content: center;
+        }
 
-        /* background: #2c3e50; */
-        /* color: white; */
+        .operator-select {
+          width: 65px;
 
-        /* border: none; */
-    }
-</style>
-             
+          min-width: 65px;
+
+          text-align: center;
+
+          font-size: 22px;
+          font-weight: 700;
+
+          border-radius: 12px;
+
+          /* background: #2c3e50; */
+          /* color: white; */
+
+          /* border: none; */
+        }
+      </style>
     </div>
-        <!-- popup for θ(t) Function -->        
-        <!-- <script src="/static/js/function.js"></script> -->
-        <!-- Bootstrap JS -->
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
-        <script src="/static/js/bootstrap.bundle.min.js"></script>
-        <script>
-            function toggleTheme() {
+    <!-- popup for θ(t) Function -->
+    <!-- <script src="/static/js/function.js"></script> -->
+    <!-- Bootstrap JS -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function toggleTheme() {
+        let toggle = document.getElementById("themeToggle");
 
-                let toggle = document.getElementById("themeToggle");
+        if (toggle.checked) {
+          setTheme("theme-dark");
+        } else {
+          setTheme("theme-light");
+        }
+      }
 
-                if (toggle.checked) {
+      /* restore toggle state on reload */
+      window.addEventListener("load", () => {
+        let savedTheme = localStorage.getItem("selectedTheme");
 
-                    setTheme("theme-dark");
+        let toggle = document.getElementById("themeToggle");
 
-                } else {
+        if (savedTheme === "theme-dark") {
+          toggle.checked = true;
+        } else {
+          toggle.checked = false;
+        }
+      });
+      function toggleFormulaDetails() {
+        let details = document.getElementById("formulaDetails");
+        let btn = document.getElementById("toggleFormulaBtn");
+        let arrow = document.getElementById("formulaArrow");
 
-                    setTheme("theme-light");
-                }
-            }
+        if (details.classList.contains("collapsed")) {
+          details.classList.remove("collapsed");
+          details.classList.add("expanded");
 
-            /* restore toggle state on reload */
-            window.addEventListener("load", () => {
+          arrow.classList.add("rotate");
 
-                let savedTheme = localStorage.getItem("selectedTheme");
+          btn.querySelector("span").innerHTML =
+            '<i class="bi bi-journal-richtext me-1"></i> Show Less';
+        } else {
+          details.classList.remove("expanded");
+          details.classList.add("collapsed");
 
-                let toggle = document.getElementById("themeToggle");
+          arrow.classList.remove("rotate");
 
-                if (savedTheme === "theme-dark") {
-                    toggle.checked = true;
-                } else {
-                    toggle.checked = false;
-                }
-            });
-            function toggleFormulaDetails() {
+          btn.querySelector("span").innerHTML =
+            '<i class="bi bi-journal-richtext me-1"></i> More Details';
+        }
+      }
+    </script>
+    <script>
+      // ===== THEME SYSTEM =====
+      let savedTheme = localStorage.getItem("selectedTheme");
+      let savedColor = localStorage.getItem("selectedTheme2");
+      if (savedTheme) {
+        localStorage.removeItem("selectedTheme2");
+        document.body.style.backgroundColor = ""; // clear inline color
+        document.body.className = savedTheme;
+      } else if (savedColor) {
+        localStorage.removeItem("selectedTheme");
+        document.body.className = ""; // remove theme class
+        document.body.style.backgroundColor = savedColor;
+      } else {
+        document.body.className = "theme-light";
+      }
 
-                let details = document.getElementById("formulaDetails");
-                let btn = document.getElementById("toggleFormulaBtn");
-                let arrow = document.getElementById("formulaArrow");
+      function changeBackground() {
+        let selectedColor = document.getElementById("startColor").value;
+        document.body.style.backgroundColor = selectedColor;
+        localStorage.setItem("selectedTheme2", selectedColor);
+      }
+      function previewTheme(theme) {
+        document.body.className = theme;
+      }
 
-                if (details.classList.contains("collapsed")) {
+      function setTheme(theme) {
+        document.body.className = theme;
+        localStorage.setItem("selectedTheme", theme);
+      }
 
-                    details.classList.remove("collapsed");
-                    details.classList.add("expanded");
+      document
+        .querySelector(".dropdown-menu")
+        .addEventListener("mouseleave", function () {
+          document.body.className =
+            localStorage.getItem("selectedTheme") || "theme-light";
+        });
 
-                    arrow.classList.add("rotate");
+      // ===== MATERIAL DENSITY =====
+      // const materials = { rubber: 1100, abs: 1040, teflon: 2200 };
+    </script>
 
-                    btn.querySelector("span").innerHTML =
-                        '<i class="bi bi-journal-richtext me-1"></i> Show Less';
+    <script>
+      const sections = document.querySelectorAll("section, div[id]");
+      const navLinks = document.querySelectorAll(".nav-link");
 
-                } else {
+      window.addEventListener("scroll", () => {
+        let current = "";
 
-                    details.classList.remove("expanded");
-                    details.classList.add("collapsed");
+        sections.forEach((sec) => {
+          const sectionTop = sec.offsetTop - 80;
+          if (pageYOffset >= sectionTop) {
+            current = sec.getAttribute("id");
+          }
+        });
+      });
+    </script>
+    <!-- <input type="text" id="txt" placeholder="Type something"> -->
 
-                    arrow.classList.remove("rotate");
+    <!-- <script>
+    let isDirty = false;
 
-                    btn.querySelector("span").innerHTML =
-                        '<i class="bi bi-journal-richtext me-1"></i> More Details';
-                }
-            }
-        </script>
-        <script>
-            // ===== THEME SYSTEM =====
-            let savedTheme = localStorage.getItem("selectedTheme");
-            let savedColor = localStorage.getItem("selectedTheme2");
-            if(savedTheme){
-                localStorage.removeItem("selectedTheme2");
-                document.body.style.backgroundColor = ""; // clear inline color 
-                document.body.className = savedTheme;  
-            }   
-            else if (savedColor) {
-                localStorage.removeItem("selectedTheme");
-                document.body.className = ""; // remove theme class
-                document.body.style.backgroundColor = savedColor;
-            } 
-            else {
-                document.body.className = "theme-light";
-            }           
+    document.getElementById("txt").addEventListener("input", function () {
+      isDirty = true;
+    });
 
-            function changeBackground() {
-                let selectedColor = document.getElementById("startColor").value;
-                document.body.style.backgroundColor = selectedColor;
-                localStorage.setItem("selectedTheme2", selectedColor);
-            }
-            function previewTheme(theme) {
-                document.body.className = theme;
-            }
+    window.addEventListener("beforeunload", function (e) {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+  </script> -->
 
-            function setTheme(theme) {
-                document.body.className = theme;
-                localStorage.setItem("selectedTheme", theme);
-            }
-
-            document
-                .querySelector(".dropdown-menu")
-                .addEventListener("mouseleave", function () {
-                    document.body.className =
-                        localStorage.getItem("selectedTheme") || "theme-light";
-                });
-
-            // ===== MATERIAL DENSITY =====
-            // const materials = { rubber: 1100, abs: 1040, teflon: 2200 };        
-                      
-            
-        </script>      
-        
-        <script>
-            const sections = document.querySelectorAll("section, div[id]");
-            const navLinks = document.querySelectorAll(".nav-link");
-
-            window.addEventListener("scroll", () => {
-                let current = "";
-
-                sections.forEach((sec) => {
-                    const sectionTop = sec.offsetTop - 80;
-                    if (pageYOffset >= sectionTop) {
-                        current = sec.getAttribute("id");
-                    }
-                });
-              
-            });
-            
-        </script>     
-        
-        <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
-         <!-- <script src="/static/js/tex-mml-chtml.js"></script> -->
-</body>
-
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+    <!-- <script src="/static/js/tex-mml-chtml.js"></script> -->
+  </body>
 </html>

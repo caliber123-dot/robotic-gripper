@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, jsonify, send_file
 from waitress import serve as waitress_serve
 from datetime import datetime
 import time
+from merge_excel import fileMerged
 
 # from openpyxl import Workbook
 # from openpyxl.worksheet.worksheet import Worksheet
@@ -61,14 +62,17 @@ from database import (
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = os.path.join(app.root_path, "static", "files")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 create_tables()
-# @app.route('/')
-# def hello_world():
-#     return 'Hello World'
+@app.route('/')
+def hello_world():
+    return render_template("landing.html")
 
 
 # Home Screen
-@app.route("/")
+@app.route("/home")
 def home():
     # print("############# Rendering index.html")
     return render_template("home.html")
@@ -872,10 +876,28 @@ def download_excel():
     # =========================
 
     # file_name = "gripper_results.xlsx"
+    file_path = os.path.join(UPLOAD_FOLDER, file_name)
 
-    wb.save(file_name)
+    # wb.save(file_name)
+    wb.save(file_path)
 
-    return send_file(file_name, as_attachment=True, download_name=file_name)
+    # download_excel
+    mStatus = data.get("mStatus")
+    # print("mStatus::",mStatus)
+    # return send_file(file_name, as_attachment=True, download_name=file_name)
+    if mStatus == 1:
+        # print("mStatus1::",mStatus)
+        return send_file(file_path, as_attachment=True, download_name=file_name)        
+    else:
+        # print("mStatus2::",mStatus)
+        return jsonify(
+            {
+                "status": "success",
+                "filename": file_name,
+                "filepath": f"static/files/{file_name}",
+                "message": f"{file_name} generated successfully",
+            }
+        )
 
 
 @app.route("/download_results_pdf", methods=["POST"])
@@ -1306,6 +1328,10 @@ def download_graph_excel():
 
     # graph_data = data["graphImage"]
     graph_data = data.get("graphImage")
+    if not graph_data:
+        return jsonify({
+            "error": "Graph image missing"
+        }), 400
 
     if not graph_data:
         return jsonify({"error": "Graph image not received"}), 400
@@ -1329,38 +1355,48 @@ def download_graph_excel():
     shape_name = shape_name.replace(" ", "").replace("+", "")
     # filename = "Graph_Report_AAAA.xlsx"
     current_time = datetime.now().strftime("%H-%M-%S")
-    # filename = (
-    #     f"Graph_"
-    #     f"{shape_name}_"
-    #     f"{object_shape}_"
-    #     f"{material}_{current_time}.xlsx"
-
-    # )
-    # print("Saving file:", filename)
-    # wb.save(filename)
-
-    # return send_file(
-    #     filename,
-    #     as_attachment=True
-    # )
+   
     filename = (
         f"Graph_" f"{shape_name}_" f"{object_shape}_" f"{material}_{current_time}.xlsx"
     )
 
     # print("Generating file:", filename)
 
-    excel_file = BytesIO()
+    # excel_file = BytesIO()
 
-    wb.save(excel_file)
+    # wb.save(excel_file)
 
-    excel_file.seek(0)
+    # excel_file.seek(0)
 
-    return send_file(
-        excel_file,
-        as_attachment=True,
-        download_name=filename,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
+    # return send_file(
+    #     excel_file,
+    #     as_attachment=True,
+    #     download_name=filename,
+    #     mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # )
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    wb.save(file_path)
+
+    mStatus = data.get("mStatus")
+    if mStatus == 1:
+        # print("mStatus1::",mStatus)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        # print("mStatus2::",mStatus)
+        return jsonify(
+            {
+                "status": "success",
+                "filename": filename,
+                "filepath": f"static/files/{filename}",
+                "message": f"{filename} generated successfully",
+            }
+        )
 
 
 @app.route("/download_compare_excel", methods=["POST"])
@@ -1495,18 +1531,41 @@ def download_compare_excel():
 
     # print("Generating file:", filename)
 
-    excel_file = BytesIO()
+    # excel_file = BytesIO()
 
-    wb.save(excel_file)
+    # wb.save(excel_file)
 
-    excel_file.seek(0)
+    # excel_file.seek(0)
 
-    return send_file(
-        excel_file,
-        as_attachment=True,
-        download_name=filename,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
+    # return send_file(
+    #     excel_file,
+    #     as_attachment=True,
+    #     download_name=filename,
+    #     mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # )
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    wb.save(file_path)
+
+    mStatus = data.get("mStatus")
+    if mStatus == 1:
+        # print("mStatus1::",mStatus)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        # print("mStatus2::",mStatus)
+        return jsonify(
+            {
+                "status": "success",
+                "filename": filename,
+                "filepath": f"static/files/{filename}",
+                "message": f"{filename} generated successfully",
+            }
+        )
 
 
 @app.route("/download_graph_pdf", methods=["POST"])
@@ -1794,7 +1853,7 @@ def download_compare_pdf():
 @app.route("/get_spring_constants", methods=["POST"])
 def get_spring_constants_api():
 
-    print(">>>>>> get_spring_constants API called...........")
+    # print(">>>>>> get_spring_constants API called...........")
     data = request.json
     # print("Data received for spring constants:", data)
 
@@ -1899,10 +1958,53 @@ def get_spring_constants_comparison_api():
         {"spring_value": row["spring_value"], "time_value": row["time_value"]}
         for row in values
     ]
-    print("Comparison Spring Constants:", result)
+    # print("Comparison Spring Constants:", result)
     return jsonify({"spring_values": result})
 
 
+@app.route("/merge_excels", methods=["POST"])
+def merge_excels():
+
+    data = request.json
+
+    files = data.get("files", [])
+
+    merge_list = []
+
+    for item in files:
+
+        filename = item["filename"]
+        narration = item["narration"]
+
+        file_path = os.path.join(
+            UPLOAD_FOLDER,
+            filename
+        )
+
+        merge_list.append(
+            (file_path, narration)
+        )
+
+    # print(merge_list)   
+    # print("\nFiles to Merge:")
+
+    # for filename, narration in merge_list:
+    #     print(f"File: {filename}")
+    #     print(f"Narration: {narration}")
+    #     print("-" * 80)
+
+    file_path = fileMerged(merge_list, UPLOAD_FOLDER)
+    filename = "Final_Report_2026.xlsx"
+    # return jsonify({
+    #     "status": "success"
+    # })
+    
+    return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
 # import webbrowser
 # from threading import Timer
 

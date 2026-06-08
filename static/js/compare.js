@@ -264,7 +264,7 @@ async function autoLoadSavedSpring() {
 
     let d = result.data;
 
-    console.log("Auto loaded:", d);
+    // console.log("Auto loaded:", d);
     document.getElementById("savedText").innerHTML = `
             <span class="text-success">
                 <i class="bi bi-check-circle-fill"></i>
@@ -1176,6 +1176,11 @@ async function calculate() {
   loader.style.display = "none";
   //   loadAllSpringConstants();
   loadAllComparisonSpringConstants();
+
+  // downloadGraphExcel(2);
+  setTimeout(() => {
+    downloadGraphExcel(2);
+  }, 1500);
 }
 
 // ============================= New ===============
@@ -1193,6 +1198,36 @@ function createBarChart(timeData, forceData) {
     forceChart.destroy();
   }
 
+  let gripper = sessionStorage.getItem("pno"); // "1" or "2"
+  let bgColors;
+  let anchor;
+  let align;
+  let color;
+  if (gripper === "1") {
+    bgColors = ["#4e79a7", "#59a14f", "#f28e2b", "#e15759", "#b07aa1"];
+    anchor = "center";
+    align = "center";
+    color = "white";
+  } else {
+    bgColors = [
+      "#265294", // blue
+      "#9670ca", // Violet
+      "#bd6162", // Blue
+      "#326d2a", // Orange
+      "#FFBE0B", // Yellow
+    ];
+    anchor = "end";
+    align = "top";
+    color = "black";
+
+    const bgColors2 = [
+      "#00A8E8", // Sky Blue
+      "#FF6B6B", // Coral Red
+      "#FFD166", // Golden Yellow
+      "#06D6A0", // Mint Green
+      "#9B5DE5", // Purple
+    ];
+  }
   // IMPORTANT FIX
   setTimeout(() => {
     forceChart = new Chart(ctx, {
@@ -1214,13 +1249,7 @@ function createBarChart(timeData, forceData) {
             barThickness: 150, // fixed width
             maxBarThickness: 200, // prevent oversized bars
 
-            backgroundColor: [
-              "#4e79a7",
-              "#59a14f",
-              "#f28e2b",
-              "#e15759",
-              "#b07aa1",
-            ],
+            backgroundColor: bgColors,
           },
         ],
       },
@@ -1236,11 +1265,12 @@ function createBarChart(timeData, forceData) {
           },
 
           datalabels: {
-            anchor: "end",
-
-            align: "top",
-
-            color: "black",
+            // anchor: "end",
+            // align: "top",
+            // color: "black",
+            anchor: anchor,
+            align: align,
+            color: color,
 
             font: {
               weight: "bold",
@@ -1368,7 +1398,7 @@ function drawComparisonChart(data) {
   });
 }
 
-async function downloadGraphExcel() {
+async function downloadGraphExcel(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
 
   let tableData = [];
@@ -1394,7 +1424,7 @@ async function downloadGraphExcel() {
 
     return;
   }
-
+  let graphImage = document.getElementById("forceChart").toDataURL("image/png");
   let payload = {
     func: document.getElementById("func").value,
     // alert("sss" + localStorage.getItem("pno") || "0")
@@ -1418,11 +1448,13 @@ async function downloadGraphExcel() {
       document.getElementById("time").selectedIndex
     ].text,
 
-    graphImage: document.getElementById("chartImage").value,
+    // graphImage: document.getElementById("chartImage").value,
+    graphImage: graphImage,
 
     tableData: tableData,
+    mStatus: mStatus,
   };
-
+  console.log("Empty graphImage length:", payload.graphImage?.length);
   let response = await fetch("/download_compare_excel", {
     method: "POST",
     headers: {
@@ -1431,38 +1463,64 @@ async function downloadGraphExcel() {
     body: JSON.stringify(payload),
   });
 
-  console.log("Status:", response.status);
-  console.log("Content-Type:", response.headers.get("content-type"));
+  // console.log("Status:", response.status);
+  // console.log("Content-Type:", response.headers.get("content-type"));
+  if (mStatus == 2) {
+    //Save to localStorage for Merging Excel
+    const result = await response.json();
+    if (result.status === "success") {
+      addGeneratedFile(result.filename, "Compare_Chart");
+      console.log(result.message, "mStatus:", mStatus);
+      // console.table(localStorage);
+      console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
+      // Object.entries(localStorage).forEach(([key, value]) => {
+      //   console.log(key, JSON.parse(value));
+      // });
+    }
+  } else {
+    if (!response.ok) {
+      let txt = await response.text();
+      console.log(txt);
+      alert("Server Error");
+      return;
+    }
 
-  if (!response.ok) {
-    let txt = await response.text();
-    console.log(txt);
-    alert("Server Error");
-    return;
+    let blob = await response.blob();
+
+    console.log("Blob Size:", blob.size);
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    // a.download = "Graph_Report.xlsx";
+    let disposition = response.headers.get("Content-Disposition");
+
+    let filename = "Graph_Report.xlsx";
+
+    if (disposition && disposition.includes("filename=")) {
+      filename = disposition.split("filename=")[1].replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    a.click();
   }
+}
 
-  let blob = await response.blob();
+function addGeneratedFile(filename, narration) {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
-  console.log("Blob Size:", blob.size);
+  files.push({
+    filename: filename,
+    created_at: new Date().toLocaleString(),
+    narration: narration,
+  });
 
-  let url = window.URL.createObjectURL(blob);
-
-  let a = document.createElement("a");
-
-  a.href = url;
-
-  // a.download = "Graph_Report.xlsx";
-  let disposition = response.headers.get("Content-Disposition");
-
-  let filename = "Graph_Report.xlsx";
-
-  if (disposition && disposition.includes("filename=")) {
-    filename = disposition.split("filename=")[1].replace(/"/g, "");
-  }
-
-  a.download = filename;
-
-  a.click();
+  localStorage.setItem("generatedFiles", JSON.stringify(files));
+  updateDirtyState();
 }
 
 async function downloadGraphPdf() {
@@ -1732,6 +1790,7 @@ async function loadComparisonSpringAutocomplete(springKey, datalistId) {
   let shape = document.getElementById("shape").value;
 
   let time = document.getElementById("time").value;
+  // console.log("Time ==>> ", time);
 
   let func = document.getElementById("func").value;
 
@@ -1761,7 +1820,7 @@ async function loadComparisonSpringAutocomplete(springKey, datalistId) {
 
   let result = await response.json();
 
-  console.log(">>>>> Received:", result);
+  // console.log(">>>>> Received:", result);
 
   let datalist = document.getElementById(datalistId);
 
@@ -1778,3 +1837,226 @@ async function loadComparisonSpringAutocomplete(springKey, datalistId) {
     datalist.appendChild(option);
   });
 }
+
+function mergedAllExcels111() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  console.log("generatedFiles", files);
+
+  fetch("/merge_excels", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      files: files,
+    }),
+  });
+}
+
+function mergedAllExcels2222() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  console.log("generatedFiles:", files);
+
+  if (files.length === 0) {
+    alert("No files found to merge.");
+    return;
+  }
+
+  fetch("/merge_excels", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      files: files,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to merge files");
+      }
+
+      return response.blob();
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Merged.xlsx"; // download filename
+
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error("Merge Error:", error);
+      alert("Error merging files.");
+    });
+}
+
+function mergedAllExcels333() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+  if (!files || files.length === 0) {
+    alert("No files available to merge.");
+    return;
+  }
+  // Create file list for confirmation
+  let fileList = files
+    .map((file, index) => `${index + 1}. ${file.filename}`)
+    .join("\n");
+
+  let message =
+    "The following files will be merged:\n\n" +
+    fileList +
+    "\n\nDo you want to continue?";
+
+  if (!confirm(message)) {
+    return;
+  }
+
+  fetch("/merge_excels", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      files: files,
+    }),
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error("Failed to merge files");
+      }
+
+      const blob = await response.blob();
+
+      // Get filename from Flask response
+      let filename = "Merged.xlsx";
+
+      const disposition = response.headers.get("Content-Disposition");
+
+      if (disposition) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) {
+          filename = match[1];
+        }
+      }
+
+      return { blob, filename };
+    })
+    .then(({ blob, filename }) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename; // Backend filename
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+async function mergedAllExcels() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  if (!files || files.length === 0) {
+    alert("No files available to merge.");
+    return;
+  }
+
+  let fileList = files
+    .map((file, index) => `${index + 1}. ${file.filename}`)
+    .join("\n");
+
+  if (
+    !confirm(
+      "The following files will be merged:\n\n" +
+        fileList +
+        "\n\nDo you want to continue?",
+    )
+  ) {
+    return;
+  }
+
+  const btn = document.getElementById("btnMerge");
+  const btnText = document.getElementById("btnMergeText");
+  const btnLoader = document.getElementById("btnMergeLoader");
+
+  btn.disabled = true;
+  btnText.style.display = "none";
+  btnLoader.style.display = "inline";
+
+  try {
+    const response = await fetch("/merge_excels", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ files }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to merge files");
+    }
+
+    const blob = await response.blob();
+
+    let filename = "Merged.xlsx";
+    const disposition = response.headers.get("Content-Disposition");
+
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    alert("Error merging files.");
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = "inline";
+    btnLoader.style.display = "none";
+    localStorage.removeItem("generatedFiles");
+    updateDirtyState();
+  }
+}
+
+let isDirty = false;
+
+function updateDirtyState() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+  isDirty = files.length > 0;
+  console.log("isDirty", isDirty);
+}
+
+updateDirtyState();
+
+window.addEventListener("beforeunload", function (e) {
+  if (isDirty) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});

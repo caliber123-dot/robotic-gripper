@@ -31,13 +31,56 @@
             color: #fff;
             left: 0;
             top: 0;
-
         }
 
         .menu ul {
             margin: 0;
         }
+
+        body {
+            visibility: hidden;
+        }
     </style>
+    <script>
+        function applyGripperTheme() {
+            const navbar = document.querySelector(".navbar");
+            const hero = document.getElementById("page_window1");
+            const headerTheme = document.getElementById("gripper_header_theme");
+            let hedTitle = document.getElementById("hedTitle");
+
+            if (!navbar || !hero) return;
+
+            navbar.classList.remove("custom-navbar", "custom-navbar2");
+            hero.classList.remove("hero-ai-bg", "hero-ai-bg2");
+
+            window.GRIPPER = parseInt(sessionStorage.getItem("pno")) || 1;
+
+            if (window.GRIPPER === 1) {
+                navbar.classList.add("custom-navbar");
+                hero.classList.add("hero-ai-bg");
+                headerTheme.classList.add("hero-ai-bg");
+                // alert("Gripper 1");
+                hedTitle.textContent =
+                    "Spring Structural Model of Robotic Gripper for 4 Finger";
+                document.body.style.fontFamily = "'Segoe UI', sans-serif";
+            } else if (window.GRIPPER === 2) {
+                navbar.classList.add("custom-navbar2");
+                hero.classList.add("hero-ai-bg2");
+                headerTheme.classList.add("hero-ai-bg2");
+                // alert("Gripper 2");
+                hedTitle.textContent =
+                    "Spring Structural Model of Robotic Gripper for 3 Finger + 1 Thumb";
+                // document.body.style.fontFamily = "Tahoma, sans-serif";
+                // document.body.style.fontFamily = "'Times New Roman', serif";
+                document.body.style.fontFamily = "Georgia, serif";
+            }
+        }
+        // applyGripperTheme();
+        document.addEventListener("DOMContentLoaded", () => {
+            applyGripperTheme();
+            document.body.style.visibility = "visible";
+        });
+    </script>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script> -->
@@ -49,7 +92,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold" href="/">
                 <i class="bi bi-robot"></i> Gripper System
             </a>
 
@@ -62,7 +105,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">
+                        <a class="nav-link" href="/home">
                             <i class="bi bi-house-door"></i> Home
                         </a>
                     </li>
@@ -72,11 +115,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="/graph">
+                        <a class="nav-link" href="/graph">
                             <i class="bi bi-graph-up"></i> Bar Chart
                         </a>
                     </li>
-
 
                     <li class="nav-item">
                         <a class="nav-link active" href="/comparison">
@@ -95,16 +137,14 @@
                         </a>
                     </li> -->
                     <li class="nav-item ms-3 d-flex align-items-center">
-
                         <i class="bi bi-sun-fill theme-icon-light"></i>
 
                         <div class="form-check form-switch mx-2">
                             <input class="form-check-input custom-theme-switch" type="checkbox" id="themeToggle"
-                                onchange="toggleTheme()">
+                                onchange="toggleTheme()" />
                         </div>
 
                         <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
-
                     </li>
                     <li>
                         <div class="dropdown d-inline-block ms-2">
@@ -161,8 +201,7 @@
                                         .custom-theme-switch:not(:checked) {
                                             background-color: #e9ecef;
 
-                                            background-image:
-                                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='rgba(0%2C0%2C0%2C0.75)'/%3E%3C/svg%3E");
+                                            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='rgba(0%2C0%2C0%2C0.75)'/%3E%3C/svg%3E");
                                         }
 
                                         /* DARK MODE circle = white */
@@ -182,8 +221,7 @@
                                         }
 
                                         .custom-theme-switch:focus {
-                                            box-shadow:
-                                                0 0 12px rgba(0, 212, 255, 0.7);
+                                            box-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
                                         }
 
                                         .theme-icon-light {
@@ -207,7 +245,6 @@
                                             margin-right: 15px;
                                             cursor: pointer;
                                             margin-right: 0px;
-
                                         }
 
                                         .color-panel {
@@ -221,8 +258,7 @@
 
                                             padding: 0;
 
-                                            background:
-                                                linear-gradient(90deg,
+                                            background: linear-gradient(90deg,
                                                     red,
                                                     orange,
                                                     yellow,
@@ -232,8 +268,7 @@
                                                     violet,
                                                     red);
 
-                                            box-shadow:
-                                                0 0 10px rgba(0, 0, 0, 0.15);
+                                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 
                                             overflow: hidden;
                                         }
@@ -256,17 +291,15 @@
                                             align-items: center;
                                             gap: 10px;
                                             /* spacing between input and button */
-
                                         }
                                     </style>
                                     <div class="color-box2">
                                         <input type="color" class="color-panel" id="startColor" value="#f1f1f1"
-                                            onchange="changeBackground()">
+                                            onchange="changeBackground()" />
                                         <!-- <button type="button" class="btn btn-sm btn-primary" onclick="changeBackground()">
                                             Apply
                                         </button> -->
                                     </div>
-
                                 </div>
                             </ul>
                         </div>
@@ -276,19 +309,14 @@
         </div>
     </nav>
 
-
-    <div class="container mt-4" style="min-width: 100% !important;">
-
+    <div class="container mt-4" style="min-width: 100% !important">
         <style>
             .hero-ai-bg {
                 position: relative;
                 overflow: hidden;
 
-                background:
-                    linear-gradient(135deg,
-                        #16222a,
-                        #203a43,
-                        #2c5364);
+                /* background: linear-gradient(135deg, #16222a, #203a43, #2c5364); */
+                background: linear-gradient(135deg, #99474e, #80494e, #72282e);
 
                 border-radius: 14px;
                 padding: 18px;
@@ -332,8 +360,7 @@
                 width: 500px;
                 height: 500px;
 
-                background:
-                    radial-gradient(circle,
+                background: radial-gradient(circle,
                         rgba(0, 212, 255, 0.22) 0%,
                         transparent 70%);
 
@@ -371,7 +398,7 @@
 
             /* BIG highlighted title */
             .hero-ai-bg h2 {
-                font-size: 2.5rem;
+                font-size: 2rem;
                 font-weight: 800;
 
                 letter-spacing: 1px;
@@ -392,14 +419,12 @@
 
                 color: #dff6ff;
 
-                text-shadow:
-                    0 0 10px rgba(0, 212, 255, 0.5);
+                text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
             }
 
             /* formula highlight */
             .hero-ai-bg img {
-                filter:
-                    drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+                filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
 
                 animation: formulaFloat 3s ease-in-out infinite;
             }
@@ -435,7 +460,7 @@
                 }
             }
 
-            .hero-ai-bg {
+            .hero-ai-bg2 {
                 position: relative;
                 overflow: hidden;
 
@@ -527,7 +552,6 @@
 
             /* floating animation */
             @keyframes floatParticle {
-
                 0% {
                     transform: translateY(100%) scale(0.5);
                     opacity: 0;
@@ -556,8 +580,13 @@
                 z-index: 2;
             }
         </style>
-        <div id="page_window1" class="hero-ai-bg"
-            style="border-radius: 10px;padding: 10px;text-align: center;color: white;display:none">
+        <div id="page_window1" class="hero-ai-bg" style="
+          border-radius: 10px;
+          padding: 10px;
+          text-align: center;
+          color: white;
+          display: none;
+        ">
             <div class="particles">
                 <span></span>
                 <span></span>
@@ -568,15 +597,13 @@
                 <span></span>
                 <span></span>
             </div>
-            <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+            <!-- <h2 style="padding: 5px">Spring Structural Model of Robotic Gripper</h2> -->
             <h4>According to this equation:</h4>
-            <img src="static/img/formula_14.png" alt="" height="80">
+            <img src="static/img/formula_14.png" alt="" height="80" />
             <!-- Formula Details -->
             <div class="w-100 text-center d-flex justify-content-center">
                 <div class="formula-details-container mt-3">
-
                     <div class="formula-details collapsed1" id="formulaDetails">
-
                         <div class="detail-item">
                             <i class="bi bi-box-seam formula-icon"></i>
                             <b>m</b> = mass of the object
@@ -619,18 +646,18 @@
 
                         <div class="detail-item">
                             <i class="bi bi-calculator formula-icon"></i>
-                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of sin
+                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of
+                            sin
                         </div>
 
                         <div class="detail-item">
                             <i class="bi bi-hand-index-thumb formula-icon"></i>
                             <b>Fᵢ(t)</b> = Grasp Force
                         </div>
-
                     </div>
 
                     <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()"
-                        style="display: none;">
+                        style="display: none">
                         <span>
                             <i class="bi bi-journal-richtext me-1"></i>
                             More Details
@@ -644,7 +671,6 @@
                         </span>
                         <i class="bi bi-arrow-right arrow-icon"></i>
                     </button>
-
                 </div>
             </div>
         </div>
@@ -723,7 +749,9 @@
             }
 
             .div1 {
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.23);
+                box-shadow:
+                    0 4px 8px rgba(0, 0, 0, 0.16),
+                    0 4px 8px rgba(0, 0, 0, 0.23);
                 /* Multiple shadows for depth */
                 border-radius: 10px;
             }
@@ -741,22 +769,17 @@
         </style>
         <script>
             function toggleTheme() {
-
                 let toggle = document.getElementById("themeToggle");
 
                 if (toggle.checked) {
-
                     setTheme("theme-dark");
-
                 } else {
-
                     setTheme("theme-light");
                 }
             }
 
             /* restore toggle state on reload */
             window.addEventListener("load", () => {
-
                 let savedTheme = localStorage.getItem("selectedTheme");
 
                 let toggle = document.getElementById("themeToggle");
@@ -768,13 +791,11 @@
                 }
             });
             function toggleFormulaDetails() {
-
                 let details = document.getElementById("formulaDetails");
                 let btn = document.getElementById("toggleFormulaBtn");
                 let arrow = document.getElementById("formulaArrow");
 
                 if (details.classList.contains("collapsed")) {
-
                     details.classList.remove("collapsed");
                     details.classList.add("expanded");
 
@@ -782,9 +803,7 @@
 
                     btn.querySelector("span").innerHTML =
                         '<i class="bi bi-journal-richtext me-1"></i> Show Less';
-
                 } else {
-
                     details.classList.remove("expanded");
                     details.classList.add("collapsed");
 
@@ -796,21 +815,25 @@
             }
         </script>
 
-        <div id="page_window2" style="display: none;">
+        <div id="page_window2" style="display: none">
             <div class="hero-ai-bg">
-                <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+                <h2 style="padding: 5px">
+                    Spring Structural Model of Robotic Gripper
+                </h2>
             </div>
             <div class="row g-4 m-1">
+                <div class="col-md-4 p-0"></div>
                 <div class="col-md-4 p-0">
-
-                </div>
-                <div class="col-md-4 p-0">
-                    <div class="box div1" style="margin-top: 5px;">
+                    <div class="box div1" style="margin-top: 5px">
                         <!-- <label>Gripper Type</label> -->
                         <select id="gripper" class="form-select bold-option">
-                            <option value="" class="bold-option">Choose Gripper Type</option>
+                            <option value="" class="bold-option">
+                                Choose Gripper Type
+                            </option>
                             <option value="1" class="bold-option">4 Fingers</option>
-                            <option value="2" class="bold-option">3 Fingers + 1 Thumb</option>
+                            <option value="2" class="bold-option">
+                                3 Fingers + 1 Thumb
+                            </option>
                         </select>
                     </div>
 
@@ -823,17 +846,13 @@
                     </button>
                     <hr />
                 </div>
-                <div class="col-md-4 p-0">
-
-                </div>
+                <div class="col-md-4 p-0"></div>
             </div>
         </div>
         <script>
             window.addEventListener("load", () => {
                 hidePages();
-
             });
-
 
             let page1 = document.getElementById("page_window1");
             let page2 = document.getElementById("page_window2");
@@ -842,7 +861,7 @@
                 page1.style.display = "none";
                 page2.style.display = "block";
             }
-            // let CURRENT_GRIPPER = 0; 
+            // let CURRENT_GRIPPER = 0;
             function hidePages() {
                 // Click Go to Gripper System
                 let pno = getCurrentGripper();
@@ -854,7 +873,9 @@
                 // alert("Pno from localStorage: " + pno);
                 // let gripper = pno;
 
-                let gripper_window_head = document.getElementById("gripper_window_head");
+                let gripper_window_head = document.getElementById(
+                    "gripper_window_head",
+                );
                 // if(gripper == "")
                 // {
                 //     alert("Please select a gripper type to proceed.");
@@ -869,21 +890,19 @@
                 gripper_window_head.style.display = "block";
             }
             function getCurrentGripper() {
-
-                return parseInt(
-                    sessionStorage.getItem("pno")
-                ) || 0;
+                return parseInt(sessionStorage.getItem("pno")) || 0;
             }
         </script>
-        <div id="gripper_window_head" style="display: none;">
-
-            <div class="hero-ai-bg">
-                <h2 style="padding: 5px;">Spring Structural Model of Robotic Gripper</h2>
+        <div id="gripper_window_head" style="display: none">
+            <div id="gripper_header_theme" class="hero-ai-bg">
+                <h2 style="padding: 5px" id="hedTitle">
+                    Spring Structural Model of Robotic Gripper
+                </h2>
             </div>
             <hr />
 
             <!-- <hr /> -->
-            <div class="menu" id="gripper_window" data-title="-" style="display: none;">
+            <div class="menu" id="gripper_window" data-title="-" style="display: none">
                 <div class="row g-4">
                     <div class="col-md-3 div2 p-0">
                         <!-- LEFT SIDE (Merged INPUT) -->
@@ -902,78 +921,76 @@
                                     <label id="selectevt">Selection Event</label>
                                     <!-- <div id="selectionEvent"></div> -->
                                     <!-- // Ellipsoidal → Major / Minor -->
-                                    <div id="ellipsEvent" style="display:none;">
+                                    <div id="ellipsEvent" style="display: none">
                                         <div class="d-flex gap-3">
                                             <div class="form-check">
                                                 <input id="rbmajor" class="form-check-input" type="radio" name="event"
-                                                    group="ellipsoidal" value="major" checked>
+                                                    group="ellipsoidal" value="major" checked />
                                                 <label class="form-check-label">Major</label>
                                             </div>
                                             <div class="form-check">
                                                 <input id="rbminor" class="form-check-input" type="radio" name="event"
-                                                    group="ellipsoidal" value="minor">
+                                                    group="ellipsoidal" value="minor" />
                                                 <label class="form-check-label">Minor</label>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- User i/p for Ellipsoidal -->
-                                    <div class="row g-2" id="ellipsInput" style="display:none;">
+                                    <div class="row g-2" id="ellipsInput" style="display: none">
                                         <div class="col-md-6">
                                             <label>Rmajor (mm)</label>
                                             <input id="Rmajor" type="number" class="form-control" placeholder="50 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                         <div class="col-md-6">
                                             <label>Rminor (mm)</label>
                                             <input id="Rminor" type="number" class="form-control" placeholder="30 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                     </div>
 
                                     <!-- // Rectangular → Length / Breadth -->
-                                    <div id="rectangleEvent" style="display:none;">
+                                    <div id="rectangleEvent" style="display: none">
                                         <div class="row mb-2">
                                             <div class="col-md-12 d-flex align-items-center gap-4">
                                                 <div class="form-check">
                                                     <input id="rblength" class="form-check-input" type="radio"
-                                                        name="event" value="length" group="rectangular" checked>
+                                                        name="event" value="length" group="rectangular" checked />
                                                     <label class="form-check-label">Length</label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input id="rbbreadth" class="form-check-input" type="radio"
-                                                        name="event" group="rectangular" value="breadth">
+                                                        name="event" group="rectangular" value="breadth" />
                                                     <label class="form-check-label">Breadth</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- User i/p for Rectangular -->
-                                    <div class="row g-2" id="rectangleInput" style="display:none;">
+                                    <div class="row g-2" id="rectangleInput" style="display: none">
                                         <div class="col-md-4">
-                                            <label style="font-size: 15px;">Length(mm)</label>
+                                            <label style="font-size: 15px">Length(mm)</label>
                                             <input id="length" type="number" class="form-control" placeholder="100 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label style="font-size: 15px;">Breadth(mm)</label>
+                                            <label style="font-size: 15px">Breadth(mm)</label>
                                             <input id="breadth" type="number" class="form-control" placeholder="40 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label style="font-size: 15px;">Width(mm)</label>
+                                            <label style="font-size: 15px">Width(mm)</label>
                                             <input id="width" type="number" class="form-control" placeholder="20 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                     </div>
-                                    <div class="row g-2" id="sphericalInput" style="display:none;">
+                                    <div class="row g-2" id="sphericalInput" style="display: none">
                                         <div class="col-md-12">
                                             <label>Radius (mm)</label>
                                             <input id="radius" type="number" class="form-control" placeholder="50 mm"
-                                                min="1" step="1">
+                                                min="1" step="1" />
                                         </div>
                                     </div>
-
-
 
                                     <!-- <label>Time t (seconds)</label>
                             <div class="form-control bg-light fw-bold text-secondary">1 - 5 sec </div> -->
@@ -985,13 +1002,19 @@
                                         <div class="col-md-9">
                                             <select id="func" class="form-select">
                                                 <option value="t/2 + t^2/3">t/2 + t²/3</option>
-                                                <option value="t/2 + t^2/3 + t^3/4">t/2 + t²/3 + t³/4</option>
-                                                <option value="t/3 + t^2/4 + t^3/5">t/3 + t²/4 + t³/5</option>
+                                                <option value="t/2 + t^2/3 + t^3/4">
+                                                    t/2 + t²/3 + t³/4
+                                                </option>
+                                                <option value="t/3 + t^2/4 + t^3/5">
+                                                    t/3 + t²/4 + t³/5
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
-                                            <button type="button" class="btn btn-dark" style="font-weight: 600;"
-                                                onclick="onMyPopupFun()">Add</button>
+                                            <button type="button" class="btn btn-dark" style="font-weight: 600"
+                                                onclick="onMyPopupFun()">
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
 
@@ -1002,7 +1025,6 @@
                                         <option value="2">2 sec</option>
                                         <option value="3">3 sec</option> -->
                                     </select>
-
 
                                     <label class="mt-2">Spring Constant Mode</label>
                                     <div>
@@ -1016,17 +1038,18 @@
                                         <input type="radio" name="kmode" value="3" onclick="updateSpringFields()" />
                                         All unequal
                                     </div>
-                                    <div id="springInputs_equal" class="mt-2"><label>Common K (N/m)</label>
+                                    <div id="springInputs_equal" class="mt-2">
+                                        <label>Common K (N/m)</label>
                                         <input id="k_common" type="number" class="form-control" placeholder="Common K"
-                                            min="1" step="1" list="k_common_options">
+                                            min="1" step="1" list="k_common_options" />
                                         <datalist id="k_common_options"> </datalist>
                                     </div>
-                                    <div id="springInputs_samefinger" class="mt-2" style="display: none;">
+                                    <div id="springInputs_samefinger" class="mt-2" style="display: none">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <label>Finger Same K (N/m)</label>
                                                 <input id="k_finger" type="number" class="form-control"
-                                                    placeholder="Finger K" min="1" step="1" list="k_finger_options">
+                                                    placeholder="Finger K" min="1" step="1" list="k_finger_options" />
                                                 <datalist id="k_finger_options"></datalist>
                                             </div>
                                             <div class="col-md-12">
@@ -1034,37 +1057,35 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <input id="k_thumb" type="number" class="form-control"
-                                                            placeholder="K1" min="1" step="1" list="k_thumb_options">
+                                                            placeholder="K1" min="1" step="1" list="k_thumb_options" />
                                                         <datalist id="k_thumb_options"></datalist>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <input id="k_thumb2" type="number" class="form-control"
-                                                            placeholder="K2" min="1" step="1" list="k_thumb2_options">
+                                                            placeholder="K2" min="1" step="1" list="k_thumb2_options" />
                                                         <datalist id="k_thumb2_options"></datalist>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <input id="k_thumb3" type="number" class="form-control"
-                                                            placeholder="K3" min="1" step="1" list="k_thumb3_options">
+                                                            placeholder="K3" min="1" step="1" list="k_thumb3_options" />
                                                         <datalist id="k_thumb3_options"></datalist>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="springInputs_msg" class="text-danger mt-2" style="display: none;">
-
-                                        </div>
+                                        <div id="springInputs_msg" class="text-danger mt-2" style="display: none"></div>
                                     </div>
-                                    <div id="springInputs_unequal" class="mt-2" style="display: none;">
+                                    <div id="springInputs_unequal" class="mt-2" style="display: none">
                                         <label>Finger 1 K1 &amp; K2 (N/m)</label>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <input id="f1k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f1k1_options">
+                                                    type="number" min="1" step="1" list="f1k1_options" />
                                                 <datalist id="f1k1_options"></datalist>
                                             </div>
                                             <div class="col-md-6">
                                                 <input id="f1k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f1k2_options">
+                                                    type="number" min="1" step="1" list="f1k2_options" />
                                                 <datalist id="f1k2_options"></datalist>
                                             </div>
                                         </div>
@@ -1072,12 +1093,12 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <input id="f2k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f2k1_options">
+                                                    type="number" min="1" step="1" list="f2k1_options" />
                                                 <datalist id="f2k1_options"></datalist>
                                             </div>
                                             <div class="col-md-6">
                                                 <input id="f2k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f2k2_options">
+                                                    type="number" min="1" step="1" list="f2k2_options" />
                                                 <datalist id="f2k2_options"></datalist>
                                             </div>
                                         </div>
@@ -1086,65 +1107,64 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <input id="f3k1" class="form-control" placeholder="Spring 1"
-                                                    type="number" min="1" step="1" list="f3k1_options">
+                                                    type="number" min="1" step="1" list="f3k1_options" />
                                                 <datalist id="f3k1_options"></datalist>
                                             </div>
                                             <div class="col-md-6">
                                                 <input id="f3k2" class="form-control mb-2" placeholder="Spring 2"
-                                                    type="number" min="1" step="1" list="f3k2_options">
+                                                    type="number" min="1" step="1" list="f3k2_options" />
                                                 <datalist id="f3k2_options"></datalist>
                                             </div>
                                         </div>
 
-                                        <div id="div_Finger4" style="display: none;">
+                                        <div id="div_Finger4" style="display: none">
                                             <label>Finger 4 K1 &amp; K2 (N/m)</label>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <input id="f4k1" class="form-control" placeholder="Spring 1"
-                                                        type="number" min="1" step="1" list="f4k1_options">
+                                                        type="number" min="1" step="1" list="f4k1_options" />
                                                     <datalist id="f4k1_options"></datalist>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <input id="f4k2" class="form-control mb-2" placeholder="Spring 2"
-                                                        type="number" min="1" step="1" list="f4k2_options">
+                                                        type="number" min="1" step="1" list="f4k2_options" />
                                                     <datalist id="f4k2_options"></datalist>
                                                 </div>
                                             </div>
-
                                         </div>
-                                        <div id="div_Thumb" style="display: none;">
+                                        <div id="div_Thumb" style="display: none">
                                             <label>Thumb K1, K2 &amp; K3 (N/m)</label>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <input id="Thk1" class="form-control" placeholder="Spring 1"
-                                                        type="number" min="1" step="1" list="Thk1_options">
+                                                        type="number" min="1" step="1" list="Thk1_options" />
                                                     <datalist id="Thk1_options"></datalist>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <input id="Thk2" class="form-control" placeholder="Spring 2"
-                                                        type="number" min="1" step="1" list="Thk2_options">
+                                                        type="number" min="1" step="1" list="Thk2_options" />
                                                     <datalist id="Thk2_options"></datalist>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <input id="Thk3" class="form-control mb-2" placeholder="Spring 3"
-                                                        type="number" min="1" step="1" list="Thk3_options">
+                                                        type="number" min="1" step="1" list="Thk3_options" />
                                                     <datalist id="Thk3_options"></datalist>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                     <!-- <div id="springInputs" class="mt-2"></div> -->
 
                                     <button onclick="calculate()" class="btn btn-primary mt-3 w-100 bold600">
                                         Generate Comparison Chart
                                     </button>
-                                    <div id="savedText" class="mt-2 text-success fw-bold">
-                                    </div>
-                                    <p class="mt-2"><b>Execution Time:</b><br> <span id="executionTime">0</span> µs /
+                                    <div id="savedText" class="mt-2 text-success fw-bold"></div>
+                                    <p class="mt-2">
+                                        <b>Execution Time:</b><br />
+                                        <span id="executionTime">0</span> µs /
                                         <span id="executionTime2">0</span> ms
                                     </p>
-                                    <span id="loader" class="ms-2" style="display:none;">
+                                    <span id="loader" class="ms-2" style="display: none">
                                         <span class="spinner-border spinner-border-sm text-primary"></span>
                                         Loading...
                                     </span>
@@ -1157,7 +1177,7 @@
                             <div id="output" class="col-md-12 div2 p-0">
                                 <div class="card p-0 h-100">
                                     <div class="box output mt-2">
-                                        <h4>OUTPUT </h4>
+                                        <h4>OUTPUT</h4>
                                         <style>
                                             .bold {
                                                 font-weight: 700;
@@ -1187,7 +1207,6 @@
                                                     <td>Teflon</td>
                                                     <td>-</td>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                         <style>
@@ -1199,17 +1218,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-4" id="row4fingers" style="display: block;">
+                        <div class="row g-4" id="row4fingers" style="display: block">
                             <div class="col-md-12 div2 p-0">
                                 <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
-                                <div class="card p-3" style="display: none;">
-                                    <div class="graph-box"><label style="font-size: 14px;height: 50px;">
-                                            Fig. 1: Chart Representation of Spring structure Model
-                                            :
+                                <div class="card p-3" style="display: none">
+                                    <div class="graph-box">
+                                        <label style="font-size: 14px; height: 50px">
+                                            Fig. 1: Chart Representation of Spring structure Model :
                                         </label>
                                         <img id="fig1" src="static/img/basic.avif" id="myImg" onclick="onMyPopup(this)"
-                                            style="width: 100%;height: auto;" alt="basic.avif">
-
+                                            style="width: 100%; height: auto" alt="basic.avif" />
                                     </div>
                                 </div>
                                 <div class="card mt-3 p-3">
@@ -1217,14 +1235,13 @@
                                         Comparison Chart Representation of Spring Structure Model
                                         (<span id="shape_name" class="fw-bold"> </span>)
                                     </h4>
-                                    <div style="height:500px;">
+                                    <div style="height: 500px">
                                         <canvas id="forceChart"></canvas>
-                                        <input type="hidden" id="chartImage">
+                                        <input type="hidden" id="chartImage" />
                                     </div>
                                     <div class="row mt-3 g-3">
-
                                         <div class="col-md-6">
-                                            <button class="btn btn-success w-100" onclick="downloadGraphExcel()">
+                                            <button class="btn btn-success w-100" onclick="downloadGraphExcel(1)">
                                                 <i class="bi bi-download me-2"></i>
                                                 Download Graph Excel
                                             </button>
@@ -1236,25 +1253,39 @@
                                                 Download Graph PDF
                                             </button>
                                         </div>
+                                    </div>
+                                    <div>
+                                        <div class="row mt-3 g-3">
+                                            <div class="col-md-12">
+                                                <button id="btnMerge"
+                                                    class="btn btn-warning border border-3 border-dark btn-lg w-100"
+                                                    onclick="mergedAllExcels()">
+                                                    <span id="btnMergeText">
+                                                        <i class="bi bi-download me-2"></i>
+                                                        Download All Saved Changes
+                                                    </span>
 
+                                                    <span id="btnMergeLoader" style="display:none;">
+                                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                                        Processing...
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
         <!-- The Modal -->
         <div id="myModal" class="modal">
-            <span class="close" style="float: right;">&times;</span>
+            <span class="close" style="float: right">&times;</span>
             <!-- <button type="button" onclick="onDownload()" class="close2">Save Img</button>
                 <button type="button" onclick="onDownloadPdf2()" class="close22">Save Pdf</button> -->
-            <img class="modal-content" id="img01" style="margin-bottom: 50px;">
+            <img class="modal-content" id="img01" style="margin-bottom: 50px" />
         </div>
         <style>
             .equation-builder {
@@ -1336,9 +1367,11 @@
                 /* border: none; */
             }
         </style>
-        <div id="myModalFun" class="modal"> <span class="close" style="float:right;">&times;</span>
-            <div class="container box" style="width:45% !important;">
-                <h5>Add θ(t) Function:</h5> <!-- HORIZONTAL EQUATION -->
+        <div id="myModalFun" class="modal">
+            <span class="close" style="float: right">&times;</span>
+            <div class="container box" style="width: 45% !important">
+                <h5>Add θ(t) Function:</h5>
+                <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
                 <div class="d-flex justify-content-center gap-4 mb-3">
                     <!-- <div class="form-check">
@@ -1352,22 +1385,17 @@
                     </div> -->
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="twoTerms"
-                            onchange="toggleTerms(2)">
+                            onchange="toggleTerms(2)" />
 
-                        <label class="form-check-label fw-bold">
-                            2 Terms
-                        </label>
+                        <label class="form-check-label fw-bold"> 2 Terms </label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="threeTerms"
-                            onchange="toggleTerms(3)">
+                            onchange="toggleTerms(3)" />
 
-                        <label class="form-check-label fw-bold">
-                            3 Terms
-                        </label>
+                        <label class="form-check-label fw-bold"> 3 Terms </label>
                     </div>
-
                 </div>
                 <div class="equation-builder">
                     <!-- TERM 1 -->
@@ -1384,34 +1412,40 @@
                             <option value="t²">t²</option>
                             <option value="t³">t³</option>
                         </select>
-                        <hr class="eq-line"> <select id="cfunc2" class="form-select eq-select">
+                        <hr class="eq-line" />
+                        <select id="cfunc2" class="form-select eq-select">
                             <option value="">select</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
                             <option value="5">5</option>
                         </select>
-                    </div> <!-- PLUS / MINUS -->
+                    </div>
+                    <!-- PLUS / MINUS -->
                     <div class="eq-operator" id="operatorGroup1">
                         <select id="operator1" class="form-select operator-select">
                             <option value="+">+</option>
                             <option value="-">−</option>
                         </select>
-                    </div> <!-- TERM 2 -->
-                    <div class="eq-block"> <select id="cfunc3" class="form-select eq-select">
+                    </div>
+                    <!-- TERM 2 -->
+                    <div class="eq-block">
+                        <select id="cfunc3" class="form-select eq-select">
                             <option value="">select</option>
                             <option value="t">t</option>
                             <option value="t²">t²</option>
                             <option value="t³">t³</option>
                         </select>
-                        <hr class="eq-line"> <select id="cfunc4" class="form-select eq-select">
+                        <hr class="eq-line" />
+                        <select id="cfunc4" class="form-select eq-select">
                             <option value="">select</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
                             <option value="5">5</option>
                         </select>
-                    </div> <!-- PLUS / MINUS -->
+                    </div>
+                    <!-- PLUS / MINUS -->
                     <!-- <div class="eq-operator">  -->
                     <!-- THIRD TERM GROUP -->
                     <div id="thirdTermGroup" class="align-items-center gap-3">
@@ -1431,7 +1465,7 @@
                                 <option value="t²">t²</option>
                                 <option value="t³">t³</option>
                             </select>
-                            <hr class="eq-line">
+                            <hr class="eq-line" />
                             <select id="cfunc6" class="form-select eq-select">
                                 <option value="">select</option>
                                 <option value="2">2</option>
@@ -1441,38 +1475,33 @@
                             </select>
                         </div>
                     </div>
-                </div> <!-- BUTTON -->
+                </div>
+                <!-- BUTTON -->
                 <div class="mt-2">
-
                     <b>Note:</b>
 
                     <ul class="mb-0 ps-3">
+                        <li>In numerator choose only up to t<sup>3</sup></li>
 
-                        <li>
-                            In numerator choose only up to
-                            t<sup>3</sup>
-                        </li>
-
-                        <li>
-                            In denominator choose only up to 5
-                        </li>
-
+                        <li>In denominator choose only up to 5</li>
                     </ul>
-
                 </div>
-                <div class="mt-4"> <button type="button" onclick="addCustomFunction()"
-                        class="btn btn-success w-100 fw-bold">
-                        Add Function </button> </div>
-                <hr> <!-- SAVED FUNCTIONS -->
+                <div class="mt-4">
+                    <button type="button" onclick="addCustomFunction()" class="btn btn-success w-100 fw-bold">
+                        Add Function
+                    </button>
+                </div>
+                <hr />
+                <!-- SAVED FUNCTIONS -->
                 <h6>Saved Functions</h6>
                 <table class="table table-bordered table-sm mt-2">
                     <thead>
                         <tr>
-                            <th style="width:80%;">Function</th>
-                            <th style="width:20%;">Action</th>
+                            <th style="width: 80%">Function</th>
+                            <th style="width: 20%">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="functionTableBody"> </tbody>
+                    <tbody id="functionTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -1483,13 +1512,9 @@
                 <div class="col-md-7">
                     <div class="row g-4">
                         <!-- OUTPUT ROW 1 -->
-                        <div class="col-12">
-
-                        </div>
+                        <div class="col-12"></div>
                         <!-- OUTPUT ROW 2 -->
-                        <div class="col-12">
-
-                        </div>
+                        <div class="col-12"></div>
                     </div>
                 </div>
             </div>
@@ -1507,8 +1532,6 @@
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
     <script src="/static/js/tex-mml-chtml.js"></script>
-
-
 </body>
 
 </html>

@@ -1104,40 +1104,6 @@ async function calculate() {
     ],
   };
 
-  // let res = await fetch("/calculate_graph", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(data)
-  // });
-
-  // let result = await res.json();
-  // ✅ Set Time & Force in 5 rows
-  // document.getElementById("txttime1").value = result.time1?.toFixed(5) || "";
-  // document.getElementById("txtforce1").value = result.force1?.toFixed(5) || "";
-  // document.getElementById("txttime2").value = result.time2?.toFixed(5) || "";
-  // document.getElementById("txtforce2").value = result.force2?.toFixed(5) || "";
-  // document.getElementById("txttime3").value = result.time3?.toFixed(5) || "";
-  // document.getElementById("txtforce3").value = result.force3?.toFixed(5) || "";
-  // document.getElementById("txttime4").value = result.time4?.toFixed(5) || "";
-  // document.getElementById("txtforce4").value = result.force4?.toFixed(5) || "";
-  // document.getElementById("txttime5").value = result.time5?.toFixed(5) || "";
-  // document.getElementById("txtforce5").value = result.force5?.toFixed(5) ||"";
-
-  // ✅ Hide loader
-  // loader.style.display = "block";
-  // // ✅ Show execution time and Generate Graph Image (png) in fig1
-  // execTime.innerText = result.execution_time;
-  // let gripper = document.getElementById("gripper").value;
-  // // alert("gripper: " + gripper + " mode: " + mode);
-  // if (gripper == "1") {
-  //     document.getElementById("fig1").src = result.fig1;
-
-  // }
-  // else if (gripper == "2") {
-  //     document.getElementById("fig1").src = result.fig1;
-  // }
-  // console.log("Fig1 URL:", result.fig1);
-
   // ================= TIME vs FORCE =================
   // ================= GRAPH API =================
 
@@ -1160,6 +1126,11 @@ async function calculate() {
   createBarChart(graphResult.time, graphResult.force);
 
   updateGraphTable(graphResult.time, graphResult.force);
+
+  // downloadGraphExcel(2);
+  setTimeout(() => {
+    downloadGraphExcel(2);
+  }, 1500);
 }
 
 // ============================= New ===============
@@ -1179,6 +1150,36 @@ function createBarChart(timeData, forceData) {
     forceChart.destroy();
   }
 
+  let gripper = sessionStorage.getItem("pno"); // "1" or "2"
+  let bgColors;
+  let anchor;
+  let align;
+  let color;
+  if (gripper === "1") {
+    bgColors = ["#4e79a7", "#59a14f", "#f28e2b", "#e15759", "#b07aa1"];
+    anchor = "center";
+    align = "center";
+    color = "white";
+  } else {
+    bgColors = [
+      "#265294", // blue
+      "#9670ca", // Violet
+      "#bd6162", // pink
+      "#326d2a", // green
+      "#FFBE0B", // Yellow
+    ];
+    anchor = "end";
+    align = "top";
+    color = "black";
+
+    const bgColors2 = [
+      "#00A8E8", // Sky Blue
+      "#FF6B6B", // Coral Red
+      "#FFD166", // Golden Yellow
+      "#06D6A0", // Mint Green
+      "#9B5DE5", // Purple
+    ];
+  }
   // IMPORTANT FIX
   setTimeout(() => {
     forceChart = new Chart(ctx, {
@@ -1203,13 +1204,7 @@ function createBarChart(timeData, forceData) {
 
             borderColor: "#000",
 
-            backgroundColor: [
-              "#4e79a7",
-              "#59a14f",
-              "#f28e2b",
-              "#e15759",
-              "#b07aa1",
-            ],
+            backgroundColor: bgColors,
           },
         ],
       },
@@ -1225,11 +1220,12 @@ function createBarChart(timeData, forceData) {
           },
 
           datalabels: {
-            anchor: "end",
-
-            align: "top",
-
-            color: "black",
+            // anchor: "end",
+            // align: "top",
+            // color: "black",
+            anchor: anchor,
+            align: align,
+            color: color,
 
             font: {
               weight: "bold",
@@ -1312,7 +1308,7 @@ function updateGraphTable(timeData, forceData) {
   }
 }
 
-async function downloadGraphExcel() {
+async function downloadGraphExcel(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
 
   let tableData = [];
@@ -1338,7 +1334,7 @@ async function downloadGraphExcel() {
 
     return;
   }
-
+  let graphImage = document.getElementById("forceChart").toDataURL("image/png");
   let payload = {
     func: document.getElementById("func").value,
     // alert("sss" + localStorage.getItem("pno") || "0")
@@ -1363,10 +1359,19 @@ async function downloadGraphExcel() {
         document.getElementById("material").selectedIndex
       ].text,
 
-    graphImage: document.getElementById("chartImage").value,
+    // graphImage: document.getElementById("chartImage").value,
+    graphImage: graphImage,
 
     tableData: tableData,
+    mStatus: mStatus,
   };
+  // console.log("Payload:", payload);
+
+  if (payload.graphImage?.length == 0) {
+    // alert("Empty chartImage !!!");
+    console.log("Empty graphImage length:", payload.graphImage?.length);
+    return;
+  }
 
   let response = await fetch("/download_graph_excel", {
     method: "POST",
@@ -1376,38 +1381,63 @@ async function downloadGraphExcel() {
     body: JSON.stringify(payload),
   });
 
-  console.log("Status:", response.status);
-  console.log("Content-Type:", response.headers.get("content-type"));
+  // console.log("Status:", response.status);
+  // console.log("Content-Type:", response.headers.get("content-type"));
+  if (mStatus == 2) {
+    //Save to localStorage for Merging Excel
+    const result = await response.json();
+    if (result.status === "success") {
+      addGeneratedFile(result.filename, "Bar_Chart");
+      console.log(result.message, "mStatus:", mStatus);
+      // console.table(localStorage);
+      console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
+      // Object.entries(localStorage).forEach(([key, value]) => {
+      //   console.log(key, JSON.parse(value));
+      // });
+    }
+  } else {
+    if (!response.ok) {
+      let txt = await response.text();
+      console.log(txt);
+      alert("Server Error");
+      return;
+    }
 
-  if (!response.ok) {
-    let txt = await response.text();
-    console.log(txt);
-    alert("Server Error");
-    return;
+    let blob = await response.blob();
+
+    console.log("Blob Size:", blob.size);
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    // a.download = "Graph_Report.xlsx";
+    let disposition = response.headers.get("Content-Disposition");
+
+    let filename = "Graph_Report.xlsx";
+
+    if (disposition && disposition.includes("filename=")) {
+      filename = disposition.split("filename=")[1].replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    a.click();
   }
+}
 
-  let blob = await response.blob();
+function addGeneratedFile(filename, narration) {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
-  console.log("Blob Size:", blob.size);
+  files.push({
+    filename: filename,
+    created_at: new Date().toLocaleString(),
+    narration: narration,
+  });
 
-  let url = window.URL.createObjectURL(blob);
-
-  let a = document.createElement("a");
-
-  a.href = url;
-
-  // a.download = "Graph_Report.xlsx";
-  let disposition = response.headers.get("Content-Disposition");
-
-  let filename = "Graph_Report.xlsx";
-
-  if (disposition && disposition.includes("filename=")) {
-    filename = disposition.split("filename=")[1].replace(/"/g, "");
-  }
-
-  a.download = filename;
-
-  a.click();
+  localStorage.setItem("generatedFiles", JSON.stringify(files));
 }
 
 async function downloadGraphPdf() {

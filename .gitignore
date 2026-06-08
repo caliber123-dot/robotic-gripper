@@ -6,7 +6,9 @@ README.md
 gripper_results.xlsx
 static/generated/
 static/templates/
+static/files/
 Graph_*.xlsx
 Input_*.xlsx
 4Fingers_*.xlsx
 gripper.db
+test2.py

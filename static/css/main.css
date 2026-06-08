@@ -58,7 +58,7 @@ body {
 h2 {
   padding: 15px;
   border-radius: 10px;
-  background: #2c3e50;
+  /* background: #2c3e50; */
   color: white;
 }
 
@@ -76,9 +76,16 @@ h2 {
 }
 
 /* Gradient Navbar */
-.custom-navbar {
+/* Project 02 */
+.custom-navbar2 {
   /* background: linear-gradient(45deg, #023179, #6610f2); */
   background: linear-gradient(45deg, #023075, #2c3e50);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+/* Project 01 */
+.custom-navbar {
+  /* background: linear-gradient(45deg, #023179, #6610f2); */
+  background: linear-gradient(45deg, #8a1e1e, #a02e12);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 

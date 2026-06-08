@@ -236,7 +236,7 @@ function reloadDropdown() {
 }
 
 // Download results as Excel >>>
-async function downloadResultsExcel() {
+async function downloadResultsExcel(mStatus) {
   let data = {
     a1: document.getElementById("a1")?.value || "",
     k1: document.getElementById("k1")?.value || "",
@@ -281,9 +281,10 @@ async function downloadResultsExcel() {
       document
         .querySelector('input[name="kmode"]:checked')
         ?.nextSibling?.textContent.trim() || "",
+    mStatus: mStatus,
   };
 
-  console.log(data);
+  // console.log(data);
 
   let response = await fetch("/download_excel", {
     method: "POST",
@@ -291,43 +292,66 @@ async function downloadResultsExcel() {
     headers: {
       "Content-Type": "application/json",
     },
-
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    alert("Excel download failed");
+  if (mStatus == 2) {
+    //Save to localStorage for Merging Excel
+    const result = await response.json();
+    if (result.status === "success") {
+      addGeneratedFile(result.filename, "Input");
+      console.log(result.message, "mStatus:", mStatus);
+      // console.table(localStorage);
+      console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
+      // Object.entries(localStorage).forEach(([key, value]) => {
+      //   console.log(key, JSON.parse(value));
+      // });
+    }
+  } else {
+    if (!response.ok) {
+      alert("Excel download failed");
 
-    return;
+      return;
+    }
+
+    let blob = await response.blob();
+
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+
+    a.href = url;
+
+    let disposition = response.headers.get("Content-Disposition");
+
+    let filename = "gripper_results.xlsx";
+
+    if (disposition && disposition.includes("filename=")) {
+      filename = disposition.split("filename=")[1].replace(/"/g, "");
+    }
+
+    a.download = filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
   }
-
-  let blob = await response.blob();
-
-  let url = window.URL.createObjectURL(blob);
-
-  let a = document.createElement("a");
-
-  a.href = url;
-
-  let disposition = response.headers.get("Content-Disposition");
-
-  let filename = "gripper_results.xlsx";
-
-  if (disposition && disposition.includes("filename=")) {
-    filename = disposition.split("filename=")[1].replace(/"/g, "");
-  }
-
-  a.download = filename;
-
-  document.body.appendChild(a);
-
-  a.click();
-
-  a.remove();
-
-  window.URL.revokeObjectURL(url);
 }
+function addGeneratedFile(filename, narration) {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
+  files.push({
+    filename: filename,
+    created_at: new Date().toLocaleString(),
+    narration: narration,
+  });
+
+  localStorage.setItem("generatedFiles", JSON.stringify(files));
+}
 async function downloadResultsPdf() {
   let total = document.getElementById("total").value;
 
