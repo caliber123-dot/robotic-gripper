@@ -2829,20 +2829,3 @@ async function mergedAllExcels1() {
     updateDirtyState();
   }
 }
-
-let isDirty = false;
-
-function updateDirtyState() {
-  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
-  isDirty = files.length > 0;
-  console.log("isDirty", isDirty);
-}
-
-updateDirtyState();
-
-window.addEventListener("beforeunload", function (e) {
-  if (isDirty) {
-    e.preventDefault();
-    e.returnValue = "";
-  }
-});
