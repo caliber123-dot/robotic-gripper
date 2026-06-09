@@ -1055,7 +1055,7 @@ function validateInputs() {
   // alert("Validating inputs...");
   let mode = document.querySelector('input[name="kmode"]:checked').value;
   let gripper = sessionStorage.getItem("pno");
-  // let time = document.getElementById("time").value;
+  let time = document.getElementById("time").value;
   //   let material = document.getElementById("material").value;
   //   console.log("## Mode:", mode, "Gripper:", gripper);
   // let trFinger4 = document.getElementById("trFinger4");
@@ -1118,7 +1118,11 @@ function validateInputs() {
       return false;
     }
   }
-
+  if (!time) {
+    // alert("Please enter Time");
+    markInvalid("time");
+    return false;
+  }
   // Reset borders
   document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
 
@@ -1267,18 +1271,17 @@ function validateInputs1() {
       return false;
     }
   }
-  if (!time) {
-    // alert("Please enter Time");
-    markInvalid("time1");
-    return false;
-  }
 
   if (!material) {
     // alert("Please select Material");
     markInvalid("material1");
     return false;
   }
-
+  if (!time) {
+    // alert("Please enter Time");
+    markInvalid("time1");
+    return false;
+  }
   // Reset borders
   document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
 
