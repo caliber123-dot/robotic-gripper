@@ -130,13 +130,19 @@
             let hedTitle = document.getElementById("hedTitle");
 
             const tab = document.querySelector(".tab");
-            const tabcontent = document.querySelector(".tabcontent");
+            // const tabcontent = document.querySelector(".tabcontent");
+            const tabcontents = document.querySelectorAll(
+                ".tabcontent, .tabcontent1"
+            );
 
             if (!navbar || !hero) return;
 
             navbar.classList.remove("custom-navbar", "custom-navbar2");
             tab.classList.remove("tab", "tab1");
-            tabcontent.classList.remove("tabcontent", "tabcontent1");
+            // tabcontent.classList.remove("tabcontent", "tabcontent1");
+            tabcontents.forEach(tc => {
+                tc.classList.remove("tabcontent", "tabcontent1");
+            });
             hero.classList.remove("hero-ai-bg", "hero-ai-bg2");
 
             window.GRIPPER = parseInt(sessionStorage.getItem("pno")) || 1;
@@ -144,7 +150,10 @@
             if (window.GRIPPER === 1) {
                 navbar.classList.add("custom-navbar");
                 tab.classList.add("tab1");
-                tabcontent.classList.add("tabcontent1");
+                // tabcontent.classList.add("tabcontent1");
+                tabcontents.forEach(tc => {
+                    tc.classList.add("tabcontent1");
+                });
                 hero.classList.add("hero-ai-bg");
                 headerTheme.classList.add("hero-ai-bg");
                 // alert("Gripper 1");
@@ -154,7 +163,10 @@
             } else if (window.GRIPPER === 2) {
                 navbar.classList.add("custom-navbar2");
                 tab.classList.add("tab");
-                tabcontent.classList.add("tabcontent");
+                // tabcontent.classList.add("tabcontent");
+                tabcontents.forEach(tc => {
+                    tc.classList.add("tabcontent");
+                });
                 hero.classList.add("hero-ai-bg2");
                 headerTheme.classList.add("hero-ai-bg2");
                 // alert("Gripper 2");
