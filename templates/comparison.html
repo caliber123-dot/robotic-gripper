@@ -177,7 +177,6 @@
             border: 2px solid #023075;
             /* background-color: #023075; */
             background-color: #425b81;
-
         }
 
         /* Style the buttons inside the tab */
@@ -209,7 +208,7 @@
         /* Style the tab content */
         .tabcontent {
             display: none;
-            padding: 0px 2px;
+            padding: 0px 0px;
             border: 2px solid #023075;
             border-top: none;
         }
@@ -1020,7 +1019,6 @@
             }
         </script>
         <div id="gripper_window_head" style="display: none">
-
             <div id="gripper_header_theme" class="hero-ai-bg">
                 <h2 style="padding: 5px" id="hedTitle">
                     Spring Structural Model of Robotic Gripper
@@ -1031,14 +1029,17 @@
             <!-- ######## Tabs ########## -->
             <div class="menu" id="gripper_window" data-title="-" style="display: none">
                 <div class="tab">
-                    <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'Material')">Materials vs Force
+                    <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'Material')">
+                        Materials vs Force
                     </button>
-                    <button class="tablinks" onclick="openCity(event, 'Spring')">Spring Constant vs Force</button>
+                    <button class="tablinks" onclick="openCity(event, 'Spring')">
+                        Spring Constant vs Force
+                    </button>
                 </div>
                 <!-- tab 1 -->
                 <div id="Material" class="tabcontent">
-                    <div class="row g-4" style="margin: 0px;padding: 0px;">
-                        <div class="col-md-3 div2 p-0" style="margin-top: 2px;">
+                    <div class="row g-4" style="margin: 0px; padding: 0px">
+                        <div class="col-md-3 div2 p-0" style="margin-top: 0px">
                             <!-- LEFT SIDE (Merged INPUT) -->
                             <div id="input" class="col-md-12">
                                 <div class="card p-0 h-100">
@@ -1314,7 +1315,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-9 div2" style="margin-top: 2px;">
+                        <div class="col-md-9 div2" style="margin-top: 0px">
                             <div class="row div2 p-0">
                                 <div id="output" class="col-md-12 div2 p-0">
                                     <div class="card p-0 h-100">
@@ -1366,7 +1367,8 @@
                                     <div class="card p-3" style="display: none">
                                         <div class="graph-box">
                                             <label style="font-size: 14px; height: 50px">
-                                                Fig. 1: Chart Representation of Spring structure Model :
+                                                Fig. 1: Chart Representation of Spring structure Model
+                                                :
                                             </label>
                                             <img id="fig1" src="static/img/basic.avif" id="myImg"
                                                 onclick="onMyPopup(this)" style="width: 100%; height: auto"
@@ -1375,8 +1377,8 @@
                                     </div>
                                     <div class="card mt-3 p-3">
                                         <h4 class="text-center">
-                                            Comparison Chart Representation of Spring Structure Model
-                                            (<span id="shape_name" class="fw-bold"> </span>)
+                                            Comparison Chart Representation of Spring Structure
+                                            Model (<span id="shape_name" class="fw-bold"> </span>)
                                         </h4>
                                         <div style="height: 500px">
                                             <canvas id="forceChart"></canvas>
@@ -1424,7 +1426,7 @@
                 </div>
                 <!-- tab 2 -->
                 <div id="Spring" class="tabcontent">
-                    <div class="row g-4" style="padding-left: 10px;padding-right: 10px;">
+                    <div class="row g-4" style="padding-left: 12px; padding-right: 12px">
                         <div class="col-md-3 div2 p-0">
                             <!-- LEFT SIDE (Merged INPUT) -->
                             <div id="input" class="col-md-12">
@@ -1439,7 +1441,7 @@
                                             <option value="2">Spherical</option>
                                             <option value="3">Ellipsoidal</option>
                                         </select>
-                                        <label id="selectevt1" style="display: none;">Selection Event</label>
+                                        <label id="selectevt1" style="display: none">Selection Event</label>
                                         <!-- <div id="selectionEvent"></div> -->
                                         <!-- // Ellipsoidal → Major / Minor -->
                                         <div id="ellipsEvent1" style="display: none">
@@ -1543,7 +1545,6 @@
                                         <label>Time t (seconds)</label>
                                         <select id="time1" class="form-select">
                                             <option value="">Select Time</option>
-
                                         </select>
                                         <!-- <label class="mt-2">Spring Constant Mode</label> -->
 
@@ -1582,8 +1583,9 @@
                                             <table class="table table-bordered table-sm">
                                                 <thead>
                                                     <tr>
-                                                        <th class="bg-light" style="width: 50%;">Spring Constant (All
-                                                            equal)</th>
+                                                        <th class="bg-light" style="width: 50%">
+                                                            Spring Constant (All equal)
+                                                        </th>
                                                         <th class="bg-light">Force (N)</th>
                                                     </tr>
                                                 </thead>
@@ -1592,7 +1594,6 @@
                                                         <td>-</td>
                                                         <td>-</td>
                                                     </tr>
-
                                                 </tbody>
                                             </table>
                                             <style>
@@ -1610,8 +1611,8 @@
 
                                     <div class="card mt-3 p-3">
                                         <h4 class="text-center">
-                                            Comparison Chart Representation of Spring Structure Model
-                                            (<span id="shape_name1" class="fw-bold"> </span>)
+                                            Comparison Chart Representation of Spring Structure
+                                            Model (<span id="shape_name1" class="fw-bold"> </span>)
                                         </h4>
                                         <div style="height: 500px">
                                             <canvas id="forceChart1"></canvas>
@@ -1674,7 +1675,6 @@
                 <!-- HORIZONTAL EQUATION -->
                 <!-- TERM SELECTION -->
                 <div class="d-flex justify-content-center gap-4 mb-3">
-
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="termCount" id="twoTerms"
                             onchange="toggleTerms(2)" />

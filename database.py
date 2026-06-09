@@ -667,6 +667,7 @@ def get_comparison_all_equal(gripper, shape, material ,theta_function, time_valu
         AND material = ?
         AND time_value = ?
         AND theta_function = ?
+        AND spring_key = 'k_common' 
         ORDER BY spring_value
     """,
         (gripper, shape, material, time_value, theta_function),
