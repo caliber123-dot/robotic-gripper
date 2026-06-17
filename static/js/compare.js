@@ -682,18 +682,25 @@ function addCustomFunction() {
   // Optional close popup
   // document.getElementById("myModalFun").style.display = "none";
 }
-function addFunctionToDropdown(funcStr) {
+function addFunctionToDropdown222(funcStr) {
   let dropdown = document.getElementById("func");
+  let dropdown1 = document.getElementById("func1");
 
   let option = document.createElement("option");
   option.text = funcStr;
   // option.value = funcStr;   // store full string
   option.value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
 
-  dropdown.appendChild(option);
+  if (dropdown) {
+    dropdown.appendChild(option);
+    dropdown.value = option.value;
+  }
+  if (dropdown1) {
+    dropdown1.appendChild(option);
+    dropdown1.value = option.value;
+  }
 
   // dropdown.value = funcStr; // select newly added
-  dropdown.value = option.value;
 }
 /* default load */
 window.addEventListener("load", () => {
@@ -712,9 +719,10 @@ window.addEventListener("load", () => {
 
 function reloadDropdown() {
   let dropdown = document.getElementById("func");
+  let dropdown1 = document.getElementById("func1");
 
   // Keep default options
-  dropdown.innerHTML = `
+  const options = `
     <option value="t/2 + t^2/3">
         t/2 + t²/3
     </option>
@@ -728,12 +736,35 @@ function reloadDropdown() {
     </option>
 `;
 
+  if (dropdown) dropdown.innerHTML = options;
+  if (dropdown1) dropdown1.innerHTML = options;
+
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
   saved.forEach((func) => {
     addFunctionToDropdown(func);
   });
 }
+
+function addFunctionToDropdown(funcStr) {
+  let dropdown = document.getElementById("func");
+  let dropdown1 = document.getElementById("func1");
+
+  let value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
+
+  if (dropdown) {
+    let option1 = new Option(funcStr, value);
+    dropdown.add(option1);
+    dropdown.value = value;
+  }
+
+  if (dropdown1) {
+    let option2 = new Option(funcStr, value);
+    dropdown1.add(option2);
+    dropdown1.value = value;
+  }
+}
+
 function renderFunctionTable() {
   let table = document.getElementById("functionTableBody");
   table.innerHTML = "";
@@ -768,9 +799,10 @@ function deleteFunction(index) {
 }
 function reloadDropdown() {
   let dropdown = document.getElementById("func");
+  let dropdown1 = document.getElementById("func1");
 
   // Keep default options
-  dropdown.innerHTML = `
+  const defaultOptions = `
     <option value="t/2 + t^2/3">
         t/2 + t²/3
     </option>
@@ -783,6 +815,9 @@ function reloadDropdown() {
         t/3 + t²/4 + t³/5
     </option>
 `;
+
+  if (dropdown) dropdown.innerHTML = defaultOptions;
+  if (dropdown1) dropdown1.innerHTML = defaultOptions;
 
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 

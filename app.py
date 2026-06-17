@@ -11,7 +11,7 @@ from merge_excel import fileMerged
 # from openpyxl import Workbook
 # from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
 from openpyxl.utils import get_column_letter
 from sympy import symbols, diff, sympify, N
 from sympy.core.expr import Expr
@@ -32,6 +32,8 @@ import base64
 from io import BytesIO
 from openpyxl.drawing.image import Image
 
+# from openpyxl.styles
+
 # from reportlab.pdfgen import canvas
 from reportlab.platypus import (
     SimpleDocTemplate,
@@ -41,10 +43,15 @@ from reportlab.platypus import (
     TableStyle,
     Image as RLImage,
 )
-
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+# pdfmetrics.registerFont(TTFont("Arial", "arial.ttf"))
+pdfmetrics.registerFont(TTFont("Arial-Bold", "arialbd.ttf"))
 from database import (
     create_tables,
     save_input,
@@ -59,7 +66,7 @@ from database import (
     get_comparison_time1,
     get_spring_constants_comparison,
     get_saved_input_compare,
-    get_comparison_all_equal
+    get_comparison_all_equal,
 )
 
 app = Flask(__name__)
@@ -68,7 +75,9 @@ UPLOAD_FOLDER = os.path.join(app.root_path, "static", "files")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 create_tables()
-@app.route('/')
+
+
+@app.route("/")
 def hello_world():
     return render_template("landing.html")
 
@@ -701,8 +710,8 @@ def get_saved_data_compare():
     return jsonify({"status": "not_found"})
 
 
-@app.route("/download_excel", methods=["POST"])
-def download_excel():
+@app.route("/download_excel22", methods=["POST"])
+def download_excel22():
 
     data = request.json
 
@@ -889,7 +898,283 @@ def download_excel():
     # return send_file(file_name, as_attachment=True, download_name=file_name)
     if mStatus == 1:
         # print("mStatus1::",mStatus)
-        return send_file(file_path, as_attachment=True, download_name=file_name)        
+        return send_file(file_path, as_attachment=True, download_name=file_name)
+    else:
+        # print("mStatus2::",mStatus)
+        return jsonify(
+            {
+                "status": "success",
+                "filename": file_name,
+                "filepath": f"static/files/{file_name}",
+                "message": f"{file_name} generated successfully",
+            }
+        )
+
+
+@app.route("/download_excel", methods=["POST"])
+def download_excel():
+
+    data = request.json
+
+    wb = Workbook()
+
+    ws = wb.active
+
+    if ws is None:
+        raise Exception("Worksheet not created")
+
+    ws.title = "Gripper Results"
+
+    # =========================
+    # HEADER DETAILS
+    # =========================
+
+    header_font = Font(bold=True)
+    Grippertype = data.get("gripper_name", "")
+    ws.merge_cells("A1:G1")
+    ws["A1"] = "Schematic Representation of " f"Spring Structure Model ({Grippertype})"
+    ws["A1"].font = Font(bold=True, size=18)
+    ws["A1"].alignment = Alignment(horizontal="center")
+    # ws.column_dimensions["A"].width = 15
+    ws["A3"] = "Gripper type:"
+    ws["A3"].font = header_font
+    ws["B3"] = Grippertype
+
+    ws["A4"] = "Object Shape"
+    ws["A4"].font = header_font
+    ws["B4"] = data.get("shape_name", "")
+
+    ws["A5"] = "Material"
+    ws["A5"].font = header_font
+    ws["B5"] = data.get("material", "")
+
+    ws["A6"] = "Time"
+    ws["A6"].font = header_font
+    ws["B6"] = str(data.get("time", "")) + " sec"
+
+    ws["A7"] = "θ(t) Function"
+    ws["A7"].font = header_font
+    ws["B7"] = data.get("func", "")
+
+    ws["A8"] = "Spring Constant"
+    ws["A8"].font = header_font
+    ws["B8"] = data.get("mode_name", "")
+
+    # Bold left labels
+    # for row in range(2, 9):
+    #     ws[f"A{row}"].font = header_font
+
+    for col_num in range(1, ws.max_column + 1):
+
+        max_length = 0
+
+        for row in range(2, ws.max_row + 1):  # Row 1 ignore
+
+            value = ws.cell(row=row, column=col_num).value
+
+            if value:
+                max_length = max(max_length, len(str(value)))
+
+        ws.column_dimensions[get_column_letter(col_num)].width = max_length + 2
+
+    # =========================
+    # TABLE HEADER
+    # =========================
+    start_header_row = 10
+    # Main merged headers
+    ws.merge_cells(f"A{start_header_row}:A{start_header_row+2}")
+    ws.merge_cells(f"B{start_header_row}:C{start_header_row}")
+    ws.merge_cells(f"D{start_header_row}:D{start_header_row}")
+    ws.merge_cells(f"E{start_header_row}:F{start_header_row}")
+    ws.merge_cells(f"G{start_header_row}:G{start_header_row+2}")
+
+    # Row 10
+    ws[f"A{start_header_row}"] = "Gripper"
+    ws[f"B{start_header_row}"] = "|A|"
+    ws[f"D{start_header_row}"] = "+K"
+    ws[f"E{start_header_row}"] = "*|B|"
+    ws[f"G{start_header_row}"] = "F(t) (N)"
+
+    # Row 11
+    ws[f"B{start_header_row+1}"] = "A1"
+    ws[f"C{start_header_row+1}"] = "A2"
+
+    ws[f"D{start_header_row+1}"] = "K"
+
+    ws[f"E{start_header_row+1}"] = "B1"
+    ws[f"F{start_header_row+1}"] = "B2"
+
+    # Row 12
+    ws[f"B{start_header_row+2}"] = "(mg)i"
+
+    ws[f"C{start_header_row+2}"] = "[-ri*sin(θi)*(dθi/dt) + " "ri*cos(θi)*(d²θi/dt²)]"
+    ws[f"D{start_header_row+2}"] = "(K1*K2)/(K1+K2)"
+
+    ws[f"E{start_header_row+2}"] = "ri"
+
+    ws[f"F{start_header_row+2}"] = "{θi - θi³/3! + θi⁵/5! + ...}"
+
+    # =====================================================
+    # STYLING
+    # =====================================================
+
+    header_font = Font(bold=True)
+
+    thin = Side(style="thin")
+
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    header_fill = PatternFill(
+        start_color="D9D9D9", end_color="D9D9D9", fill_type="solid"
+    )
+
+    for row in ws.iter_rows(
+        min_row=start_header_row, max_row=start_header_row + 2, min_col=1, max_col=7
+    ):
+        for cell in row:
+            cell.font = header_font
+            cell.alignment = Alignment(
+                horizontal="center", vertical="center", wrap_text=True
+            )
+            cell.border = border
+            cell.fill = header_fill
+
+    # =====================================================
+    # DATA ROWS
+    # =====================================================
+
+    data_row = start_header_row + 3
+
+    rows = [
+        [
+            "Finger 1",
+            data.get("a11"),
+            data.get("a21"),
+            data.get("k1"),
+            data.get("b11"),
+            data.get("b21"),
+            data.get("f1"),
+        ],
+        [
+            "Finger 2",
+            data.get("a12"),
+            data.get("a22"),
+            data.get("k2"),
+            data.get("b12"),
+            data.get("b22"),
+            data.get("f2"),
+        ],
+        [
+            "Finger 3",
+            data.get("a13"),
+            data.get("a23"),
+            data.get("k3"),
+            data.get("b13"),
+            data.get("b23"),
+            data.get("f3"),
+        ],
+    ]
+    # Finger 4
+    if "4" in str(data.get("gripper_name", "")):
+        rows.append(
+            [
+                "Finger 4",
+                data.get("a14"),
+                data.get("a24"),
+                data.get("k4"),
+                data.get("b14"),
+                data.get("b24"),
+                data.get("f4"),
+            ]
+        )
+
+    # Thumb
+    if "Thumb" in str(data.get("gripper_name", "")):
+        rows.append(
+            [
+                "Thumb",
+                data.get("a15"),
+                data.get("ta"),
+                data.get("tk"),
+                data.get("b15"),
+                data.get("tb"),
+                data.get("ft"),
+            ]
+        )
+
+    # Write rows
+    for row_data in rows:
+        ws.append(row_data)
+
+    # =====================================================
+    # TOTAL
+    # =====================================================
+
+    total_row = data_row + len(rows)
+
+    ws[f"A{total_row}"] = "TOTAL"
+    ws[f"G{total_row}"] = data.get("total", 0)
+
+    ws[f"A{total_row}"].font = Font(bold=True)
+    ws[f"G{total_row}"].font = Font(bold=True)
+
+    # =====================================================
+    # BORDERS FOR DATA
+    # =====================================================
+
+    for row in ws.iter_rows(min_row=data_row, max_row=total_row, min_col=1, max_col=7):
+        for cell in row:
+            cell.border = border
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # =====================================================
+    # COLUMN WIDTHS
+    # =====================================================
+
+    ws.column_dimensions["A"].width = 18
+    ws.column_dimensions["B"].width = 12
+    ws.column_dimensions["C"].width = 25
+    ws.column_dimensions["D"].width = 18
+    ws.column_dimensions["E"].width = 12
+    ws.column_dimensions["F"].width = 25
+    ws.column_dimensions["G"].width = 12
+
+    # =========================================
+    # DYNAMIC FILE NAME
+    # =========================================
+
+    current_time = datetime.now().strftime("%H-%M-%S")
+
+    gripper_name = data.get("gripper_name", "").replace(" ", "").replace("+", "")
+
+    shape_name = data.get("shape_name", "").replace(" ", "")
+
+    material = data.get("material", "").replace(" ", "")
+
+    file_name = (
+        f"Input_"
+        f"{gripper_name}_"
+        f"{shape_name}_"
+        f"{material}_"
+        f"{current_time}.xlsx"
+    )
+    # =========================
+    # SAVE FILE
+    # =========================
+
+    # file_name = "gripper_results.xlsx"
+    file_path = os.path.join(UPLOAD_FOLDER, file_name)
+
+    # wb.save(file_name)
+    wb.save(file_path)
+
+    # download_excel
+    mStatus = data.get("mStatus")
+    # print("mStatus::",mStatus)
+    # return send_file(file_name, as_attachment=True, download_name=file_name)
+    if mStatus == 1:
+        # print("mStatus1::",mStatus)
+        return send_file(file_path, as_attachment=True, download_name=file_name)
     else:
         # print("mStatus2::",mStatus)
         return jsonify(
@@ -909,7 +1194,8 @@ def download_results_pdf():
 
     buffer = BytesIO()
 
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    # doc = SimpleDocTemplate(buffer, pagesize=letter)
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
 
     styles = getSampleStyleSheet()
 
@@ -921,7 +1207,7 @@ def download_results_pdf():
 
     elements.append(
         Paragraph(
-            "<b>Schematic Representation of Spring Structure Model</b> "
+            "<b>Schematic Representation of Spring Structure Model for</b><br/>"
             f"{data.get('gripper_name')}",
             styles["Title"],
         )
@@ -952,42 +1238,113 @@ def download_results_pdf():
     # TABLE
     # =====================================
 
-    table_data = [["Gripper", "A", "K", "B", "F(t) (N)"]]
-
-    rows = [
-        ["Finger 1", data.get("a1"), data.get("k1"), data.get("b1"), data.get("f1")],
-        ["Finger 2", data.get("a2"), data.get("k2"), data.get("b2"), data.get("f2")],
-        ["Finger 3", data.get("a3"), data.get("k3"), data.get("b3"), data.get("f3")],
+    table_data = [
+        ["", "|A|", "|A|", "+K", "*|B|", "*|B|", ""],
+        ["Gripper", "A1", "A2", "K", "B1", "B2", "F(t) (N)"],
+        [
+            "",
+            "(mg)i",
+            "[-ri*sin(θi)*(dθi/dt)+ri*cos(θi)*(d²θi/dt²)]",
+            "(K1*K2)/(K1+K2)",
+            "ri",
+            "{θi-θi³/3!+θi⁵/5!+...}",
+            "",
+        ],
     ]
 
-    if "4" in str(data.get("gripper_name", "")):
+    rows = [
+        [
+            "Finger 1",
+            data.get("a11"),
+            data.get("a21"),
+            data.get("k1"),
+            data.get("b11"),
+            data.get("b21"),
+            data.get("f1"),
+        ],
+        [
+            "Finger 2",
+            data.get("a12"),
+            data.get("a22"),
+            data.get("k2"),
+            data.get("b12"),
+            data.get("b22"),
+            data.get("f2"),
+        ],
+        [
+            "Finger 3",
+            data.get("a13"),
+            data.get("a23"),
+            data.get("k3"),
+            data.get("b13"),
+            data.get("b23"),
+            data.get("f3"),
+        ],
+    ]
 
+    # Finger 4
+    if "4" in str(data.get("gripper_name", "")):
         rows.append(
-            ["Finger 4", data.get("a4"), data.get("k4"), data.get("b4"), data.get("f4")]
+            [
+                "Finger 4",
+                data.get("a14"),
+                data.get("a24"),
+                data.get("k4"),
+                data.get("b14"),
+                data.get("b24"),
+                data.get("f4"),
+            ]
         )
 
+    # Thumb
     if "Thumb" in str(data.get("gripper_name", "")):
-
         rows.append(
-            ["Thumb", data.get("ta"), data.get("tk"), data.get("tb"), data.get("ft")]
+            [
+                "Thumb",
+                data.get("a15"),
+                data.get("ta"),
+                data.get("tk"),
+                data.get("b15"),
+                data.get("tb"),
+                data.get("ft"),
+            ]
         )
 
     table_data.extend(rows)
 
-    table_data.append(["TOTAL", "", "", "", data.get("total")])
+    table_data.append(
+        [
+            "TOTAL",
+            "",
+            "",
+            "",
+            "",
+            "",
+            data.get("total"),
+        ]
+    )
 
-    table = Table(table_data, colWidths=[100, 90, 90, 90, 90])
+    table = Table(table_data, colWidths=[80, 60, 160, 80, 60, 100, 65])
+    # table = Table(table_data, colWidths=[80, 70, 180, 90, 70, 180, 80])
 
     table.setStyle(
         TableStyle(
             [
-                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                # Merge top headers
+                ("SPAN", (1, 0), (2, 0)),  # |A|
+                ("SPAN", (4, 0), (5, 0)),  # *|B|
+                # Gripper span
+                ("SPAN", (0, 1), (0, 2)),
+                # F(t) span
+                ("SPAN", (6, 1), (6, 2)),
+                ("BACKGROUND", (0, 0), (-1, 2), colors.lightgrey),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("FONTNAME", (0, 0), (-1, 2), "Arial-Bold"),
+                ("FONTNAME", (0, -1), (-1, -1), "Arial-Bold"),
                 ("BACKGROUND", (0, -1), (-1, -1), colors.lightgrey),
-                ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
             ]
         )
     )
@@ -1331,9 +1688,7 @@ def download_graph_excel():
     # graph_data = data["graphImage"]
     graph_data = data.get("graphImage")
     if not graph_data:
-        return jsonify({
-            "error": "Graph image missing"
-        }), 400
+        return jsonify({"error": "Graph image missing"}), 400
 
     if not graph_data:
         return jsonify({"error": "Graph image not received"}), 400
@@ -1357,7 +1712,7 @@ def download_graph_excel():
     shape_name = shape_name.replace(" ", "").replace("+", "")
     # filename = "Graph_Report_AAAA.xlsx"
     current_time = datetime.now().strftime("%H-%M-%S")
-   
+
     filename = (
         f"Graph_" f"{shape_name}_" f"{object_shape}_" f"{material}_{current_time}.xlsx"
     )
@@ -1905,7 +2260,7 @@ def comparison_data():
 
     data = request.json
 
-    materials = ["rubber", "abs", "teflon"]
+    materials = ["Rubber", "ABS", "Teflon"]
 
     result = []
 
@@ -1938,7 +2293,7 @@ def comparison_data1():
     shape = int(data.get("shape", 0))
     material = data.get("material", "")
     theta_function = data.get("func", "")
-    time_value = float(data.get("time", 0))   
+    time_value = float(data.get("time", 0))
 
     # Fetch all Spring Constant (All equal) from spring_constants where spring_key = 'k_common'
     # print("gripper:", gripper)
@@ -1946,7 +2301,9 @@ def comparison_data1():
     # print("material:", material)
     # print("theta_function:", theta_function)
     # print("time_value:", time_value)
-    values = get_comparison_all_equal(gripper, shape, material , theta_function, time_value)
+    values = get_comparison_all_equal(
+        gripper, shape, material, theta_function, time_value
+    )
     # print("values:", values)
     k_common_all = [row["spring_value"] for row in values]
     # print("k_common_all>>>>" , k_common_all)
@@ -1988,6 +2345,7 @@ def get_comparison_time_api():
 
     return jsonify({"times": result})
 
+
 @app.route("/get_comparison_time1", methods=["POST"])
 def get_comparison_time1_api():
 
@@ -2001,12 +2359,11 @@ def get_comparison_time1_api():
 
     theta_function = data.get("func", "")
 
-    values = get_comparison_time1(gripper, shape, material , theta_function)
+    values = get_comparison_time1(gripper, shape, material, theta_function)
 
     result = [row["time_value"] for row in values]
 
     return jsonify({"times": result})
-
 
 
 @app.route("/get_spring_constants_comparison", methods=["POST"])
@@ -2051,16 +2408,11 @@ def merge_excels():
         filename = item["filename"]
         narration = item["narration"]
 
-        file_path = os.path.join(
-            UPLOAD_FOLDER,
-            filename
-        )
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
 
-        merge_list.append(
-            (file_path, narration)
-        )
+        merge_list.append((file_path, narration))
 
-    # print(merge_list)   
+    # print(merge_list)
     # print("\nFiles to Merge:")
 
     # for filename, narration in merge_list:
@@ -2073,13 +2425,15 @@ def merge_excels():
     # return jsonify({
     #     "status": "success"
     # })
-    
+
     return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=filename,
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+        file_path,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
 # import webbrowser
 # from threading import Timer
 

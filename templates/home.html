@@ -270,7 +270,8 @@
       .hero-ai-bg {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(135deg, #99474e, #80494e, #000205);
+        background: linear-gradient(45deg, #666, #888, #444);
+        /* background: linear-gradient(135deg, #99474e, #80494e, #000205); */
         /* background: linear-gradient(135deg, #16222a, #203a43, #2c5364); */
 
         border-radius: 14px;
@@ -312,7 +313,7 @@
       }
 
       /* Project-2 */
-      .hero-ai-bg2::before {
+      .hero-ai-bg21::before {
         content: "";
 
         position: absolute;
@@ -404,12 +405,12 @@
 
         color: #ffffff;
 
-        text-shadow:
+        /* text-shadow:
           0 0 10px rgba(255, 255, 255, 0.4),
           0 0 20px rgba(0, 212, 255, 0.7),
           0 0 40px rgba(0, 212, 255, 0.5);
 
-        animation: titleGlow 3s ease-in-out infinite alternate;
+        animation: titleGlow 3s ease-in-out infinite alternate; */
       }
 
       .hero-ai-bg2 h2 {
@@ -420,31 +421,31 @@
 
         color: #ffffff;
 
-        text-shadow:
+        /* text-shadow:
           0 0 10px rgba(255, 255, 255, 0.4),
           0 0 20px rgba(0, 212, 255, 0.7),
-          0 0 40px rgba(0, 212, 255, 0.5);
+          0 0 40px rgba(0, 212, 255, 0.5); */
 
-        animation: titleGlow 3s ease-in-out infinite alternate;
+        /* animation: titleGlow 3s ease-in-out infinite alternate; */
       }
 
       /* highlighted subtitle */
       .hero-ai-bg h4 {
         font-weight: 700;
 
-        color: #dff6ff;
+        color: #f2f2f2;
 
-        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        /* text-shadow: 0 0 10px rgba(0, 212, 255, 0.5); */
       }
 
       /* formula highlight */
-      .hero-ai-bg img {
+      .hero-ai-bg22 img {
         filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
 
         animation: formulaFloat 3s ease-in-out infinite;
       }
 
-      .hero-ai-bg2 img {
+      .hero-ai-bg21 img {
         /* filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3)); */
         filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.7)) drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)) drop-shadow(0 0 40px rgba(0, 120, 255, 0.35));
         animation: formulaFloat 3s ease-in-out infinite;
@@ -487,7 +488,8 @@
         position: relative;
         overflow: hidden;
 
-        background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735);
+        background: linear-gradient(45deg, #526e92, #526e92, #1b2735);
+        /* background: linear-gradient(135deg, #1e2f45, #243b55, #1b2735); */
         /* background: linear-gradient(135deg, #99474e, #80494e, #000205); */
 
         border-radius: 14px;
@@ -818,6 +820,7 @@
                 style="position: relative; z-index: 99999">
                 <i class="bi bi-journal-richtext me-1"></i> Get Started
                 <i class="bi bi-arrow-right arrow-icon"></i>
+
               </a>
             </div>
           </div>
@@ -844,7 +847,7 @@
             "Spring Structural Model of Robotic Gripper for 4 Finger";
           industrial_img.src = "/static/img/4Finger2_3_4.png";
           btnGetstart.className =
-            "btn btn-danger btn-lg mt-3 mb-2 w-50 border border-3 border-light";
+            "btn btn-secondary btn-lg mt-3 mb-2 w-50 border border-3 border-light";
         } else if (getCurrentGripper() === 2) {
           title.textContent =
             "Spring Structural Model of Robotic Gripper for 3 Finger + 1 Thumb";

@@ -238,29 +238,44 @@ function reloadDropdown() {
 // Download results as Excel >>>
 async function downloadResultsExcel(mStatus) {
   let data = {
-    a1: document.getElementById("a1")?.value || "",
-    k1: document.getElementById("k1")?.value || "",
-    b1: document.getElementById("b1")?.value || "",
-    f1: document.getElementById("f1")?.value || "",
+    //Finger 1
+    a11: document.getElementById("a10")?.value || "", // A1
+    a21: document.getElementById("a1")?.value || "", // A2
+    k1: document.getElementById("k1")?.value || "", // K
+    b11: document.getElementById("b10")?.value || "", // B1
+    b21: document.getElementById("b1")?.value || "", // B2
+    f1: document.getElementById("f1")?.value || "", // F(t)
 
-    a2: document.getElementById("a2")?.value || "",
-    k2: document.getElementById("k2")?.value || "",
-    b2: document.getElementById("b2")?.value || "",
-    f2: document.getElementById("f2")?.value || "",
+    // Finger 2
+    a12: document.getElementById("a20")?.value || "", // A1
+    a22: document.getElementById("a2")?.value || "", // A2
+    k2: document.getElementById("k2")?.value || "", // K
+    b12: document.getElementById("b20")?.value || "", // B1
+    b22: document.getElementById("b2")?.value || "", // B2
+    f2: document.getElementById("f2")?.value || "", // F(t)
 
-    a3: document.getElementById("a3")?.value || "",
-    k3: document.getElementById("k3")?.value || "",
-    b3: document.getElementById("b3")?.value || "",
+    // Finger 3
+    a13: document.getElementById("a30")?.value || "", // A1
+    a23: document.getElementById("a3")?.value || "", // A2
+    k3: document.getElementById("k3")?.value || "", // K
+    b13: document.getElementById("b30")?.value || "", // B1
+    b23: document.getElementById("b3")?.value || "", // B2
     f3: document.getElementById("f3")?.value || "",
 
-    a4: document.getElementById("a4")?.value || "",
-    k4: document.getElementById("k4")?.value || "",
-    b4: document.getElementById("b4")?.value || "",
+    // Finger 4
+    a14: document.getElementById("a40")?.value || "", // A1
+    a24: document.getElementById("a4")?.value || "", // A2
+    k4: document.getElementById("k4")?.value || "", // K
+    b14: document.getElementById("b40")?.value || "", // B1
+    b24: document.getElementById("b4")?.value || "", // B2
     f4: document.getElementById("f4")?.value || "",
 
-    ta: document.getElementById("ta")?.value || "",
-    tk: document.getElementById("tk")?.value || "",
-    tb: document.getElementById("tb")?.value || "",
+    // 1 Thumb
+    a15: document.getElementById("a50")?.value || "", // A1
+    ta: document.getElementById("ta")?.value || "", // A2
+    tk: document.getElementById("tk")?.value || "", // K
+    b15: document.getElementById("b50")?.value || "", // B1
+    tb: document.getElementById("tb")?.value || "", // B2
     ft: document.getElementById("ft")?.value || "",
 
     total: document.getElementById("total")?.value || "",
@@ -396,30 +411,45 @@ async function downloadResultsPdf() {
 
     mode_name: mode_name,
 
-    a1: document.getElementById("a1").value,
-    a2: document.getElementById("a2").value,
-    a3: document.getElementById("a3").value,
-    a4: document.getElementById("a4").value,
+    //Finger 1
+    a11: document.getElementById("a10")?.value || "", // A1
+    a21: document.getElementById("a1")?.value || "", // A2
+    k1: document.getElementById("k1")?.value || "", // K
+    b11: document.getElementById("b10")?.value || "", // B1
+    b21: document.getElementById("b1")?.value || "", // B2
+    f1: document.getElementById("f1")?.value || "", // F(t)
 
-    b1: document.getElementById("b1").value,
-    b2: document.getElementById("b2").value,
-    b3: document.getElementById("b3").value,
-    b4: document.getElementById("b4").value,
+    // Finger 2
+    a12: document.getElementById("a20")?.value || "", // A1
+    a22: document.getElementById("a2")?.value || "", // A2
+    k2: document.getElementById("k2")?.value || "", // K
+    b12: document.getElementById("b20")?.value || "", // B1
+    b22: document.getElementById("b2")?.value || "", // B2
+    f2: document.getElementById("f2")?.value || "", // F(t)
 
-    k1: document.getElementById("k1").value,
-    k2: document.getElementById("k2").value,
-    k3: document.getElementById("k3").value,
-    k4: document.getElementById("k4").value,
+    // Finger 3
+    a13: document.getElementById("a30")?.value || "", // A1
+    a23: document.getElementById("a3")?.value || "", // A2
+    k3: document.getElementById("k3")?.value || "", // K
+    b13: document.getElementById("b30")?.value || "", // B1
+    b23: document.getElementById("b3")?.value || "", // B2
+    f3: document.getElementById("f3")?.value || "",
 
-    f1: document.getElementById("f1").value,
-    f2: document.getElementById("f2").value,
-    f3: document.getElementById("f3").value,
-    f4: document.getElementById("f4").value,
+    // Finger 4
+    a14: document.getElementById("a40")?.value || "", // A1
+    a24: document.getElementById("a4")?.value || "", // A2
+    k4: document.getElementById("k4")?.value || "", // K
+    b14: document.getElementById("b40")?.value || "", // B1
+    b24: document.getElementById("b4")?.value || "", // B2
+    f4: document.getElementById("f4")?.value || "",
 
-    ta: document.getElementById("ta").value,
-    tb: document.getElementById("tb").value,
-    tk: document.getElementById("tk").value,
-    ft: document.getElementById("ft").value,
+    // 1 Thumb
+    a15: document.getElementById("a50")?.value || "", // A1
+    ta: document.getElementById("ta")?.value || "", // A2
+    tk: document.getElementById("tk")?.value || "", // K
+    b15: document.getElementById("b50")?.value || "", // B1
+    tb: document.getElementById("tb")?.value || "", // B2
+    ft: document.getElementById("ft")?.value || "",
 
     total: total,
   };
