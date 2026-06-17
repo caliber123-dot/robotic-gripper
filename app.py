@@ -54,7 +54,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 # pdfmetrics.registerFont(TTFont("Arial-Bold", "arialbd.ttf"))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pdfmetrics.registerFont(
-    TTFont("Arial-Bold", os.path.join(BASE_DIR, "static/css/fonts/arialbd.ttf"))
+    TTFont("Arial-Bold", os.path.join(BASE_DIR, "static/css/fonts/ARIALBD.TTF"))
 )
 from database import (
     create_tables,
