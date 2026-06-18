@@ -1681,6 +1681,13 @@ function createBarChart(timeData, forceData) {
                 weight: "bold",
               },
             },
+            ticks: {
+              color: "#555", // dark black
+              font: {
+                size: 14,
+                weight: "bold",
+              },
+            },
           },
 
           y: {
@@ -1826,6 +1833,13 @@ function createBarChart1(timeData, forceData) {
 
               font: {
                 size: 16,
+                weight: "bold",
+              },
+            },
+            ticks: {
+              color: "#555", // dark black
+              font: {
+                size: 14,
                 weight: "bold",
               },
             },
