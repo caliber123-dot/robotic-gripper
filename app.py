@@ -2444,9 +2444,14 @@ def merge_excels():
 if __name__ == "__main__":
     # Timer(2, lambda: webbrowser.open("http://localhost:8000")).start()
     # app.run()
-    print("===>> Start App on", "http://127.0.0.1:8000")
+    # print("===>> Start App on", "http://127.0.0.1:8000")
     # app.run(host="0.0.0.0", port=8000, debug=True)
-    waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
+    # waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
+    port = int(os.environ.get("PORT", 10000))
+
+    print(f"===>> Start App on port {port}")
+
+    waitress_serve(app, host="0.0.0.0", port=port, threads=8)
 
 # Version Control Commands (Git)
 # git status
