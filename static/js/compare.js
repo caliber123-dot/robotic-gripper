@@ -1706,6 +1706,12 @@ function createBarChart(timeData, forceData) {
                 weight: "bold",
               },
             },
+            ticks: {
+              color: "#555",
+              font: {
+                weight: "bold",
+              },
+            },
           },
         },
       },
@@ -1858,6 +1864,12 @@ function createBarChart1(timeData, forceData) {
 
               font: {
                 size: 16,
+                weight: "bold",
+              },
+            },
+            ticks: {
+              color: "#555",
+              font: {
                 weight: "bold",
               },
             },

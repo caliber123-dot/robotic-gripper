@@ -310,6 +310,17 @@
             </div>
           </div>
         </div>
+
+      </div>
+      <div style="
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;;
+">
+        <button class="btn btn-dark btn-lg me-2 ms-2" onclick="downloadExe()">
+          <i class="bi bi-download me-2"></i>Download Standalone Apps</button>
       </div>
     </div>
   </section>
@@ -332,6 +343,32 @@
       // window.open("/input", "_blank");
       localStorage.removeItem("generatedFiles");
       window.open("/home", "_self");
+    }
+  </script>
+
+  <script>
+    function downloadExe() {
+      // Show warning message in a popup
+      const warningMessage = `🚨 IMPORTANT: First Time Launch Warning\n\n` +
+        `If Windows shows: "Windows protected your PC" and "Unknown Publisher"\n\n` +
+        `➤ Click: "More Info"\n` +
+        `➤ Then Click: "Run Anyway"\n\n` +
+        `The app is safe.\n` +
+        `This happens because the app isn't digitally signed.`;
+      // Replace with your actual release tag (e.g., "v1.0.0") or use "latest" for newest
+      // Display confirmation dialog and proceed with download if user clicks OK
+      if (confirm(warningMessage)) {
+        const releaseTag = "latest";
+        // const releaseTag = "tag";
+        const exeUrl = `https://github.com/caliber123-dot/Graph-Fuzzy-Function/releases/${releaseTag}/download/MaterialFuzzyApp_1.4.exe`;
+
+        const link = document.createElement('a');
+        link.href = exeUrl;
+        link.download = 'MaterialFuzzyApp.exe';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
   </script>
 </body>
