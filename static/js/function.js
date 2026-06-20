@@ -238,6 +238,8 @@ function reloadDropdown() {
 // Download results as Excel >>>
 async function downloadResultsExcel(mStatus) {
   let data = {
+    volume: document.getElementById("txtvolume")?.value || "", // volume
+    mass: document.getElementById("txtmass")?.value || "", // mass
     //Finger 1
     a11: document.getElementById("a10")?.value || "", // A1
     a21: document.getElementById("a1")?.value || "", // A2
@@ -370,7 +372,6 @@ function addGeneratedFile(filename, narration) {
 }
 async function downloadResultsPdf() {
   let total = document.getElementById("total").value;
-
   // VALIDATION
   if (total === "" || total === "0") {
     alert("Please calculate force first.");
@@ -379,9 +380,7 @@ async function downloadResultsPdf() {
   }
 
   let gripper = getCurrentGripper();
-
   let mode = document.querySelector('input[name="kmode"]:checked').value;
-
   let mode_name = "";
 
   if (mode == "1") {
@@ -406,10 +405,11 @@ async function downloadResultsPdf() {
       ].text,
 
     time: document.getElementById("time").value,
-
     func: document.getElementById("func").value,
-
     mode_name: mode_name,
+
+    volume: document.getElementById("txtvolume")?.value || "", // volume
+    mass: document.getElementById("txtmass")?.value || "", // mass
 
     //Finger 1
     a11: document.getElementById("a10")?.value || "", // A1
@@ -450,7 +450,6 @@ async function downloadResultsPdf() {
     b15: document.getElementById("b50")?.value || "", // B1
     tb: document.getElementById("tb")?.value || "", // B2
     ft: document.getElementById("ft")?.value || "",
-
     total: total,
   };
 

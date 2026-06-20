@@ -776,92 +776,6 @@
           color: white;
           display: none;
         ">
-            <div class="particles">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <!-- <h2 style="padding: 5px">Spring Structural Model of Robotic Gripper</h2> -->
-            <h4>According to this equation:</h4>
-            <img src="static/img/formula_14.png" alt="" height="80" />
-            <!-- Formula Details -->
-            <div class="w-100 text-center d-flex justify-content-center">
-                <div class="formula-details-container mt-3">
-                    <div class="formula-details collapsed1" id="formulaDetails">
-                        <div class="detail-item">
-                            <i class="bi bi-box-seam formula-icon"></i>
-                            <b>m</b> = mass of the object
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-globe2 formula-icon"></i>
-                            <b>g</b> = acceleration due to gravity = 9.8 m/s²
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-arrows-angle-expand formula-icon"></i>
-                            <b>r</b> = distance of finger from joint to contact point
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-compass formula-icon"></i>
-                            <b>θ</b> = angle of contact
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-diagram-3 formula-icon"></i>
-                            <b>k</b> = spring constant
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-graph-up-arrow formula-icon"></i>
-                            <b>dθ/dt</b> = first derivative
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-activity formula-icon"></i>
-                            <b>d²θ/dt²</b> = second derivative
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-arrow-left-right formula-icon"></i>
-                            <b>r sinθ</b> = linear deflection
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-calculator formula-icon"></i>
-                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of
-                            sin
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-hand-index-thumb formula-icon"></i>
-                            <b>Fᵢ(t)</b> = Grasp Force
-                        </div>
-                    </div>
-
-                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()"
-                        style="display: none">
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            More Details
-                        </span>
-                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
-                    </button>
-                    <button class="formula-toggle-btn mt-2" id="btnpage_window1" onclick="hidePages()">
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            Start Gripper System
-                        </span>
-                        <i class="bi bi-arrow-right arrow-icon"></i>
-                    </button>
-                </div>
-            </div>
         </div>
         <style>
             .formula-details-container {
@@ -1068,6 +982,7 @@
 
                 showhidewindow(pno);
                 showhidewindow1(pno);
+                showhidewindow2(pno);
 
                 page1.style.display = "none";
                 page2.style.display = "none";
@@ -1094,6 +1009,9 @@
                     </button>
                     <button class="tablinks" onclick="openCity(event, 'Spring')">
                         Spring Constant vs Force
+                    </button>
+                    <button class="tablinks" onclick="openCity(event, 'Shape')">
+                        Shape vs Force
                     </button>
                 </div>
                 <!-- tab 1 -->
@@ -1718,6 +1636,304 @@
                         </div>
                     </div>
                 </div>
+                <!-- tab 3 -->
+                <div id="Shape" class="tabcontent">
+                    <div class="row g-4" style="padding-left: 12px; padding-right: 12px">
+                        <div class="col-md-3 div2 p-0">
+                            <!-- LEFT SIDE (Merged INPUT) -->
+                            <div id="input" class="col-md-12">
+                                <div class="card p-0 h-100">
+                                    <div class="box">
+                                        <h4>INPUT</h4>
+
+
+                                        <label>Material</label>
+                                        <select id="material2" class="form-select">
+                                            <option value="">Select Material</option>
+                                            <option value="rubber">Rubber</option>
+                                            <option value="abs">ABS</option>
+                                            <option value="teflon">Teflon</option>
+                                        </select>
+                                        <label>θ(t) Function</label>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <select id="func2" class="form-select">
+                                                    <option value="t/2 + t^2/3">t/2 + t²/3</option>
+                                                    <option value="t/2 + t^2/3 + t^3/4">
+                                                        t/2 + t²/3 + t³/4
+                                                    </option>
+                                                    <option value="t/3 + t^2/4 + t^3/5">
+                                                        t/3 + t²/4 + t³/5
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-dark" style="font-weight: 600"
+                                                    onclick="onMyPopupFun()">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <label>Time t (seconds)</label>
+                                        <select id="time2" class="form-select">
+                                            <option value="">Select Time</option>
+                                        </select>
+                                        <!-- <label class="mt-2">Spring Constant Mode</label> -->
+                                        <label class="mt-2">Spring Constant Mode</label>
+                                        <div>
+                                            <input type="radio" name="kmode1" value="1" checked
+                                                onclick="updateSpringFields2()" />
+                                            All equal<br />
+                                            <div id="fingerthumb_hide1">
+                                                <input type="radio" name="kmode1" value="2"
+                                                    onclick="updateSpringFields2()" />
+                                                Fingers same, Thumb different<br />
+                                            </div>
+                                            <input type="radio" name="kmode1" value="3"
+                                                onclick="updateSpringFields2()" />
+                                            All unequal
+                                        </div>
+                                        <div id="springInputs_equal1" class="mt-2">
+                                            <label>Common K (N/m)</label>
+                                            <input id="k_common1" type="number" class="form-control"
+                                                placeholder="Common K" min="1" step="1" list="k_common_options1" />
+                                            <datalist id="k_common_options1"> </datalist>
+                                        </div>
+                                        <div id="springInputs_samefinger1" class="mt-2" style="display: none">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>Finger Same K (N/m)</label>
+                                                    <input id="k_finger1" type="number" class="form-control"
+                                                        placeholder="Finger K" min="1" step="1"
+                                                        list="k_finger_options1" />
+                                                    <datalist id="k_finger_options1"></datalist>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label>Thumb Different K (N/m)</label>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb1" type="number" class="form-control"
+                                                                placeholder="K1" min="1" step="1"
+                                                                list="k_thumb_options1" />
+                                                            <datalist id="k_thumb_options1"></datalist>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb21" type="number" class="form-control"
+                                                                placeholder="K2" min="1" step="1"
+                                                                list="k_thumb2_options1" />
+                                                            <datalist id="k_thumb2_options1"></datalist>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input id="k_thumb31" type="number" class="form-control"
+                                                                placeholder="K3" min="1" step="1"
+                                                                list="k_thumb3_options1" />
+                                                            <datalist id="k_thumb3_options1"></datalist>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="springInputs_msg1" class="text-danger mt-2" style="display: none">
+                                            </div>
+                                        </div>
+                                        <div id="springInputs_unequal1" class="mt-2" style="display: none">
+                                            <label>Finger 1 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f1k11" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f1k1_options1" />
+                                                    <datalist id="f1k1_options1"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f1k21" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f1k2_options1" />
+                                                    <datalist id="f1k2_options1"></datalist>
+                                                </div>
+                                            </div>
+                                            <label>Finger 2 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f2k11" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f2k1_options1" />
+                                                    <datalist id="f2k1_options1"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f2k21" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f2k2_options1" />
+                                                    <datalist id="f2k2_options1"></datalist>
+                                                </div>
+                                            </div>
+
+                                            <label>Finger 3 K1 &amp; K2 (N/m)</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input id="f3k11" class="form-control" placeholder="Spring 1"
+                                                        type="number" min="1" step="1" list="f3k1_options1" />
+                                                    <datalist id="f3k1_options1"></datalist>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="f3k21" class="form-control mb-2" placeholder="Spring 2"
+                                                        type="number" min="1" step="1" list="f3k2_options1" />
+                                                    <datalist id="f3k2_options1"></datalist>
+                                                </div>
+                                            </div>
+
+                                            <div id="div_Finger41" style="display: none">
+                                                <label>Finger 4 K1 &amp; K2 (N/m)</label>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <input id="f4k11" class="form-control" placeholder="Spring 1"
+                                                            type="number" min="1" step="1" list="f4k1_options1" />
+                                                        <datalist id="f4k1_options1"></datalist>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input id="f4k21" class="form-control mb-2"
+                                                            placeholder="Spring 2" type="number" min="1" step="1"
+                                                            list="f4k2_options1" />
+                                                        <datalist id="f4k2_options1"></datalist>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div_Thumb1" style="display: none">
+                                                <label>Thumb K1, K2 &amp; K3 (N/m)</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <input id="Thk11" class="form-control" placeholder="Spring 1"
+                                                            type="number" min="1" step="1" list="Thk1_options1" />
+                                                        <datalist id="Thk1_options1"></datalist>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input id="Thk21" class="form-control" placeholder="Spring 2"
+                                                            type="number" min="1" step="1" list="Thk2_options1" />
+                                                        <datalist id="Thk2_options1"></datalist>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input id="Thk31" class="form-control mb-2"
+                                                            placeholder="Spring 3" type="number" min="1" step="1"
+                                                            list="Thk3_options1" />
+                                                        <datalist id="Thk3_options1"></datalist>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button onclick="calculate2()" class="btn btn-primary mt-3 w-100 bold600">
+                                            Generate Comparison Chart
+                                        </button>
+                                        <div id="savedText2" class="mt-2 text-success fw-bold"></div>
+                                        <p class="mt-2">
+                                            <b>Execution Time:</b><br />
+                                            <span id="executionTime_1">0</span> µs /
+                                            <span id="executionTime_2">0</span> ms
+                                        </p>
+                                        <span id="loader2" class="ms-2" style="display: none">
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                            Loading...
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9 div2">
+                            <div class="row div2 p-0">
+                                <div id="output" class="col-md-12 div2 p-0">
+                                    <div class="card p-0 h-100">
+                                        <div class="box output mt-2">
+                                            <h4>OUTPUT</h4>
+                                            <style>
+                                                .bold {
+                                                    font-weight: 700;
+                                                }
+
+                                                .bold600 {
+                                                    font-weight: 600;
+                                                }
+                                            </style>
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="bg-light" style="width: 50%">
+                                                            Object Shape
+                                                        </th>
+                                                        <th class="bg-light">Force (N)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="graphTableBody2">
+                                                    <tr>
+                                                        <td>Rectangular Paralleopiped</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Spherical</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Ellipsoidal</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <style>
+                                                mjx-container {
+                                                    margin: 0px !important;
+                                                }
+                                            </style>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-4" id="row4fingers2" style="display: block">
+                                <div class="col-md-12 div2 p-0">
+                                    <!-- OUTPUT PANEL 4 fingers and 3 Fingers -->
+                                    <div class="card mt-3 p-3">
+                                        <h4 class="text-center">
+                                            Comparison Chart Representation of Spring Structure
+                                            Model (<span id="shape_name2" class="fw-bold"> </span>)
+                                        </h4>
+                                        <div style="height: 500px">
+                                            <canvas id="forceChart2"></canvas>
+                                            <input type="hidden" id="chartImage2" />
+                                        </div>
+                                        <div class="row mt-3 g-3">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-success w-100" onclick="downloadGraphExcel2(1)">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph Excel
+                                                </button>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <button class="btn btn-danger w-100" onclick="downloadGraphPdf2()">
+                                                    <i class="bi bi-download me-2"></i>
+                                                    Download Graph PDF
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="row mt-3 g-3">
+                                                <div class="col-md-12">
+                                                    <button id="btnMerge2"
+                                                        class="btn btn-warning border border-3 border-dark btn-lg w-100"
+                                                        onclick="mergedAllExcels2()">
+                                                        <span id="btnMergeText2">
+                                                            <i class="bi bi-download me-2"></i>
+                                                            Download All Saved Changes
+                                                        </span>
+                                                        <span id="btnMergeLoader2" style="display: none">
+                                                            <span class="spinner-border spinner-border-sm me-2"></span>
+                                                            Processing...
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <!-- The Modal -->

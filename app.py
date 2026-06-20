@@ -68,8 +68,11 @@ from database import (
     get_saved_input_graph_all,
     get_comparison_time,
     get_comparison_time1,
+    get_comparison_time2,
     get_spring_constants_comparison,
+    get_spring_constants_comparison2,
     get_saved_input_compare,
+    get_saved_input_compare2,
     get_comparison_all_equal,
 )
 
@@ -694,6 +697,7 @@ def get_saved_data_graph():
     return jsonify({"status": "not_found"})
 
 
+# for tab 1
 @app.route("/get_saved_data_compare", methods=["POST"])
 def get_saved_data_compare():
 
@@ -702,6 +706,27 @@ def get_saved_data_compare():
     result = get_saved_input_compare(
         int(data.get("gripper", 0)),
         int(data.get("shape", 0)),
+        data.get("func"),
+        float(data.get("time", 0)),
+        data.get("mode"),
+    )
+
+    if result:
+
+        return jsonify({"status": "found", "data": result})
+
+    return jsonify({"status": "not_found"})
+
+
+# for tab 3
+@app.route("/get_saved_data_compare2", methods=["POST"])
+def get_saved_data_compare2():
+
+    data = request.json
+
+    result = get_saved_input_compare2(
+        int(data.get("gripper", 0)),
+        data.get("material", 0),
         data.get("func"),
         float(data.get("time", 0)),
         data.get("mode"),
@@ -919,9 +944,7 @@ def download_excel22():
 def download_excel():
 
     data = request.json
-
     wb = Workbook()
-
     ws = wb.active
 
     if ws is None:
@@ -964,6 +987,14 @@ def download_excel():
     ws["A8"].font = header_font
     ws["B8"] = data.get("mode_name", "")
 
+    ws["A10"] = "Volume (m³)"
+    ws["A10"].font = header_font
+    ws["B10"] = data.get("volume", "")
+
+    ws["C10"] = "Mass (kg)"
+    ws["C10"].font = header_font
+    ws["D10"] = data.get("mass", "")
+
     # Bold left labels
     # for row in range(2, 9):
     #     ws[f"A{row}"].font = header_font
@@ -971,11 +1002,8 @@ def download_excel():
     for col_num in range(1, ws.max_column + 1):
 
         max_length = 0
-
         for row in range(2, ws.max_row + 1):  # Row 1 ignore
-
             value = ws.cell(row=row, column=col_num).value
-
             if value:
                 max_length = max(max_length, len(str(value)))
 
@@ -984,7 +1012,7 @@ def download_excel():
     # =========================
     # TABLE HEADER
     # =========================
-    start_header_row = 10
+    start_header_row = 12
     # Main merged headers
     ws.merge_cells(f"A{start_header_row}:A{start_header_row+2}")
     ws.merge_cells(f"B{start_header_row}:C{start_header_row}")
@@ -1015,7 +1043,6 @@ def download_excel():
     ws[f"D{start_header_row+2}"] = "(K1*K2)/(K1+K2)"
 
     ws[f"E{start_header_row+2}"] = "ri"
-
     ws[f"F{start_header_row+2}"] = "{θi - θi³/3! + θi⁵/5! + ...}"
 
     # =====================================================
@@ -1023,9 +1050,7 @@ def download_excel():
     # =====================================================
 
     header_font = Font(bold=True)
-
     thin = Side(style="thin")
-
     border = Border(left=thin, right=thin, top=thin, bottom=thin)
 
     header_fill = PatternFill(
@@ -1048,7 +1073,6 @@ def download_excel():
     # =====================================================
 
     data_row = start_header_row + 3
-
     rows = [
         [
             "Finger 1",
@@ -1115,7 +1139,6 @@ def download_excel():
     # =====================================================
 
     total_row = data_row + len(rows)
-
     ws[f"A{total_row}"] = "TOTAL"
     ws[f"G{total_row}"] = data.get("total", 0)
 
@@ -1148,11 +1171,8 @@ def download_excel():
     # =========================================
 
     current_time = datetime.now().strftime("%H-%M-%S")
-
     gripper_name = data.get("gripper_name", "").replace(" ", "").replace("+", "")
-
     shape_name = data.get("shape_name", "").replace(" ", "")
-
     material = data.get("material", "").replace(" ", "")
 
     file_name = (
@@ -1195,14 +1215,11 @@ def download_excel():
 def download_results_pdf():
 
     data = request.json
-
     buffer = BytesIO()
 
     # doc = SimpleDocTemplate(buffer, pagesize=letter)
     doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
-
     styles = getSampleStyleSheet()
-
     elements = []
 
     # =====================================
@@ -1230,10 +1247,11 @@ def download_results_pdf():
         f"<b>Time:</b> " f"{data.get('time')} sec",
         f"<b>θ(t) Function:</b> " f"{data.get('func')}",
         f"<b>Spring Constant:</b> " f"{data.get('mode_name')}",
+        f"<b>Volume (m³):</b> " f"{data.get('volume')}",
+        f"<b>Mass (kg):</b> " f"{data.get('mass')}",
     ]
 
     for item in details:
-
         elements.append(Paragraph(item, styles["Normal"]))
 
     elements.append(Spacer(1, 20))
@@ -1365,11 +1383,8 @@ def download_results_pdf():
     from datetime import datetime
 
     current_time = datetime.now().strftime("%H-%M-%S")
-
     gripper_name = data.get("gripper_name", "").replace(" ", "").replace("+", "")
-
     shape_name = data.get("shape_name", "").replace(" ", "")
-
     material = data.get("material", "").replace(" ", "")
 
     filename = (
@@ -1764,9 +1779,7 @@ def download_graph_excel():
 def download_compare_excel():
 
     data = request.json
-
     wb = Workbook()
-
     ws = wb.active
 
     if ws is None:
@@ -1779,13 +1792,11 @@ def download_compare_excel():
     # =========================================
 
     ws.merge_cells("A1:K1")
-
     shape_name = data.get("shape_name", "")
     ws["A1"] = (
         "Comparison Chart Representation of " f"Spring Structure Model ({shape_name})"
     )
     ws["A1"].font = Font(bold=True, size=18)
-
     ws["A1"].alignment = Alignment(horizontal="center")
 
     # =========================================
@@ -1793,26 +1804,16 @@ def download_compare_excel():
     # =========================================
 
     object_shape = data.get("object_shape", "-")
-
     time_val = data.get("time", "-")
-
     ws["A4"] = f"Object Shape : {object_shape}"
-
     ws["A5"] = f"Time : {time_val}"
-
     ws["A3"].font = Font(bold=True, size=12)
-
     ws["A4"].font = Font(bold=True, size=12)
     ws["A3"] = f"Gripper Type : " f"{data.get('gripper_name', '-')}"
-
     ws["A6"] = f"θ(t) Function : " f"{data.get('func', '-')}"
-
     ws["A7"] = f"Spring Constant : " f"{data.get('mode_name', '-')}"
-
     ws["A5"].font = Font(bold=True, size=12)
-
     ws["A6"].font = Font(bold=True, size=12)
-
     ws["A7"].font = Font(bold=True, size=12)
     # =========================================
     # TABLE HEADER
@@ -1825,12 +1826,9 @@ def download_compare_excel():
         # ws["A9"].alignment = Alignment(horizontal="right")
 
     ws["B9"] = "Force (N)"
-
     # from openpyxl.styles import Alignment
     ws["B9"].alignment = Alignment(horizontal="right")
-
     header_font = Font(bold=True)
-
     ws["A9"].font = header_font
     ws["B9"].font = header_font
 
@@ -1842,13 +1840,10 @@ def download_compare_excel():
     for item in data["tableData"]:
 
         ws[f"A{row}"] = item["time"]
-
         # ws[f"B{row}"] = float(item["force"])
         force_value = str(item["force"]).replace("(N)", "").strip()
         ws[f"B{row}"] = float(force_value)
-
         # print("Time:", item["time"], "Force:", item["force"])
-
         row += 1
 
     # =========================================
@@ -1861,7 +1856,6 @@ def download_compare_excel():
     # =========================================
     # GRAPH IMAGE
     # =========================================
-
     # graph_data = data["graphImage"]
     graph_data = data.get("graphImage")
 
@@ -1869,13 +1863,9 @@ def download_compare_excel():
         return jsonify({"error": "Graph image not received"}), 400
 
     graph_data = graph_data.split(",")[1]
-
     image_data = base64.b64decode(graph_data)
-
     image_stream = BytesIO(image_data)
-
     img = Image(image_stream)
-
     img.width = 900
     img.height = 450
 
@@ -1895,24 +1885,8 @@ def download_compare_excel():
         f"{time_val}_{current_time}.xlsx"
     )
 
-    # print("Generating file:", filename)
-
-    # excel_file = BytesIO()
-
-    # wb.save(excel_file)
-
-    # excel_file.seek(0)
-
-    # return send_file(
-    #     excel_file,
-    #     as_attachment=True,
-    #     download_name=filename,
-    #     mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    # )
     file_path = os.path.join(UPLOAD_FOLDER, filename)
-
     wb.save(file_path)
-
     mStatus = data.get("mStatus")
     if mStatus == 1:
         # print("mStatus1::",mStatus)
@@ -1932,6 +1906,143 @@ def download_compare_excel():
                 "message": f"{filename} generated successfully",
             }
         )
+
+
+# =================== tab 3 =====================
+@app.route("/download_compare_excel2", methods=["POST"])
+def download_compare_excel2():
+
+    data = request.json
+    wb = Workbook()
+    ws = wb.active
+
+    if ws is None:
+        raise Exception("Worksheet not created")
+
+    ws.title = "Comparison Chart"
+
+    # =========================================
+    # MAIN HEADING
+    # =========================================
+
+    ws.merge_cells("A1:K1")
+    shape_name = data.get("shape_name", "")
+    ws["A1"] = (
+        "Comparison Chart Representation of " f"Spring Structure Model ({shape_name})"
+    )
+    ws["A1"].font = Font(bold=True, size=18)
+    ws["A1"].alignment = Alignment(horizontal="center")
+
+    # =========================================
+    # OBJECT DETAILS
+    # =========================================
+
+    material = data.get("material", "-")
+    time_val = data.get("time", "-")
+    ws["A4"] = f"Material : {material}"
+    ws["A5"] = f"Time : {time_val}"
+    ws["A3"].font = Font(bold=True, size=12)
+    ws["A4"].font = Font(bold=True, size=12)
+    ws["A3"] = f"Gripper Type : " f"{data.get('gripper_name', '-')}"
+    ws["A6"] = f"θ(t) Function : " f"{data.get('func', '-')}"
+    ws["A7"] = f"Spring Constant : " f"{data.get('mode_name', '-')}"
+    ws["A5"].font = Font(bold=True, size=12)
+    ws["A6"].font = Font(bold=True, size=12)
+    ws["A7"].font = Font(bold=True, size=12)
+    # =========================================
+    # TABLE HEADER
+    # =========================================
+    tab = data.get("tab", "0")
+    if tab == 1:
+        ws["A9"] = "Object Shape"
+    else:
+        ws["A9"] = "-"
+        # ws["A9"].alignment = Alignment(horizontal="right")
+
+    ws["B9"] = "Force (N)"
+    # from openpyxl.styles import Alignment
+    ws["B9"].alignment = Alignment(horizontal="right")
+    header_font = Font(bold=True)
+    ws["A9"].font = header_font
+    ws["B9"].font = header_font
+
+    # =========================================
+    # TABLE DATA
+    # =========================================
+
+    row = 10
+    for item in data["tableData"]:
+
+        ws[f"A{row}"] = item["time"]
+        # ws[f"B{row}"] = float(item["force"])
+        force_value = str(item["force"]).replace("(N)", "").strip()
+        ws[f"B{row}"] = float(force_value)
+        # print("Time:", item["time"], "Force:", item["force"])
+        row += 1
+
+    # =========================================
+    # COLUMN WIDTH
+    # =========================================
+
+    ws.column_dimensions["A"].width = 20
+    ws.column_dimensions["B"].width = 20
+
+    # =========================================
+    # GRAPH IMAGE
+    # =========================================
+    # graph_data = data["graphImage"]
+    graph_data = data.get("graphImage")
+
+    if not graph_data:
+        return jsonify({"error": "Graph image not received"}), 400
+
+    graph_data = graph_data.split(",")[1]
+    image_data = base64.b64decode(graph_data)
+    image_stream = BytesIO(image_data)
+    img = Image(image_stream)
+    img.width = 900
+    img.height = 450
+
+    ws.add_image(img, "A16")
+
+    # =========================================
+    # SAVE FILE
+    # =========================================
+    shape_name = shape_name.replace(" ", "").replace("+", "")
+    # filename = "Graph_Report_AAAA.xlsx"
+    current_time = datetime.now().strftime("%H-%M-%S")
+
+    filename = (
+        f"Graph_Comparison_"
+        f"{shape_name}_"
+        f"{material}_"
+        f"{time_val}_{current_time}.xlsx"
+    )
+
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    wb.save(file_path)
+    mStatus = data.get("mStatus")
+    if mStatus == 1:
+        # print("mStatus1::",mStatus)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        # print("mStatus2::",mStatus)
+        return jsonify(
+            {
+                "status": "success",
+                "filename": filename,
+                "filepath": f"static/files/{filename}",
+                "message": f"{filename} generated successfully",
+            }
+        )
+
+
+# ==================== End tab 3 ======================
 
 
 @app.route("/download_graph_pdf", methods=["POST"])
@@ -2077,13 +2188,9 @@ def download_graph_pdf():
 def download_compare_pdf():
 
     data = request.json
-
     buffer = BytesIO()
-
     doc = SimpleDocTemplate(buffer, pagesize=letter)
-
     elements = []
-
     styles = getSampleStyleSheet()
 
     # =========================================
@@ -2091,7 +2198,6 @@ def download_compare_pdf():
     # =========================================
 
     shape_name = data.get("shape_name", "")
-
     title = (
         "Comparison Chart Representation of "
         f"Spring Structure Model "
@@ -2099,7 +2205,6 @@ def download_compare_pdf():
     )
 
     elements.append(Paragraph(f"<b>{title}</b>", styles["Title"]))
-
     elements.append(Spacer(1, 20))
 
     # =========================================
@@ -2107,9 +2212,7 @@ def download_compare_pdf():
     # =========================================
 
     object_shape = data.get("object_shape", "-")
-
     time_val = data.get("time", "-")
-
     elements.append(
         Paragraph(
             f"<b>Gripper Type:</b> " f"{data.get('gripper_name', '-')}",
@@ -2118,9 +2221,7 @@ def download_compare_pdf():
     )
 
     elements.append(Paragraph(f"<b>Object Shape:</b> {object_shape}", styles["Normal"]))
-
     elements.append(Paragraph(f"<b>Time:</b> {time_val}", styles["Normal"]))
-
     elements.append(
         Paragraph(
             f"<b>θ(t) Function:</b> " f"{data.get('func', '-')}", styles["Normal"]
@@ -2165,7 +2266,6 @@ def download_compare_pdf():
     )
 
     elements.append(table)
-
     elements.append(Spacer(1, 30))
 
     # =========================================
@@ -2173,19 +2273,14 @@ def download_compare_pdf():
     # =========================================
 
     graph_data = data["graphImage"]
-
     graph_data = graph_data.split(",")[1]
-
     image_data = base64.b64decode(graph_data)
-
     temp_image = "temp_chart_pdf.png"
 
     with open(temp_image, "wb") as f:
-
         f.write(image_data)
 
     chart = RLImage(temp_image, width=500, height=280)
-
     elements.append(chart)
 
     # =========================================
@@ -2193,12 +2288,10 @@ def download_compare_pdf():
     # =========================================
 
     doc.build(elements)
-
     buffer.seek(0)
 
     # delete temp image
     if os.path.exists(temp_image):
-
         os.remove(temp_image)
 
     # =========================================
@@ -2210,6 +2303,134 @@ def download_compare_pdf():
         f"Graph_Comparison_"
         f"{shape_name}_"
         f"{object_shape}_"
+        f"{time_val}_"
+        f"{current_time}.pdf"
+    )
+
+    return send_file(
+        buffer, as_attachment=True, download_name=filename, mimetype="application/pdf"
+    )
+
+
+@app.route("/download_compare_pdf2", methods=["POST"])
+def download_compare_pdf2():
+
+    data = request.json
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # =========================================
+    # TITLE
+    # =========================================
+
+    shape_name = data.get("shape_name", "")
+    title = (
+        "Comparison Chart Representation of "
+        f"Spring Structure Model "
+        f"({shape_name})"
+    )
+
+    elements.append(Paragraph(f"<b>{title}</b>", styles["Title"]))
+    elements.append(Spacer(1, 20))
+
+    # =========================================
+    # DETAILS
+    # =========================================
+
+    material = data.get("material", "-")
+    time_val = data.get("time", "-")
+    elements.append(
+        Paragraph(
+            f"<b>Gripper Type:</b> " f"{data.get('gripper_name', '-')}",
+            styles["Normal"],
+        )
+    )
+
+    elements.append(Paragraph(f"<b>Material:</b> {material}", styles["Normal"]))
+    elements.append(Paragraph(f"<b>Time:</b> {time_val}", styles["Normal"]))
+    elements.append(
+        Paragraph(
+            f"<b>θ(t) Function:</b> " f"{data.get('func', '-')}", styles["Normal"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Spring Constant:</b> " f"{data.get('mode_name', '-')}",
+            styles["Normal"],
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # =========================================
+    # TABLE
+    # =========================================
+    tab = data.get("tab", "0")
+    if tab == 1:
+        table_data = [["Object Shape", "Force (N)"]]
+    else:
+        table_data = [["All equal", "Force (N)"]]
+
+    for item in data["tableData"]:
+
+        table_data.append([item["time"], item["force"]])
+
+    table = Table(table_data, colWidths=[200, 200])
+
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ]
+        )
+    )
+
+    elements.append(table)
+    elements.append(Spacer(1, 30))
+
+    # =========================================
+    # GRAPH IMAGE
+    # =========================================
+
+    graph_data = data["graphImage"]
+    graph_data = graph_data.split(",")[1]
+    image_data = base64.b64decode(graph_data)
+    temp_image = "temp_chart_pdf.png"
+
+    with open(temp_image, "wb") as f:
+        f.write(image_data)
+
+    chart = RLImage(temp_image, width=500, height=280)
+    elements.append(chart)
+
+    # =========================================
+    # BUILD PDF
+    # =========================================
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    # delete temp image
+    if os.path.exists(temp_image):
+        os.remove(temp_image)
+
+    # =========================================
+    # DOWNLOAD
+    # =========================================
+    current_time = datetime.now().strftime("%H-%M-%S")
+
+    filename = (
+        f"Graph_Comparison_"
+        f"{shape_name}_"
+        f"{material}_"
         f"{time_val}_"
         f"{current_time}.pdf"
     )
@@ -2261,38 +2482,68 @@ def comparison_data():
     # print("comparison_data API called")
     start = time.perf_counter()
     # existing code
-
     data = request.json
-
-    materials = ["Rubber", "ABS", "Teflon"]
-
+    # print("data>>", data)
+    # materials = ["Rubber", "ABS", "Teflon"]
+    materials = ["rubber", "abs", "teflon"]
     result = []
-
     for material in materials:
-
         temp = dict(data)
-
         temp["material"] = material
-
         total_force = perform_calculation(temp, float(data["time"]))
 
+        if material == "rubber":
+            material = "Rubber"
+        elif material == "abs":
+            material = "ABS"
+        elif material == "teflon":
+            material = "Teflon"
+        # print("Material>>>", temp["material"])
         result.append({"material": material, "force": round(total_force, 4)})
 
     # print("Comparison Result:", result)
     elapsed_us = (time.perf_counter() - start) * 1_000_000  # Convert to microseconds
-
     # return jsonify(result)
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
 
+# for tab 3
+@app.route("/comparison_data2", methods=["POST"])
+def comparison_data2():
+    # print("comparison_data API called")
+    start = time.perf_counter()
+    # existing code
+    data = request.json
+    # materials = ["Rubber", "ABS", "Teflon"]
+    shapes = [1, 2, 3]
+    result = []
+    for shape in shapes:
+        temp = dict(data)
+        temp["shape"] = shape
+        total_force = perform_calculation(temp, float(data["time"]))
+        if shape == 1:
+            shape = "Rectangular Paralleopiped"
+        elif shape == 2:
+            shape = "Spherical"
+        elif shape == 3:
+            shape = "Ellipsoidal"
+
+        # print("Material>>>", temp["material"])
+        result.append({"shape": shape, "force": round(total_force, 4)})
+
+    # print("Comparison Result3:", result)
+    elapsed_us = (time.perf_counter() - start) * 1_000_000  # Convert to microseconds
+    # return jsonify(result)
+    return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
+
+
+# for tab 2
 @app.route("/comparison_data1", methods=["POST"])
 def comparison_data1():
     # print("comparison_data1 API called")
     start = time.perf_counter()
     # existing code
-
     data = request.json
-
     gripper = int(data.get("gripper", 0))
     shape = int(data.get("shape", 0))
     material = data.get("material", "")
@@ -2315,19 +2566,14 @@ def comparison_data1():
     result = []
 
     for k_common in k_common_all:
-
         temp = dict(data)
-
         temp["k_common"] = k_common
         # print("temp =", temp)
-
         total_force = perform_calculation(temp, float(data["time"]))
-
         result.append({"k_common": k_common, "force": round(total_force, 4)})
 
     # print("Comparison Result:", result)
     elapsed_us = (time.perf_counter() - start) * 1_000_000  # Convert to microseconds
-
     # return jsonify(result)
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
@@ -2350,46 +2596,76 @@ def get_comparison_time_api():
     return jsonify({"times": result})
 
 
+# for tab 2
 @app.route("/get_comparison_time1", methods=["POST"])
 def get_comparison_time1_api():
 
     data = request.json
-
     gripper = int(data.get("gripper", 0))
-
     shape = int(data.get("shape", 0))
-
     material = data.get("material", 0)
-
     theta_function = data.get("func", "")
 
     values = get_comparison_time1(gripper, shape, material, theta_function)
-
     result = [row["time_value"] for row in values]
 
     return jsonify({"times": result})
 
 
+# for tab 3
+@app.route("/get_comparison_time2", methods=["POST"])
+def get_comparison_time2_api():
+    data = request.json
+    gripper = int(data.get("gripper", 0))
+    material = data.get("material", "")
+    theta_function = data.get("func", "")
+    values = get_comparison_time2(gripper, material, theta_function)
+    result = [row["time_value"] for row in values]
+    return jsonify({"times": result})
+
+
+# for tab 1
 @app.route("/get_spring_constants_comparison", methods=["POST"])
 def get_spring_constants_comparison_api():
 
     data = request.json
-
     gripper = int(data.get("gripper", 0))
-
     shape = int(data.get("shape", 0))
-
     theta_function = data.get("func", "")
-
     time_value = float(data.get("time", 0))
-
     spring_key = data.get("spring_key", "")
 
     values = get_spring_constants_comparison(
         gripper, shape, theta_function, time_value, spring_key
     )
-
+    # print("values>>", values)
     # result = [row["spring_value"] for row in values]
+    result = [
+        {"spring_value": row["spring_value"], "time_value": row["time_value"]}
+        for row in values
+    ]
+    # print("Comparison Spring Constants:", result)
+    return jsonify({"spring_values": result})
+
+
+# for tab 3
+@app.route("/get_spring_constants_comparison2", methods=["POST"])
+def get_spring_constants_comparison2_api():
+
+    data = request.json
+    gripper = int(data.get("gripper", 0))
+    material = data.get("material", "")
+    theta_function = data.get("func", "")
+    time_value = float(data.get("time", 0))
+    spring_key = data.get("spring_key", "")
+
+    # print(data)
+
+    values = get_spring_constants_comparison2(
+        gripper, material, theta_function, time_value, spring_key
+    )
+    # print("values>>", values)
+    result = [row["spring_value"] for row in values]
     result = [
         {"spring_value": row["spring_value"], "time_value": row["time_value"]}
         for row in values
@@ -2445,11 +2721,11 @@ if __name__ == "__main__":
     # Timer(2, lambda: webbrowser.open("http://localhost:8000")).start()
     # app.run()
     # print("===>> Start App on", "http://127.0.0.1:8000")
-    # app.run(host="0.0.0.0", port=8000, debug=True)
     # waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
     port = int(os.environ.get("PORT", 10000))
-    # print(f"===>> Start App on port {port}")
     print("===>> Start App on", f"http://127.0.0.1:{port}")
+    # app.run(host="0.0.0.0", port=port, debug=True)
+    # print(f"===>> Start App on port {port}")
     waitress_serve(app, host="0.0.0.0", port=port, threads=8)
 
 # Version Control Commands (Git)

@@ -162,6 +162,124 @@ function showhidewindow(pno) {
   updateSpringFields();
 }
 
+// for tab 3
+function showhidewindow2(pno) {
+  let gripper = pno;
+  // let gripper_window = document.getElementById("gripper_window");
+  // let fig1 = document.getElementById("fig1");
+  // let txttime1 = document.getElementById("txttime1");
+  // let txtforce1 = document.getElementById("txtforce1");
+  // let length = document.getElementById("length");
+  // let breadth = document.getElementById("breadth");
+  // let width = document.getElementById("width");
+  // let radius = document.getElementById("radius");
+  // let Rmajor = document.getElementById("Rmajor");
+  // let Rminor = document.getElementById("Rminor");
+  // let time = document.getElementById("time");
+  let k_common = document.getElementById("k_common1");
+  let k_finger = document.getElementById("k_finger1");
+  let k_thumb = document.getElementById("k_thumb1");
+  let k_thumb2 = document.getElementById("k_thumb21");
+  let k_thumb3 = document.getElementById("k_thumb31");
+  let f1k1 = document.getElementById("f1k11");
+  let f1k2 = document.getElementById("f1k21");
+  let f2k1 = document.getElementById("f2k11");
+  let f2k2 = document.getElementById("f2k21");
+  let f3k1 = document.getElementById("f3k11");
+  let f3k2 = document.getElementById("f3k21");
+  let f4k1 = document.getElementById("f4k11");
+  let f4k2 = document.getElementById("f4k21");
+  let Thk1 = document.getElementById("Thk11");
+  let Thk2 = document.getElementById("Thk21");
+  let Thk3 = document.getElementById("Thk31");
+
+  // length.value = "100";
+  // breadth.value = "40";
+  // width.value = "20";
+  // radius.value = "50";
+  // Rmajor.value = "50";
+  // Rminor.value = "30";
+  // let time = document.getElementById("time");
+  k_common.value = "";
+  k_finger.value = "";
+  k_thumb.value = "";
+  k_thumb2.value = "";
+  k_thumb3.value = "";
+  f1k1.value = "";
+  f1k2.value = "";
+  f2k1.value = "";
+  f2k2.value = "";
+  f3k1.value = "";
+  f3k2.value = "";
+  f4k1.value = "";
+  f4k2.value = "";
+  Thk1.value = "";
+  Thk2.value = "";
+  Thk3.value = "";
+
+  // ================= TABLE =================
+
+  document.getElementById("graphTableBody2").innerHTML = `
+
+        <tr>
+            <td>Rectangular Paralleopiped</td>
+            <td>-</td>
+        </tr>
+
+        <tr>
+            <td>Spherical</td>
+            <td>-</td>
+        </tr>
+
+        <tr>
+            <td>Ellipsoidal</td>
+            <td>-</td>
+        </tr>
+
+    `;
+  // ================= CHART =================
+
+  if (forceChart2) {
+    forceChart2.destroy();
+    forceChart2 = null;
+  }
+
+  // clear canvas
+  let canvas = document.getElementById("forceChart2");
+
+  let ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  document.getElementById("shape_name2").innerText = "-";
+  // fig1.src = "static/img/basic.avif";
+  let fingerthumb_hide = document.getElementById("fingerthumb_hide1");
+  // alert("You have selected Gripper Type " + gripper + ". Click OK to proceed.");
+  if (!gripper) {
+    gripper_window.setAttribute("data-title", "-");
+    gripper_window.style.display = "none";
+    fingerthumb_hide.style.display = "none";
+  } else if (gripper == 1) {
+    gripper_window.setAttribute("data-title", "4 Fingers Comparison Chart");
+    gripper_window.style.display = "block";
+    // trFinger4.style.display = "table-row";
+    document.getElementById("shape_name2").innerText = "4 Fingers";
+    // document.getElementById("shape_name1").innerText = "4 Fingers";
+    fingerthumb_hide.style.display = "none";
+  } else if (gripper == 2) {
+    gripper_window.setAttribute(
+      "data-title",
+      "3 Fingers + 1 Thumb Comparison Chart",
+    );
+    gripper_window.style.display = "block";
+    // trFinger4.style.display = "none";
+    document.getElementById("shape_name2").innerText = "3 Fingers + 1 Thumb";
+    // document.getElementById("shape_name1").innerText = "3 Fingers + 1 Thumb";
+    fingerthumb_hide.style.display = "block";
+  }
+  updateSpringFields2();
+}
+
 function showhidewindow1(pno) {
   // loadSpringConstants(pno);
   //   loadAllSpringConstants();
@@ -297,16 +415,65 @@ function updateSpringFields() {
   }
 }
 
+// for tab 3
+function updateSpringFields2() {
+  // alert("Update spring fields called");
+  //   console.log("Updating spring fields...");
+  let gripper = sessionStorage.getItem("pno");
+  let mode = document.querySelector('input[name="kmode1"]:checked').value;
+  // let container = document.getElementById("springInputs");
+  let equal = document.getElementById("springInputs_equal1");
+  let samefinger = document.getElementById("springInputs_samefinger1");
+  let unequal = document.getElementById("springInputs_unequal1");
+  let msg = document.getElementById("springInputs_msg1");
+
+  let fingerCount = gripper == 1 ? 4 : 3;
+
+  if (mode == 1) {
+    equal.style.display = "block";
+    samefinger.style.display = "none";
+    unequal.style.display = "none";
+    msg.style.display = "none";
+  }
+
+  if (mode == 2) {
+    if (gripper == 2) {
+      equal.style.display = "none";
+      samefinger.style.display = "block";
+      unequal.style.display = "none";
+      msg.style.display = "none";
+    } else {
+      equal.style.display = "none";
+      samefinger.style.display = "none";
+      unequal.style.display = "none";
+      msg.style.display = "block";
+      msg.innerHTML = "Alert, Select Gripper Type : 3 Fingers + 1 Thumb";
+    }
+  }
+  //   console.log("Mode:", mode, "Gripper:", gripper);
+  if (mode == 3) {
+    equal.style.display = "none";
+    samefinger.style.display = "none";
+    unequal.style.display = "block";
+    msg.style.display = "none";
+    let div_Finger4 = document.getElementById("div_Finger41");
+    let div_Thumb = document.getElementById("div_Thumb1");
+    if (gripper == 2) {
+      div_Thumb.style.display = "block";
+      div_Finger4.style.display = "none";
+    } else {
+      div_Finger4.style.display = "block";
+      div_Thumb.style.display = "none";
+    }
+  }
+}
+
 // set Saved spring values into textboxes
 async function autoLoadSavedSpring() {
   let gripper = getCurrentGripper();
-
   let shape = document.getElementById("shape").value;
-
   let func = document.getElementById("func").value;
-
   let time = document.getElementById("time").value;
-
   let mode = document.querySelector('input[name="kmode"]:checked')?.value;
 
   // validation
@@ -318,28 +485,21 @@ async function autoLoadSavedSpring() {
 
   let response = await fetch("/get_saved_data_compare", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
 
     body: JSON.stringify({
       gripper: gripper,
-
       shape: shape,
-
       func: func,
-
       time: time,
-
       mode: mode,
     }),
   });
 
   let result = await response.json();
-
   //   console.log(result);
-
   // =========================
   // FOUND
   // =========================
@@ -348,7 +508,6 @@ async function autoLoadSavedSpring() {
     // clearSpringInputs();
 
     let d = result.data;
-
     // console.log("Auto loaded:", d);
     document.getElementById("savedText").innerHTML = `
             <span class="text-success">
@@ -420,7 +579,6 @@ async function autoLoadSavedSpring() {
         el.value = item[1];
       }
     });
-
     // calculate();
   }
 
@@ -430,7 +588,6 @@ async function autoLoadSavedSpring() {
   else {
     // clearSpringInputs();
     clearSpringInputs();
-
     console.warn("No saved spring data");
     document.getElementById("savedText").innerHTML = `
             <span class="text-danger">
@@ -528,6 +685,212 @@ function clearSpringInputs() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
+// for tab 3
+async function autoLoadSavedSpring2() {
+  let gripper = getCurrentGripper();
+  let material = document.getElementById("material2").value;
+  let func = document.getElementById("func2").value;
+  let time = document.getElementById("time2").value;
+  let mode = document.querySelector('input[name="kmode1"]:checked')?.value;
+  // console.log("pre-result(autoLoadSavedSpring2):", material);
+  // validation
+  if (!material || !time || !func || !mode) {
+    clearSpringInputs2();
+    return;
+  }
+  let response = await fetch("/get_saved_data_compare2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: gripper,
+      material: material,
+      func: func,
+      time: time,
+      mode: mode,
+    }),
+  });
+
+  let result = await response.json();
+  // console.log("result(autoLoadSavedSpring2):", result);
+  // =========================
+  // FOUND
+  // =========================
+  if (result.status === "found") {
+    let d = result.data;
+    // console.log("Auto loaded:", d);
+    document.getElementById("savedText2").innerHTML = `
+            <span class="text-success">
+                <i class="bi bi-check-circle-fill"></i>
+                Previous spring data loaded
+            </span>
+            `;
+
+    // MODE 1
+    if (d.k_common != null) {
+      let el = document.getElementById("k_common1");
+
+      if (el) {
+        el.value = d.k_common;
+      }
+    }
+    // MODE 2
+    if (d.k_finger != null) {
+      let el = document.getElementById("k_finger1");
+
+      if (el) {
+        el.value = d.k_finger;
+      }
+    }
+    // MODE 2 THUMB
+    let thumbs = [
+      ["k_thumb1", d.thk1],
+      ["k_thumb21", d.thk2],
+      ["k_thumb31", d.thk3],
+    ];
+
+    thumbs.forEach((item) => {
+      let el = document.getElementById(item[0]);
+
+      if (el && item[1] != null) {
+        el.value = item[1];
+      }
+    });
+
+    // MODE 3
+    let values = [
+      ["f1k11", d.f1k1],
+      ["f1k21", d.f1k2],
+
+      ["f2k11", d.f2k1],
+      ["f2k21", d.f2k2],
+
+      ["f3k11", d.f3k1],
+      ["f3k21", d.f3k2],
+
+      ["f4k11", d.f4k1],
+      ["f4k21", d.f4k2],
+
+      ["Thk11", d.thk1],
+      ["Thk21", d.thk2],
+      ["Thk31", d.thk3],
+
+      ["k_thumb1", d.thk1],
+      ["k_thumb21", d.thk2],
+      ["k_thumb31", d.thk3],
+    ];
+
+    values.forEach((item) => {
+      let el = document.getElementById(item[0]);
+
+      if (el && item[1] != null) {
+        el.value = item[1];
+      }
+    });
+  }
+  // =========================
+  // NOT FOUND
+  // =========================
+  else {
+    // clearSpringInputs();
+    clearSpringInputs2();
+
+    console.warn("No saved spring data");
+    document.getElementById("savedText2").innerHTML = `
+            <span class="text-danger">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                No previous calculation found
+            </span>
+            `;
+  }
+}
+
+// for tab 3 clear
+function clearSpringInputs2() {
+  // executionTime and executionTime2
+  document.getElementById("executionTime_1").innerText = "0";
+  document.getElementById("executionTime_2").innerText = "0";
+
+  let ids = [
+    "k_common1",
+    "k_finger1",
+
+    "k_thumb1",
+    "k_thumb21",
+    "k_thumb31",
+
+    "f1k11",
+    "f1k21",
+
+    "f2k11",
+    "f2k21",
+
+    "f3k11",
+    "f3k21",
+
+    "f4k11",
+    "f4k21",
+
+    "Thk11",
+    "Thk21",
+    "Thk31",
+  ];
+
+  ids.forEach((id) => {
+    let el = document.getElementById(id);
+
+    if (el) {
+      el.value = "";
+    }
+  });
+
+  // =========================
+  // CLEAR TABLE
+  // =========================
+
+  let tbody = document.getElementById("graphTableBody2");
+
+  if (tbody) {
+    tbody.innerHTML = `
+
+            <tr>
+                <td>Rectangular Paralleopiped</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>Spherical</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>Ellipsoidal</td>
+                <td>-</td>
+            </tr>
+
+        `;
+  }
+
+  // =========================
+  // CLEAR CHART
+  // =========================
+
+  if (forceChart2) {
+    forceChart2.destroy();
+    forceChart2 = null;
+  }
+
+  // =========================
+  // CLEAR CANVAS
+  // =========================
+  let canvas = document.getElementById("forceChart2");
+  if (canvas) {
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
 
 var modal = document.getElementById("myModal");
 var myModalFun = document.getElementById("myModalFun");
@@ -555,6 +918,7 @@ span2.onclick = function () {
   myModalFun.style.display = "none";
 };
 updateSpringFields();
+updateSpringFields2();
 
 function toggleTerms(count) {
   let operator1 = document.getElementById("operatorGroup1");
@@ -720,6 +1084,7 @@ window.addEventListener("load", () => {
 function reloadDropdown() {
   let dropdown = document.getElementById("func");
   let dropdown1 = document.getElementById("func1");
+  let dropdown2 = document.getElementById("func2");
 
   // Keep default options
   const options = `
@@ -738,6 +1103,7 @@ function reloadDropdown() {
 
   if (dropdown) dropdown.innerHTML = options;
   if (dropdown1) dropdown1.innerHTML = options;
+  if (dropdown2) dropdown2.innerHTML = options;
 
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
@@ -749,6 +1115,7 @@ function reloadDropdown() {
 function addFunctionToDropdown(funcStr) {
   let dropdown = document.getElementById("func");
   let dropdown1 = document.getElementById("func1");
+  let dropdown2 = document.getElementById("func2");
 
   let value = funcStr.replaceAll("²", "^2").replaceAll("³", "^3");
 
@@ -762,6 +1129,12 @@ function addFunctionToDropdown(funcStr) {
     let option2 = new Option(funcStr, value);
     dropdown1.add(option2);
     dropdown1.value = value;
+  }
+
+  if (dropdown2) {
+    let option3 = new Option(funcStr, value);
+    dropdown2.add(option3);
+    dropdown2.value = value;
   }
 }
 
@@ -800,6 +1173,7 @@ function deleteFunction(index) {
 function reloadDropdown() {
   let dropdown = document.getElementById("func");
   let dropdown1 = document.getElementById("func1");
+  let dropdown2 = document.getElementById("func2");
 
   // Keep default options
   const defaultOptions = `
@@ -818,6 +1192,7 @@ function reloadDropdown() {
 
   if (dropdown) dropdown.innerHTML = defaultOptions;
   if (dropdown1) dropdown1.innerHTML = defaultOptions;
+  if (dropdown2) dropdown2.innerHTML = defaultOptions;
 
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
@@ -975,6 +1350,14 @@ document
     // autoLoadSavedSpring();
   });
 
+// for tab 3
+document
+  .getElementById("material2")
+  ?.addEventListener("change", async function () {
+    await loadComparisonTime2();
+    autoLoadSavedSpring2();
+  });
+
 document.getElementById("func")?.addEventListener("change", async function () {
   await loadComparisonTime();
   autoLoadSavedSpring();
@@ -983,6 +1366,11 @@ document.getElementById("func")?.addEventListener("change", async function () {
 document.getElementById("func1")?.addEventListener("change", async function () {
   await loadComparisonTime1();
   // autoLoadSavedSpring();
+});
+// for tab 3
+document.getElementById("func2")?.addEventListener("change", async function () {
+  await loadComparisonTime2();
+  autoLoadSavedSpring2();
 });
 
 document.getElementById("time")?.addEventListener("change", async function () {
@@ -994,53 +1382,42 @@ document.getElementById("time")?.addEventListener("change", async function () {
 document.getElementById("time1")?.addEventListener("change", async function () {
   calculate1();
 });
-// document
-//   .getElementById("shape")
-//   ?.addEventListener("change", loadComparisonTime);
 
-// document.getElementById("func")?.addEventListener("change", loadComparisonTime);
+// for tab 3
+document.getElementById("time2")?.addEventListener("change", async function () {
+  await loadAllComparisonSpringConstants2();
+  await autoLoadSavedSpring2();
+  calculate2();
+});
 
-// document.getElementById("time")?.addEventListener("change", function () {
-//   loadAllComparisonSpringConstants();
-// });
-// document
-//   .getElementById("shape")
-//   .addEventListener("change", autoLoadSavedSpring);
-
-// document
-//   .getElementById("material")
-//   .addEventListener("change", autoLoadSavedSpring);
-
-// document.getElementById("func").addEventListener("change", autoLoadSavedSpring);
-
-// radio buttons
+// radio buttons tab 1
 document.querySelectorAll('input[name="kmode"]').forEach((r) => {
   r.addEventListener("change", autoLoadSavedSpring);
+});
+
+// for tab 3
+document.querySelectorAll('input[name="kmode1"]').forEach((r) => {
+  r.addEventListener("change", autoLoadSavedSpring2);
+  // alert("hiiiii....");
 });
 
 async function loadComparisonTime() {
   let response = await fetch("/get_comparison_time", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
 
     body: JSON.stringify({
       gripper: getCurrentGripper(),
-
       shape: document.getElementById("shape").value,
-
       func: document.getElementById("func").value,
     }),
   });
 
   let result = await response.json();
-
-  console.log("Times:", result);
-
+  console.log("Times-tab1:", result);
   let ddl = document.getElementById("time");
-
   ddl.innerHTML = '<option value="">Select Time</option>';
 
   result.times.forEach((t) => {
@@ -1050,31 +1427,57 @@ async function loadComparisonTime() {
   });
 }
 
+// For tab 2
 async function loadComparisonTime1() {
+  let shape = document.getElementById("shape1").value;
+  let material = document.getElementById("material1").value;
+  let func = document.getElementById("func1").value;
+  if (!shape || !material || !func) {
+    return;
+  }
+
   let response = await fetch("/get_comparison_time1", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
 
     body: JSON.stringify({
       gripper: getCurrentGripper(),
-
       shape: document.getElementById("shape1").value,
-
       material: document.getElementById("material1").value,
-
       func: document.getElementById("func1").value,
     }),
   });
 
   let result = await response.json();
-
-  console.log("Times1:", result);
-
+  console.log("Times-tab2:", result);
   let ddl = document.getElementById("time1");
+  ddl.innerHTML = '<option value="">Select Time</option>';
 
+  result.times.forEach((t) => {
+    ddl.innerHTML += `<option value="${t}">
+                ${t} sec
+             </option>`;
+  });
+}
+// For tab 3
+async function loadComparisonTime2() {
+  let response = await fetch("/get_comparison_time2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      gripper: getCurrentGripper(),
+      material: document.getElementById("material2").value,
+      func: document.getElementById("func2").value,
+    }),
+  });
+
+  let result = await response.json();
+  console.log("Times-tab3:", result);
+  let ddl = document.getElementById("time2");
   ddl.innerHTML = '<option value="">Select Time</option>';
 
   result.times.forEach((t) => {
@@ -1327,15 +1730,144 @@ function validateInputs1() {
   }
 
   // ===== MODE 1: ALL EQUAL =====
-
   // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
-
   // ===== MODE 3: ALL UNEQUAL =====
 
   return true;
 }
 
-// =============END=============
+// ============= END validation1 ============
+
+// tab 3
+function validateInputs2() {
+  // alert("Validating inputs...");
+  let mode = document.querySelector('input[name="kmode1"]:checked').value;
+  let gripper = sessionStorage.getItem("pno");
+  let time = document.getElementById("time2").value;
+  let material = document.getElementById("material2").value;
+  //   console.log("## Mode:", mode, "Gripper:", gripper);
+  // let trFinger4 = document.getElementById("trFinger4");
+  // let trThumb = document.getElementById("trThumb");
+  // let shape = +document.getElementById("shape").value;
+  // if (gripper == "") {
+  //   // markInvalid("gripper");
+  //   alert("Select Gripper Type");
+  //   return false;
+  // }
+  if (gripper == "1") {
+    //4 Fingers
+    // trFinger4.style.display = "table-row";
+    // trThumb.style.display = "none";
+  } else if (gripper == "2") {
+    // 3 Fingers + 1 Thumb
+    // trFinger4.style.display = "none";
+    // trThumb.style.display = "table-row";
+  }
+  // if Select Shape then validate shape parameters
+  if (!material) {
+    markInvalid("material2");
+    return false;
+  }
+
+  if (!time) {
+    // alert("Please enter Time");
+    markInvalid("time2");
+    return false;
+  }
+  // Reset borders
+  document.querySelectorAll("input").forEach((el) => (el.style.border = ""));
+
+  function invalid(id) {
+    let el = document.getElementById(id);
+    el.focus();
+    if (el) el.style.border = "2px solid red";
+  }
+
+  // ===== MODE 1: ALL EQUAL =====
+  if (mode == "1") {
+    let k = document.getElementById("k_common1").value;
+
+    if (!k) {
+      // invalid("k_common");
+      markInvalid("k_common1");
+      // alert("Enter Common K");
+      return false;
+    }
+  }
+
+  // ===== MODE 2: FINGER SAME, THUMB DIFFERENT =====
+  if (mode == "2") {
+    let kf = document.getElementById("k_finger1")?.value;
+    let kt1 = document.getElementById("k_thumb1")?.value;
+    let kt2 = document.getElementById("k_thumb21")?.value;
+    let kt3 = document.getElementById("k_thumb31")?.value;
+
+    if (gripper == "2" && !kf) {
+      // invalid("k_finger");
+      markInvalid("k_finger1");
+      // alert("Enter Finger K");
+      return false;
+    }
+
+    if (gripper == "2" && !kt1) {
+      markInvalid("k_thumb1");
+      return false;
+    }
+    if (gripper == "2" && !kt2) {
+      markInvalid("k_thumb21");
+      return false;
+    }
+    if (gripper == "2" && !kt3) {
+      markInvalid("k_thumb31");
+      return false;
+    }
+  }
+
+  // ===== MODE 3: ALL UNEQUAL =====
+  if (mode == "3") {
+    let fingerCount = gripper == "1" ? 4 : 3;
+
+    for (let i = 1; i <= fingerCount; i++) {
+      let k1 = document.getElementById(`f${i}k11`)?.value;
+      let k2 = document.getElementById(`f${i}k21`)?.value;
+
+      if (!k1) {
+        invalid(`f${i}k11`);
+        // alert(`Enter Finger ${i} Spring 1`);
+        return false;
+      }
+      if (!k2) {
+        invalid(`f${i}k21`);
+        // alert(`Enter Finger ${i} Spring 2`);
+        return false;
+      }
+    }
+    // Thumb (only if gripper = 3+1)
+    if (gripper == "2") {
+      let t1 = document.getElementById("Thk11")?.value;
+      let t2 = document.getElementById("Thk21")?.value;
+      let t3 = document.getElementById("Thk31")?.value;
+
+      if (!t1) {
+        invalid("Thk11");
+        // alert("Enter Thumb K1");
+        return false;
+      }
+      if (!t2) {
+        invalid("Thk21");
+        // alert("Enter Thumb K2");
+        return false;
+      }
+      if (!t3) {
+        invalid("Thk31");
+        // alert("Enter Thumb K3");
+        return false;
+      }
+    }
+  }
+  return true;
+}
+// ============ End Validation2 ===========
 
 function markInvalid(id) {
   let el = document.getElementById(id);
@@ -1344,6 +1876,7 @@ function markInvalid(id) {
 }
 
 // Main Logic to call backend and calculate forces
+// tab 1
 async function calculate() {
   //   console.log("✅ Working calculate function called");
   //   console.trace("✅ calculate called from");
@@ -1363,7 +1896,6 @@ async function calculate() {
 
   // 🔥 GET SELECTION EVENT
   let event = "";
-
   if (shape == "3") {
     // Ellipsoidal
     if (document.getElementById("rbmajor").checked) {
@@ -1436,7 +1968,6 @@ async function calculate() {
 
   // ================= Materials vs FORCE =================
   // ================= GRAPH API =================
-
   let graphResponse = await fetch("/comparison_data", {
     method: "POST",
 
@@ -1448,29 +1979,136 @@ async function calculate() {
   });
 
   let graphResult = await graphResponse.json();
-
   let materials = graphResult.result.map((x) => x.material);
-
   let forces = graphResult.result.map((x) => x.force);
-
   createBarChart(materials, forces);
-
   // change to updateGraphTable for comparison chart
   //   updateGraphTable(graphResult.time, graphResult.force);
   updateGraphTable(materials, forces);
-
   execTime.innerText = graphResult.execution_time_us;
   execTime2.innerText = (graphResult.execution_time_us / 1000).toFixed(3);
   loader.style.display = "none";
   //   loadAllSpringConstants();
-  loadAllComparisonSpringConstants();
-
+  // loadAllComparisonSpringConstants();
+  // loadAllComparisonSpringConstants2();
   // downloadGraphExcel(2);
   setTimeout(() => {
     downloadGraphExcel(2);
   }, 1500);
 }
 // =============== END Calculate() ==============
+
+// tab 3
+async function calculate2() {
+  console.log("✅ Working calculate tab 3 function called");
+  // 🔥 VALIDATION FIRST
+  // alert("Validation started");
+  if (!validateInputs2()) return;
+  console.log("Validation2 Passed ✅");
+  let loader = document.getElementById("loader2");
+  let execTime = document.getElementById("executionTime_1");
+  let execTime2 = document.getElementById("executionTime_2");
+  // 🔥 SHOW LOADER
+  loader.style.display = "inline-block";
+  execTime.innerText = "0";
+  execTime2.innerText = "0";
+
+  // 🔥 GET SELECTION EVENT
+  let event = "";
+  // if (shape == "3") {
+  //   // Ellipsoidal
+  //   if (document.getElementById("rbmajor").checked) {
+  //     event = "major";
+  //   } else if (document.getElementById("rbminor").checked) {
+  //     event = "minor";
+  //   }
+  // } else if (shape == "1") {
+  //   // Rectangular
+  //   if (document.getElementById("rblength").checked) {
+  //     event = "length";
+  //   } else if (document.getElementById("rbbreadth").checked) {
+  //     event = "breadth";
+  //   }
+  //   // alert("Event: " + event);
+  // } else {
+  //   event = "none"; // spherical
+  // }
+  let material = document.getElementById("material2").value;
+  let time = document.getElementById("time2").value;
+  let func = document.getElementById("func2").value;
+  let mode = document.querySelector('input[name="kmode1"]:checked').value;
+  let data = {
+    // shape: +shape,
+    event: event, // 🔥 SEND TO BACKEND
+    material: material, // fixed material for graph page
+    time: time, // fixed time for graph page
+    func: func,
+    gripper: sessionStorage.getItem("pno"),
+    mode: mode,
+    k_common: +document.getElementById("k_common1")?.value || 0,
+    k_finger: +document.getElementById("k_finger1")?.value || 0,
+    thumb:
+      mode == "2"
+        ? [
+            +document.getElementById("k_thumb1")?.value || 0,
+            +document.getElementById("k_thumb21")?.value || 0,
+            +document.getElementById("k_thumb31")?.value || 0,
+          ]
+        : [
+            +document.getElementById("Thk11")?.value || 0,
+            +document.getElementById("Thk21")?.value || 0,
+            +document.getElementById("Thk31")?.value || 0,
+          ],
+
+    fingers: [
+      {
+        k1: +document.getElementById("f1k11")?.value || 0,
+        k2: +document.getElementById("f1k21")?.value || 0,
+      },
+      {
+        k1: +document.getElementById("f2k11")?.value || 0,
+        k2: +document.getElementById("f2k21")?.value || 0,
+      },
+      {
+        k1: +document.getElementById("f3k11")?.value || 0,
+        k2: +document.getElementById("f3k21")?.value || 0,
+      },
+      {
+        k1: +document.getElementById("f4k11")?.value || 0,
+        k2: +document.getElementById("f4k21")?.value || 0,
+      },
+    ],
+  };
+  // ================= Shape vs FORCE =================
+  // ================= GRAPH API =================
+  let graphResponse = await fetch("/comparison_data2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  let graphResult = await graphResponse.json();
+  let shapes = graphResult.result.map((x) => x.shape);
+  let forces = graphResult.result.map((x) => x.force);
+  createBarChart2(shapes, forces);
+  updateGraphTable2(shapes, forces);
+  execTime.innerText = graphResult.execution_time_us;
+  execTime2.innerText = (graphResult.execution_time_us / 1000).toFixed(3);
+  loader.style.display = "none";
+  //   loadAllSpringConstants();
+  // loadAllComparisonSpringConstants();
+  // loadAllComparisonSpringConstants2();
+  // downloadGraphExcel(2);
+
+  // for temp comment
+  setTimeout(() => {
+    downloadGraphExcel2(2);
+  }, 1500);
+}
+
+// =============== End calculate2() ============
 
 async function calculate1() {
   //   console.log("✅ Working calculate1 function called");
@@ -1566,12 +2204,11 @@ async function calculate1() {
 
 let forceChart = null; // Tab 1
 let forceChart1 = null; // Tab 2
+let forceChart2 = null; // Tab 3
 
 function createBarChart(timeData, forceData) {
   const canvas = document.getElementById("forceChart");
-
   const ctx = canvas.getContext("2d");
-
   // destroy previous chart
   if (forceChart) {
     forceChart.destroy();
@@ -1618,16 +2255,11 @@ function createBarChart(timeData, forceData) {
         datasets: [
           {
             label: "Force",
-
             data: forceData,
-
             borderWidth: 2,
-
             borderColor: "#000",
-
             barThickness: 150, // fixed width
             maxBarThickness: 200, // prevent oversized bars
-
             backgroundColor: bgColors,
           },
         ],
@@ -1635,9 +2267,7 @@ function createBarChart(timeData, forceData) {
 
       options: {
         responsive: true,
-
         maintainAspectRatio: false,
-
         plugins: {
           legend: {
             display: true,
@@ -1653,7 +2283,6 @@ function createBarChart(timeData, forceData) {
 
             font: {
               weight: "bold",
-
               size: 12,
             },
 
@@ -1671,11 +2300,8 @@ function createBarChart(timeData, forceData) {
           x: {
             title: {
               display: true,
-
               text: "Materials",
-
               color: "#444",
-
               font: {
                 size: 16,
                 weight: "bold",
@@ -1696,9 +2322,7 @@ function createBarChart(timeData, forceData) {
 
             title: {
               display: true,
-
               text: "Force (N)",
-
               color: "#444",
 
               font: {
@@ -1728,6 +2352,155 @@ function createBarChart(timeData, forceData) {
   }, 1000);
 }
 
+// ========================= End =================
+// for tab 3
+function createBarChart2(timeData, forceData) {
+  const canvas = document.getElementById("forceChart2");
+  const ctx = canvas.getContext("2d");
+  // destroy previous chart
+  if (forceChart2) {
+    forceChart2.destroy();
+  }
+
+  let gripper = sessionStorage.getItem("pno"); // "1" or "2"
+  let bgColors;
+  let anchor;
+  let align;
+  let color;
+  if (gripper === "1") {
+    bgColors = ["#f28e2b", "#59a14f", "#4e79a7", "#e15759", "#b07aa1"];
+    anchor = "center";
+    align = "center";
+    color = "white";
+  } else {
+    bgColors = [
+      "#bd6162", // orange
+      "#326d2a", // green
+      "#FFBE0B", // Yellow
+      "#265294", // blue
+      "#9670ca", // Violet
+    ];
+    anchor = "end";
+    align = "top";
+    color = "black";
+
+    const bgColors2 = [
+      "#00A8E8", // Sky Blue
+      "#FF6B6B", // Coral Red
+      "#FFD166", // Golden Yellow
+      "#06D6A0", // Mint Green
+      "#9B5DE5", // Purple
+    ];
+  }
+  // IMPORTANT FIX
+  setTimeout(() => {
+    forceChart2 = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: timeData,
+
+        datasets: [
+          {
+            label: "Force",
+            data: forceData,
+            borderWidth: 2,
+            borderColor: "#000",
+            barThickness: 150, // fixed width
+            maxBarThickness: 200, // prevent oversized bars
+            backgroundColor: bgColors,
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          },
+
+          datalabels: {
+            // anchor: "end",
+            // align: "top",
+            // color: "black",
+            anchor: anchor,
+            align: align,
+            color: color,
+
+            font: {
+              weight: "bold",
+              size: 12,
+            },
+
+            formatter: function (value) {
+              return Number(value).toLocaleString();
+            },
+          },
+        },
+
+        animation: {
+          duration: 1000,
+        },
+
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Object Shape",
+              color: "#444",
+              font: {
+                size: 16,
+                weight: "bold",
+              },
+            },
+            ticks: {
+              color: "#555", // dark black
+              font: {
+                size: 14,
+                weight: "bold",
+              },
+            },
+          },
+
+          y: {
+            type: "logarithmic",
+            beginAtZero: true,
+
+            title: {
+              display: true,
+              text: "Force (N)",
+              color: "#444",
+
+              font: {
+                size: 16,
+                weight: "bold",
+              },
+            },
+            ticks: {
+              color: "#555",
+              font: {
+                weight: "bold",
+              },
+            },
+          },
+        },
+      },
+    });
+  }, 200); // small render delay
+
+  // save chart image
+  setTimeout(() => {
+    let chartBase64 = document
+      .getElementById("forceChart2")
+      .toDataURL("image/png");
+
+    document.getElementById("chartImage2").value = chartBase64;
+  }, 1000);
+}
+
+//==================== End =====================
+
 function createBarChart1(timeData, forceData) {
   const canvas = document.getElementById("forceChart1");
 
@@ -1744,16 +2517,16 @@ function createBarChart1(timeData, forceData) {
   let align;
   let color;
   if (gripper === "1") {
-    bgColors = ["#4e79a7", "#59a14f", "#f28e2b", "#e15759", "#b07aa1"];
+    bgColors = ["#59a14f", "#4e79a7", "#f28e2b", "#e15759", "#b07aa1"];
     anchor = "center";
     align = "center";
     color = "white";
   } else {
     bgColors = [
-      "#265294", // blue
       "#9670ca", // Violet
       "#bd6162", // Blue
       "#326d2a", // Orange
+      "#265294", // blue
       "#FFBE0B", // Yellow
     ];
     anchor = "end";
@@ -1891,7 +2664,29 @@ function createBarChart1(timeData, forceData) {
 
 function updateGraphTable(materialData, forceData) {
   let tbody = document.getElementById("graphTableBody");
+  tbody.innerHTML = "";
 
+  for (let i = 0; i < materialData.length; i++) {
+    tbody.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${materialData[i]}
+            </td>
+
+            <td>
+                ${forceData[i]}
+            </td>
+
+        </tr>
+
+        `;
+  }
+}
+
+function updateGraphTable2(materialData, forceData) {
+  let tbody = document.getElementById("graphTableBody2");
   tbody.innerHTML = "";
 
   for (let i = 0; i < materialData.length; i++) {
@@ -1977,14 +2772,11 @@ function drawComparisonChart(data) {
 
 async function downloadGraphExcel(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
-
   let tableData = [];
 
   tableRows.forEach((row) => {
     let cols = row.querySelectorAll("td");
-
     let forceValue = cols[1].innerText.trim();
-
     // skip empty rows
     if (forceValue === "-" || forceValue === "") {
       return;
@@ -1992,13 +2784,11 @@ async function downloadGraphExcel(mStatus) {
 
     tableData.push({
       time: cols[0].innerText,
-
       force: forceValue,
     });
   });
   if (tableData.length === 0) {
     alert("Please generate graph first.");
-
     return;
   }
   let graphImage = document.getElementById("forceChart").toDataURL("image/png");
@@ -2027,7 +2817,6 @@ async function downloadGraphExcel(mStatus) {
 
     // graphImage: document.getElementById("chartImage").value,
     graphImage: graphImage,
-
     tableData: tableData,
     mStatus: mStatus,
     tab: 1,
@@ -2064,26 +2853,121 @@ async function downloadGraphExcel(mStatus) {
     }
 
     let blob = await response.blob();
-
     console.log("Blob Size:", blob.size);
-
     let url = window.URL.createObjectURL(blob);
-
     let a = document.createElement("a");
-
     a.href = url;
 
     // a.download = "Graph_Report.xlsx";
     let disposition = response.headers.get("Content-Disposition");
-
     let filename = "Graph_Report.xlsx";
-
     if (disposition && disposition.includes("filename=")) {
       filename = disposition.split("filename=")[1].replace(/"/g, "");
     }
 
     a.download = filename;
+    a.click();
+  }
+}
 
+async function downloadGraphExcel2(mStatus) {
+  let tableRows = document.querySelectorAll("#graphTableBody2 tr");
+  let tableData = [];
+
+  tableRows.forEach((row) => {
+    let cols = row.querySelectorAll("td");
+    let forceValue = cols[1].innerText.trim();
+    // skip empty rows
+    if (forceValue === "-" || forceValue === "") {
+      return;
+    }
+
+    tableData.push({
+      time: cols[0].innerText,
+      force: forceValue,
+    });
+  });
+  if (tableData.length === 0) {
+    alert("Please generate graph first.");
+    return;
+  }
+  let graphImage = document
+    .getElementById("forceChart2")
+    .toDataURL("image/png");
+  let payload = {
+    func: document.getElementById("func2").value,
+    // alert("sss" + localStorage.getItem("pno") || "0")
+    mode_name:
+      document.querySelector('input[name="kmode1"]:checked').value == "1"
+        ? "All equal"
+        : document.querySelector('input[name="kmode1"]:checked').value == "2"
+          ? "Fingers same, Thumb different"
+          : "All unequal",
+
+    gripper_name:
+      sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
+    shape_name: document.getElementById("shape_name2").innerText,
+
+    material:
+      document.getElementById("material2").options[
+        document.getElementById("material2").selectedIndex
+      ].text,
+
+    time: document.getElementById("time2").options[
+      document.getElementById("time2").selectedIndex
+    ].text,
+
+    // graphImage: document.getElementById("chartImage").value,
+    graphImage: graphImage,
+    tableData: tableData,
+    mStatus: mStatus,
+    tab: 1,
+  };
+  console.log("Empty graphImage length:", payload.graphImage?.length);
+  let response = await fetch("/download_compare_excel2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  // console.log("Status:", response.status);
+  // console.log("Content-Type:", response.headers.get("content-type"));
+  if (mStatus == 2) {
+    //Save to localStorage for Merging Excel
+    const result = await response.json();
+    if (result.status === "success") {
+      addGeneratedFile(result.filename, "Compare_Chart");
+      console.log(result.message, "mStatus:", mStatus);
+      // console.table(localStorage);
+      console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
+      // Object.entries(localStorage).forEach(([key, value]) => {
+      //   console.log(key, JSON.parse(value));
+      // });
+    }
+  } else {
+    if (!response.ok) {
+      let txt = await response.text();
+      console.log(txt);
+      alert("Server Error");
+      return;
+    }
+
+    let blob = await response.blob();
+    console.log("Blob Size:", blob.size);
+    let url = window.URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+
+    // a.download = "Graph_Report.xlsx";
+    let disposition = response.headers.get("Content-Disposition");
+    let filename = "Graph_Report.xlsx";
+    if (disposition && disposition.includes("filename=")) {
+      filename = disposition.split("filename=")[1].replace(/"/g, "");
+    }
+
+    a.download = filename;
     a.click();
   }
 }
@@ -2213,12 +3097,10 @@ function addGeneratedFile(filename, narration) {
 
 async function downloadGraphPdf() {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
-
   let tableData = [];
 
   tableRows.forEach((row) => {
     let cols = row.querySelectorAll("td");
-
     let forceValue = cols[1].innerText.trim();
 
     // skip empty rows
@@ -2228,7 +3110,6 @@ async function downloadGraphPdf() {
 
     tableData.push({
       time: cols[0].innerText,
-
       force: forceValue,
     });
   });
@@ -2236,13 +3117,11 @@ async function downloadGraphPdf() {
   // VALIDATION SAME AS EXCEL
   if (tableData.length === 0) {
     alert("Please generate graph first.");
-
     return;
   }
 
   let payload = {
     func: document.getElementById("func").value,
-
     mode_name:
       document.querySelector('input[name="kmode"]:checked').value == "1"
         ? "All equal"
@@ -2253,61 +3132,46 @@ async function downloadGraphPdf() {
     gripper_name:
       sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
     shape_name: document.getElementById("shape_name").innerText,
-
     object_shape:
       document.getElementById("shape").options[
         document.getElementById("shape").selectedIndex
       ].text,
-
     time: document.getElementById("time").options[
       document.getElementById("time").selectedIndex
     ].text,
-
     graphImage: document.getElementById("chartImage").value,
-
     tableData: tableData,
     tab: 1,
   };
 
   let response = await fetch("/download_compare_pdf", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
-
     body: JSON.stringify(payload),
   });
 
   let blob = await response.blob();
-
   let url = window.URL.createObjectURL(blob);
-
   let a = document.createElement("a");
-
   a.href = url;
-
   let disposition = response.headers.get("Content-Disposition");
-
   let filename = "Graph_Report.pdf";
-
   if (disposition && disposition.includes("filename=")) {
     filename = disposition.split("filename=")[1].replace(/"/g, "");
   }
 
   a.download = filename;
-
   a.click();
 }
 
-async function downloadGraphPdf1() {
-  let tableRows = document.querySelectorAll("#graphTableBody1 tr");
-
+async function downloadGraphPdf2() {
+  let tableRows = document.querySelectorAll("#graphTableBody2 tr");
   let tableData = [];
 
   tableRows.forEach((row) => {
     let cols = row.querySelectorAll("td");
-
     let forceValue = cols[1].innerText.trim();
 
     // skip empty rows
@@ -2317,7 +3181,78 @@ async function downloadGraphPdf1() {
 
     tableData.push({
       time: cols[0].innerText,
+      force: forceValue,
+    });
+  });
 
+  // VALIDATION SAME AS EXCEL
+  if (tableData.length === 0) {
+    alert("Please generate graph first.");
+    return;
+  }
+
+  let payload = {
+    func: document.getElementById("func2").value,
+    mode_name:
+      document.querySelector('input[name="kmode1"]:checked').value == "1"
+        ? "All equal"
+        : document.querySelector('input[name="kmode1"]:checked').value == "2"
+          ? "Fingers same, Thumb different"
+          : "All unequal",
+
+    gripper_name:
+      sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
+    shape_name: document.getElementById("shape_name2").innerText,
+    material:
+      document.getElementById("material2").options[
+        document.getElementById("material2").selectedIndex
+      ].text,
+    time: document.getElementById("time2").options[
+      document.getElementById("time2").selectedIndex
+    ].text,
+    graphImage: document.getElementById("chartImage2").value,
+    tableData: tableData,
+    tab: 1,
+  };
+  // let graphImage = document.getElementById("chartImage2").value;
+  // if (!graphImage) alert("Empty graphImage");
+
+  let response = await fetch("/download_compare_pdf2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  let blob = await response.blob();
+  let url = window.URL.createObjectURL(blob);
+  let a = document.createElement("a");
+  a.href = url;
+  let disposition = response.headers.get("Content-Disposition");
+  let filename = "Graph_Report.pdf";
+  if (disposition && disposition.includes("filename=")) {
+    filename = disposition.split("filename=")[1].replace(/"/g, "");
+  }
+
+  a.download = filename;
+  a.click();
+}
+
+async function downloadGraphPdf1() {
+  let tableRows = document.querySelectorAll("#graphTableBody1 tr");
+  let tableData = [];
+
+  tableRows.forEach((row) => {
+    let cols = row.querySelectorAll("td");
+    let forceValue = cols[1].innerText.trim();
+    // skip empty rows
+    if (forceValue === "-" || forceValue === "") {
+      return;
+    }
+
+    tableData.push({
+      time: cols[0].innerText,
       force: forceValue,
     });
   });
@@ -2330,31 +3265,24 @@ async function downloadGraphPdf1() {
 
   let payload = {
     func: document.getElementById("func1").value,
-
     mode_name: "All equal",
-
     gripper_name:
       sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
     shape_name: document.getElementById("shape_name1").innerText,
-
     object_shape:
       document.getElementById("shape1").options[
         document.getElementById("shape1").selectedIndex
       ].text,
-
     time: document.getElementById("time1").options[
       document.getElementById("time1").selectedIndex
     ].text,
-
     graphImage: document.getElementById("chartImage1").value,
-
     tableData: tableData,
     tab: 2,
   };
 
   let response = await fetch("/download_compare_pdf", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
@@ -2363,23 +3291,16 @@ async function downloadGraphPdf1() {
   });
 
   let blob = await response.blob();
-
   let url = window.URL.createObjectURL(blob);
-
   let a = document.createElement("a");
-
   a.href = url;
-
   let disposition = response.headers.get("Content-Disposition");
-
   let filename = "Graph_Report.pdf";
-
   if (disposition && disposition.includes("filename=")) {
     filename = disposition.split("filename=")[1].replace(/"/g, "");
   }
 
   a.download = filename;
-
   a.click();
 }
 
@@ -2524,88 +3445,117 @@ function loadAllSpringConstants() {
 
 function loadAllComparisonSpringConstants() {
   loadComparisonSpringAutocomplete("k_common", "k_common_options");
-
   loadComparisonSpringAutocomplete("k_finger", "k_finger_options");
-
   loadComparisonSpringAutocomplete("k_thumb", "k_thumb_options");
-
   loadComparisonSpringAutocomplete("k_thumb2", "k_thumb2_options");
-
   loadComparisonSpringAutocomplete("k_thumb3", "k_thumb3_options");
-
   loadComparisonSpringAutocomplete("f1k1", "f1k1_options");
-
   loadComparisonSpringAutocomplete("f1k2", "f1k2_options");
-
   loadComparisonSpringAutocomplete("f2k1", "f2k1_options");
-
   loadComparisonSpringAutocomplete("f2k2", "f2k2_options");
-
   loadComparisonSpringAutocomplete("f3k1", "f3k1_options");
-
   loadComparisonSpringAutocomplete("f3k2", "f3k2_options");
-
   loadComparisonSpringAutocomplete("f4k1", "f4k1_options");
-
   loadComparisonSpringAutocomplete("f4k2", "f4k2_options");
-
   loadComparisonSpringAutocomplete("Thk1", "Thk1_options");
-
   loadComparisonSpringAutocomplete("Thk2", "Thk2_options");
-
   loadComparisonSpringAutocomplete("Thk3", "Thk3_options");
+}
+// for tab 3
+function loadAllComparisonSpringConstants2() {
+  loadComparisonSpringAutocomplete2("k_common", "k_common_options1");
+  loadComparisonSpringAutocomplete2("k_finger", "k_finger_options1");
+  loadComparisonSpringAutocomplete2("k_thumb", "k_thumb_options1");
+  loadComparisonSpringAutocomplete2("k_thumb2", "k_thumb2_options1");
+  loadComparisonSpringAutocomplete2("k_thumb3", "k_thumb3_options1");
+  loadComparisonSpringAutocomplete2("f1k1", "f1k1_options1");
+  loadComparisonSpringAutocomplete2("f1k2", "f1k2_options1");
+  loadComparisonSpringAutocomplete2("f2k1", "f2k1_options1");
+  loadComparisonSpringAutocomplete2("f2k2", "f2k2_options1");
+  loadComparisonSpringAutocomplete2("f3k1", "f3k1_options1");
+  loadComparisonSpringAutocomplete2("f3k2", "f3k2_options1");
+  loadComparisonSpringAutocomplete2("f4k1", "f4k1_options1");
+  loadComparisonSpringAutocomplete2("f4k2", "f4k2_options1");
+  loadComparisonSpringAutocomplete2("Thk1", "Thk1_options1");
+  loadComparisonSpringAutocomplete2("Thk2", "Thk2_options1");
+  loadComparisonSpringAutocomplete2("Thk3", "Thk3_options1");
 }
 
 async function loadComparisonSpringAutocomplete(springKey, datalistId) {
   let gripper = getCurrentGripper();
-
   let shape = document.getElementById("shape").value;
-
   let time = document.getElementById("time").value;
   // console.log("Time ==>> ", time);
-
   let func = document.getElementById("func").value;
-
   if (!shape || !time || !func) {
     return;
   }
 
   let response = await fetch("/get_spring_constants_comparison", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
 
     body: JSON.stringify({
       gripper: gripper,
-
       shape: shape,
-
       func: func,
-
       time: time,
-
       spring_key: springKey,
     }),
   });
 
   let result = await response.json();
-
   // console.log(">>>>> Received:", result);
-
   let datalist = document.getElementById(datalistId);
-
   datalist.innerHTML = "";
 
   result.spring_values.forEach((item) => {
     let option = document.createElement("option");
     // console.log("@@@ 2 Spring Value:", item);
-
     option.value = item.spring_value;
-
     option.label = item.time_value + " sec";
+    datalist.appendChild(option);
+  });
+}
 
+// for tab 3
+async function loadComparisonSpringAutocomplete2(springKey, datalistId) {
+  let gripper = getCurrentGripper();
+  let material = document.getElementById("material2").value;
+  let time = document.getElementById("time2").value;
+  // console.log("Time ==>> ", time);
+  let func = document.getElementById("func2").value;
+  if (!material || !time || !func) {
+    return;
+  }
+
+  let response = await fetch("/get_spring_constants_comparison2", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      gripper: gripper,
+      material: material,
+      func: func,
+      time: time,
+      spring_key: springKey,
+    }),
+  });
+
+  let result = await response.json();
+  // console.log(">>>>> Received tab 3:", result);
+  let datalist = document.getElementById(datalistId);
+  datalist.innerHTML = "";
+
+  result.spring_values.forEach((item) => {
+    let option = document.createElement("option");
+    // console.log("@@@ 2 Spring Value:", item);
+    option.value = item.spring_value;
+    option.label = item.time_value + " sec";
     datalist.appendChild(option);
   });
 }
@@ -2818,7 +3768,6 @@ async function mergedAllExcels() {
 
 async function mergedAllExcels1() {
   let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
-
   if (!files || files.length === 0) {
     alert("No files available to merge.");
     return;
@@ -2860,7 +3809,6 @@ async function mergedAllExcels1() {
     }
 
     const blob = await response.blob();
-
     let filename = "Merged.xlsx";
     const disposition = response.headers.get("Content-Disposition");
 
@@ -2872,12 +3820,81 @@ async function mergedAllExcels1() {
     }
 
     const url = window.URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     a.click();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    alert("Error merging files.");
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = "inline";
+    btnLoader.style.display = "none";
+    localStorage.removeItem("generatedFiles");
+    updateDirtyState();
+  }
+}
 
+async function mergedAllExcels2() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+  if (!files || files.length === 0) {
+    alert("No files available to merge.");
+    return;
+  }
+
+  let fileList = files
+    .map((file, index) => `${index + 1}. ${file.filename}`)
+    .join("\n");
+
+  if (
+    !confirm(
+      "The following files will be merged:\n\n" +
+        fileList +
+        "\n\nDo you want to continue?",
+    )
+  ) {
+    return;
+  }
+
+  const btn = document.getElementById("btnMerge2");
+  const btnText = document.getElementById("btnMergeText2");
+  const btnLoader = document.getElementById("btnMergeLoader2");
+
+  btn.disabled = true;
+  btnText.style.display = "none";
+  btnLoader.style.display = "inline";
+
+  try {
+    const response = await fetch("/merge_excels", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ files }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to merge files");
+    }
+
+    const blob = await response.blob();
+    let filename = "Merged.xlsx";
+    const disposition = response.headers.get("Content-Disposition");
+
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error(error);

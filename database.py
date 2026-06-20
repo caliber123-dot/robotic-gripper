@@ -286,12 +286,11 @@ def get_saved_input_graph(gripper, shape, material, theta_function, spring_mode)
 
 
 # ============================ Compare Data =========================
+# for tab 1
 def get_saved_input_compare(gripper, shape, theta_function, time_value, spring_mode):
 
     conn = get_connection()
-
     cursor = conn.cursor()
-
     cursor.execute(
         """
 
@@ -314,7 +313,40 @@ def get_saved_input_compare(gripper, shape, theta_function, time_value, spring_m
     )
 
     row = cursor.fetchone()
+    conn.close()
 
+    return dict(row) if row else None
+
+
+# for tab 3
+def get_saved_input_compare2(
+    gripper, material, theta_function, time_value, spring_mode
+):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+
+    SELECT *
+
+    FROM gripper_inputs
+
+    WHERE gripper = ?
+    AND material = ?
+    AND time_value = ?
+    AND theta_function = ?
+    AND spring_mode = ?
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+    """,
+        (gripper, material, time_value, theta_function, spring_mode),
+    )
+
+    row = cursor.fetchone()
     conn.close()
 
     return dict(row) if row else None
@@ -626,11 +658,12 @@ def get_comparison_time(gripper, shape, theta_function):
     conn.close()
 
     return rows
+
+
 # =====================================================================
-def get_comparison_time1(gripper, shape, material ,theta_function):
+def get_comparison_time1(gripper, shape, material, theta_function):
 
     conn = get_connection()
-
     cursor = conn.cursor()
 
     cursor.execute(
@@ -647,12 +680,35 @@ def get_comparison_time1(gripper, shape, material ,theta_function):
     )
 
     rows = cursor.fetchall()
-
     conn.close()
-
     return rows
+
+
+def get_comparison_time2(gripper, material, theta_function):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT DISTINCT time_value
+        FROM spring_constants
+        WHERE gripper = ?        
+        AND material = ?
+        AND theta_function = ?
+        ORDER BY time_value
+    """,
+        (gripper, material, theta_function),
+    )
+
+    rows = cursor.fetchall()
+    # print("rows>>>", rows)
+    conn.close()
+    return rows
+
+
 # ============================== Get ALl Equal=====================================
-def get_comparison_all_equal(gripper, shape, material ,theta_function, time_value):
+def get_comparison_all_equal(gripper, shape, material, theta_function, time_value):
 
     conn = get_connection()
 
@@ -706,8 +762,39 @@ def get_spring_constants_comparison(gripper, shape, theta_function, time, spring
     )
 
     rows = cursor.fetchall()
-
     conn.close()
+    # return rows
+    return [dict(row) for row in rows]
 
+
+# for tab 3
+def get_spring_constants_comparison2(
+    gripper, material, theta_function, time, spring_key
+):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+
+        SELECT DISTINCT spring_value, time_value
+
+        FROM spring_constants
+
+        WHERE gripper = ?
+        AND material = ?        
+        AND theta_function = ?
+        AND time_value = ?
+        AND spring_key = ?
+
+        ORDER BY spring_value
+
+    """,
+        (gripper, material, theta_function, time, spring_key),
+    )
+
+    rows = cursor.fetchall()
+    conn.close()
     # return rows
     return [dict(row) for row in rows]
