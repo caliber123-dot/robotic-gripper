@@ -1404,6 +1404,7 @@ def download_results_pdf():
 # CREATE COMMON FUNCTION
 def perform_calculation(data, t):
 
+    # print("PERFORM INPUT =", data)
     shape = int(data.get("shape", 0))
     event = data["event"]
 
@@ -2477,6 +2478,7 @@ def get_spring_constants_api():
     return jsonify({"spring_values": values})
 
 
+# For Tab 1
 @app.route("/comparison_data", methods=["POST"])
 def comparison_data():
     # print("comparison_data API called")
@@ -2484,12 +2486,14 @@ def comparison_data():
     # existing code
     data = request.json
     # print("data>>", data)
+    # print("TAB1 DATA =", data)
     # materials = ["Rubber", "ABS", "Teflon"]
     materials = ["rubber", "abs", "teflon"]
     result = []
     for material in materials:
         temp = dict(data)
         temp["material"] = material
+
         total_force = perform_calculation(temp, float(data["time"]))
 
         if material == "rubber":
@@ -2507,20 +2511,32 @@ def comparison_data():
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
 
-# for tab 3
+# for Tab 3
 @app.route("/comparison_data2", methods=["POST"])
 def comparison_data2():
     # print("comparison_data API called")
     start = time.perf_counter()
     # existing code
     data = request.json
+    # print("TAB3 DATA =", data)
     # materials = ["Rubber", "ABS", "Teflon"]
     shapes = [1, 2, 3]
     result = []
     for shape in shapes:
         temp = dict(data)
         temp["shape"] = shape
+        if shape == 1:  # Rectangular
+            temp["length"] = 100
+            temp["breadth"] = 40
+            temp["width"] = 20
+        elif shape == 2:  # Spherical
+            temp["radius"] = 50
+        elif shape == 3:  # Ellipsoidal
+            temp["Rmajor"] = 50
+            temp["Rminor"] = 30
+
         total_force = perform_calculation(temp, float(data["time"]))
+
         if shape == 1:
             shape = "Rectangular Paralleopiped"
         elif shape == 2:
@@ -2537,7 +2553,7 @@ def comparison_data2():
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
 
-# for tab 2
+# for Tab 2
 @app.route("/comparison_data1", methods=["POST"])
 def comparison_data1():
     # print("comparison_data1 API called")
@@ -2559,9 +2575,9 @@ def comparison_data1():
     values = get_comparison_all_equal(
         gripper, shape, material, theta_function, time_value
     )
-    # print("values:", values)
+    # print("values: Tab 2", values)
     k_common_all = [row["spring_value"] for row in values]
-    # print("k_common_all>>>>" , k_common_all)
+    # print("k_common_all Tab 2>>>>", k_common_all)
 
     result = []
 
@@ -2578,20 +2594,19 @@ def comparison_data1():
     return jsonify({"result": result, "execution_time_us": round(elapsed_us, 2)})
 
 
+# for get time tab 1
 @app.route("/get_comparison_time", methods=["POST"])
 def get_comparison_time_api():
 
     data = request.json
-
     gripper = int(data.get("gripper", 0))
-
     shape = int(data.get("shape", 0))
-
     theta_function = data.get("func", "")
 
     values = get_comparison_time(gripper, shape, theta_function)
 
     result = [row["time_value"] for row in values]
+    # print("result Tab 1>>>>", result)
 
     return jsonify({"times": result})
 
@@ -2641,7 +2656,11 @@ def get_spring_constants_comparison_api():
     # print("values>>", values)
     # result = [row["spring_value"] for row in values]
     result = [
-        {"spring_value": row["spring_value"], "time_value": row["time_value"]}
+        {
+            "spring_value": row["spring_value"],
+            "time_value": row["time_value"],
+            "material": row["material"],
+        }
         for row in values
     ]
     # print("Comparison Spring Constants:", result)
@@ -2667,7 +2686,19 @@ def get_spring_constants_comparison2_api():
     # print("values>>", values)
     result = [row["spring_value"] for row in values]
     result = [
-        {"spring_value": row["spring_value"], "time_value": row["time_value"]}
+        {
+            "spring_value": row["spring_value"],
+            "time_value": row["time_value"],
+            "shape": (
+                "Rectangular"
+                if row["shape"] == 1
+                else (
+                    "Spherical"
+                    if row["shape"] == 2
+                    else "Ellipsoidal" if row["shape"] == 3 else "Unknown"
+                )
+            ),
+        }
         for row in values
     ]
     # print("Comparison Spring Constants:", result)

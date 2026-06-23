@@ -745,7 +745,7 @@ def get_spring_constants_comparison(gripper, shape, theta_function, time, spring
     cursor.execute(
         """
 
-        SELECT DISTINCT spring_value, time_value
+        SELECT DISTINCT spring_value, time_value, material
 
         FROM spring_constants
 
@@ -778,7 +778,7 @@ def get_spring_constants_comparison2(
     cursor.execute(
         """
 
-        SELECT DISTINCT spring_value, time_value
+        SELECT DISTINCT spring_value, time_value, shape
 
         FROM spring_constants
 

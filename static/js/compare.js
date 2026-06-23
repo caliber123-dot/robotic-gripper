@@ -3515,7 +3515,7 @@ async function loadComparisonSpringAutocomplete(springKey, datalistId) {
     let option = document.createElement("option");
     // console.log("@@@ 2 Spring Value:", item);
     option.value = item.spring_value;
-    option.label = item.time_value + " sec";
+    option.label = item.time_value + " sec" + " (" + item.material + ")";
     datalist.appendChild(option);
   });
 }
@@ -3555,7 +3555,7 @@ async function loadComparisonSpringAutocomplete2(springKey, datalistId) {
     let option = document.createElement("option");
     // console.log("@@@ 2 Spring Value:", item);
     option.value = item.spring_value;
-    option.label = item.time_value + " sec";
+    option.label = item.time_value + " sec" + " (" + item.shape + ")";
     datalist.appendChild(option);
   });
 }
