@@ -358,9 +358,11 @@
       // Replace with your actual release tag (e.g., "v1.0.0") or use "latest" for newest
       // Display confirmation dialog and proceed with download if user clicks OK
       if (confirm(warningMessage)) {
-        const releaseTag = "latest";
+        // const releaseTag = "latest";
         // const releaseTag = "tag";
-        const exeUrl = `https://github.com/caliber123-dot/Graph-Fuzzy-Function/releases/${releaseTag}/download/MaterialFuzzyApp_1.4.exe`;
+        // const exeUrl = `https://github.com/caliber123-dot/Graph-Fuzzy-Function/releases/${releaseTag}/download/MaterialFuzzyApp_1.4.exe`;
+        const exeUrl =
+          `https://github.com/caliber123-dot/robotic-gripper/releases/latest/download/RoboticGripperApp_Setup.exe`;
 
         const link = document.createElement('a');
         link.href = exeUrl;
