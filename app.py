@@ -2772,7 +2772,7 @@ if __name__ == "__main__":
     # app.run()
     # print("===>> Start App on", "http://127.0.0.1:8000")
     # waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 8000))
     print("===>> Start App on", f"http://127.0.0.1:{port}")
     # app.run(host="0.0.0.0", port=port, debug=True)
     # print(f"===>> Start App on port {port}")
