@@ -84,8 +84,27 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 create_tables()
 
 
+#   New 24-06-26
+@app.route("/clear_generated_files", methods=["POST"])
+def clear_generated_files():
+    import os
+    import glob
+
+    try:
+        for file in glob.glob("static/files/*.xlsx"):
+            if os.path.basename(file) != "mergedExcel.xlsx":
+                os.remove(file)
+
+        return {"status": "success"}
+
+    except Exception as e:
+        print("DELETE ERROR:", e)
+        return {"status": "error", "message": str(e)}, 500
+
+
 @app.route("/")
 def hello_world():
+    clear_generated_files()
     return render_template("landing.html")
 
 
@@ -2611,7 +2630,7 @@ def get_comparison_time_api():
     return jsonify({"times": result})
 
 
-# for tab 2
+# for get time tab 2
 @app.route("/get_comparison_time1", methods=["POST"])
 def get_comparison_time1_api():
 
@@ -2663,7 +2682,7 @@ def get_spring_constants_comparison_api():
         }
         for row in values
     ]
-    # print("Comparison Spring Constants:", result)
+    # print("Comparison Spring Constants: Tab1", result)
     return jsonify({"spring_values": result})
 
 
@@ -2684,7 +2703,7 @@ def get_spring_constants_comparison2_api():
         gripper, material, theta_function, time_value, spring_key
     )
     # print("values>>", values)
-    result = [row["spring_value"] for row in values]
+    # result = [row["spring_value"] for row in values]
     result = [
         {
             "spring_value": row["spring_value"],
@@ -2701,7 +2720,7 @@ def get_spring_constants_comparison2_api():
         }
         for row in values
     ]
-    # print("Comparison Spring Constants:", result)
+    # print("Comparison Spring Constants Tab3:", result)
     return jsonify({"spring_values": result})
 
 
@@ -2757,9 +2776,9 @@ if __name__ == "__main__":
     print("===>> Start App on", f"http://127.0.0.1:{port}")
     # app.run(host="0.0.0.0", port=port, debug=True)
     # print(f"===>> Start App on port {port}")
-    # Port 8000
-    waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
-    # waitress_serve(app, host="0.0.0.0", port=port, threads=8)
+    # Port get_spring_constants_comparison
+    # waitress_serve(app, host="0.0.0.0", port=8000, threads=8)
+    waitress_serve(app, host="0.0.0.0", port=port, threads=8)
 
 # Version Control Commands (Git)
 # git status

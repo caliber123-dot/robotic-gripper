@@ -168,7 +168,8 @@ function addFunctionToDropdown(funcStr) {
   // dropdown.value = funcStr; // select newly added
   dropdown.value = option.value;
 }
-window.addEventListener("load", function () {
+
+window.addEventListener("load", async function () {
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
 
   saved.forEach((func) => {
@@ -176,6 +177,7 @@ window.addEventListener("load", function () {
     reloadDropdown();
     renderFunctionTable();
   });
+  await loadLastInputValues();
   // Clean localStorage.getItem("pno");
   // localStorage.removeItem("pno");
 });
@@ -283,17 +285,12 @@ async function downloadResultsExcel(mStatus) {
     total: document.getElementById("total")?.value || "",
     gripper_name:
       sessionStorage.getItem("pno") == 1 ? "4 Fingers" : "3 Fingers + 1 Thumb",
-
     shape_name:
       document.getElementById("shape")?.selectedOptions[0]?.text || "",
-
     material:
       document.getElementById("material")?.selectedOptions[0]?.text || "",
-
     time: document.getElementById("time").value,
-
     func: document.getElementById("func")?.selectedOptions[0]?.text || "",
-
     mode_name:
       document
         .querySelector('input[name="kmode"]:checked')
@@ -302,10 +299,8 @@ async function downloadResultsExcel(mStatus) {
   };
 
   // console.log(data);
-
   let response = await fetch("/download_excel", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
@@ -316,7 +311,17 @@ async function downloadResultsExcel(mStatus) {
     //Save to localStorage for Merging Excel
     const result = await response.json();
     if (result.status === "success") {
-      addGeneratedFile(result.filename, "Input");
+      // addGeneratedFile(result.filename, "Input");
+      // call function
+      addGeneratedFile(
+        document.getElementById("shape")?.value || "",
+        document.getElementById("material")?.value || "",
+        document.getElementById("time")?.value || "",
+        document.getElementById("func")?.value || "",
+        "Input",
+        result.filename,
+        "Input",
+      );
       console.log(result.message, "mStatus:", mStatus);
       // console.table(localStorage);
       console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
@@ -327,49 +332,91 @@ async function downloadResultsExcel(mStatus) {
   } else {
     if (!response.ok) {
       alert("Excel download failed");
-
       return;
     }
 
     let blob = await response.blob();
-
     let url = window.URL.createObjectURL(blob);
-
     let a = document.createElement("a");
-
     a.href = url;
-
     let disposition = response.headers.get("Content-Disposition");
-
     let filename = "gripper_results.xlsx";
-
     if (disposition && disposition.includes("filename=")) {
       filename = disposition.split("filename=")[1].replace(/"/g, "");
     }
 
     a.download = filename;
-
     document.body.appendChild(a);
-
     a.click();
-
     a.remove();
-
     window.URL.revokeObjectURL(url);
   }
 }
-function addGeneratedFile(filename, narration) {
+
+function addGeneratedFile(
+  shape_name,
+  material,
+  time,
+  func,
+  page,
+  filename,
+  narration,
+) {
   let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
-  files.push({
-    filename: filename,
-    created_at: new Date().toLocaleString(),
-    narration: narration,
-  });
+  const index = files.findIndex(
+    (f) =>
+      f.shape == shape_name &&
+      f.material == material &&
+      f.time == time &&
+      f.func == func &&
+      f.page == page,
+  );
+
+  if (index >= 0) {
+    files[index].filename = filename;
+    files[index].created_at = new Date().toLocaleString();
+    files[index].narration = narration;
+  } else {
+    files.push({
+      shape: shape_name,
+      material: material,
+      time: time,
+      func: func,
+      page: page,
+      filename: filename,
+      created_at: new Date().toLocaleString(),
+      narration: narration,
+    });
+  }
 
   localStorage.setItem("generatedFiles", JSON.stringify(files));
   updateDirtyState();
 }
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   loadLastInputValues();
+// });
+
+async function loadLastInputValues() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  // Get latest Input record
+  const lastInput = [...files].reverse().find((f) => f.page === "Input");
+
+  if (!lastInput) return;
+
+  // Set values
+  document.getElementById("shape").value = lastInput.shape;
+  updateSelectionEvent();
+  document.getElementById("material").value = lastInput.material;
+  document.getElementById("time").value = lastInput.time;
+  document.getElementById("func").value = lastInput.func;
+  // console.log("Restored:", lastInput);
+
+  await getSavedData();
+}
+
 async function downloadResultsPdf() {
   let total = document.getElementById("total").value;
   // VALIDATION
@@ -587,19 +634,14 @@ function clearTable() {
 async function getSavedData() {
   let gripper = getCurrentGripper();
   let shape = document.getElementById("shape").value;
-
   let material = document.getElementById("material").value;
-
   let time = document.getElementById("time").value;
-
   let func = document.getElementById("func").value;
-
   let mode = document.querySelector('input[name="kmode"]:checked').value;
 
   // validation
   if (!shape || !material || !time || !func || !mode) {
     clearSpringInputs();
-
     return;
   }
 
@@ -621,7 +663,6 @@ async function getSavedData() {
   });
 
   let result = await response.json();
-
   console.log(result);
 
   // =========================
@@ -630,7 +671,6 @@ async function getSavedData() {
 
   if (result.status === "found") {
     let d = result.data;
-
     console.log("Previous Data:", d);
 
     // avoid reload same data
@@ -640,7 +680,6 @@ async function getSavedData() {
 
     if (currentTotal == d.total_force) {
       console.log("Already loaded");
-
       return;
     }
 
@@ -692,9 +731,7 @@ async function getSavedData() {
 
     mapValues.forEach((item) => {
       let id = item[0];
-
       let value = item[1];
-
       let el = document.getElementById(id);
 
       if (el && value != null) {
@@ -745,11 +782,8 @@ async function getSavedData() {
 }
 
 document.getElementById("shape").addEventListener("change", getSavedData);
-
 document.getElementById("material").addEventListener("change", getSavedData);
-
 document.getElementById("time").addEventListener("input", getSavedData);
-
 document.getElementById("func").addEventListener("change", getSavedData);
 
 document.querySelectorAll('input[name="kmode"]').forEach((radio) => {
@@ -881,13 +915,9 @@ async function loadSpringConstants(gripper) {
 
   const datalists = [
     "k_common_options",
-
     "k_finger_options",
-
     "k_thumb_options",
-
     "k_thumb2_options",
-
     "k_thumb3_options",
 
     "f1k1_options",
@@ -906,16 +936,12 @@ async function loadSpringConstants(gripper) {
 
   datalists.forEach((id) => {
     let dl = document.getElementById(id);
-
     if (!dl) return;
-
     dl.innerHTML = "";
 
     data.spring_values.forEach((value) => {
       let option = document.createElement("option");
-
       option.value = value;
-
       dl.appendChild(option);
     });
   });
@@ -924,15 +950,10 @@ async function loadSpringConstants(gripper) {
 // Auto complete for spring constants based on current gripper, shape, material, function and mode
 async function loadSpringAutocomplete(springKey, datalistId) {
   let gripper = getCurrentGripper();
-
   let shape = document.getElementById("shape").value;
-
   let material = document.getElementById("material").value;
-
   // let time = document.getElementById("time").value;
-
   let func = document.getElementById("func").value;
-
   let spring_key = springKey;
   if (!shape || !material || !func) {
     return;
@@ -953,60 +974,38 @@ async function loadSpringAutocomplete(springKey, datalistId) {
   });
 
   let result = await response.json();
-
   let datalist = document.getElementById(datalistId);
-
   datalist.innerHTML = "";
 
   // result.spring_values.forEach((value) => {
   //   let option = document.createElement("option");
-
   //   option.value = value;
-
   //   datalist.appendChild(option);
   // });
   result.spring_values.forEach((item) => {
     let option = document.createElement("option");
-
     option.value = item.spring_value;
-
     option.textContent = item.time_value + " sec";
-
     datalist.appendChild(option);
   });
 }
 
 function loadAllSpringConstants() {
   loadSpringAutocomplete("k_common", "k_common_options");
-
   loadSpringAutocomplete("k_finger", "k_finger_options");
-
   loadSpringAutocomplete("k_thumb", "k_thumb_options");
-
   loadSpringAutocomplete("k_thumb2", "k_thumb2_options");
-
   loadSpringAutocomplete("k_thumb3", "k_thumb3_options");
-
   loadSpringAutocomplete("f1k1", "f1k1_options");
-
   loadSpringAutocomplete("f1k2", "f1k2_options");
-
   loadSpringAutocomplete("f2k1", "f2k1_options");
-
   loadSpringAutocomplete("f2k2", "f2k2_options");
-
   loadSpringAutocomplete("f3k1", "f3k1_options");
-
   loadSpringAutocomplete("f3k2", "f3k2_options");
-
   loadSpringAutocomplete("f4k1", "f4k1_options");
-
   loadSpringAutocomplete("f4k2", "f4k2_options");
-
   loadSpringAutocomplete("Thk1", "Thk1_options");
-
   loadSpringAutocomplete("Thk2", "Thk2_options");
-
   loadSpringAutocomplete("Thk3", "Thk3_options");
 }
 

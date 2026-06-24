@@ -469,6 +469,7 @@ function updateSpringFields2() {
 }
 
 // set Saved spring values into textboxes
+// for tab 1
 async function autoLoadSavedSpring() {
   let gripper = getCurrentGripper();
   let shape = document.getElementById("shape").value;
@@ -1067,9 +1068,8 @@ function addFunctionToDropdown222(funcStr) {
   // dropdown.value = funcStr; // select newly added
 }
 /* default load */
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   document.getElementById("twoTerms").checked = true;
-
   toggleTerms(2);
   // alert("Default terms initialized.");
   let saved = JSON.parse(localStorage.getItem("customFunctions")) || [];
@@ -1079,6 +1079,11 @@ window.addEventListener("load", () => {
     reloadDropdown();
     renderFunctionTable();
   });
+  await loadLastInputValues();
+  // await sleep(500);
+  await loadLastInputValues1();
+  // await sleep(500);
+  await loadLastInputValues2();
 });
 
 function reloadDropdown() {
@@ -1222,6 +1227,7 @@ window.addEventListener("scroll", () => {
   // });
 });
 
+// tab 1
 function updateSelectionEvent() {
   let shape = document.getElementById("shape").value;
   // let container = document.getElementById("selectionEvent");
@@ -1274,7 +1280,7 @@ function updateSelectionEvent() {
 
   // loadAllSpringConstants();
 }
-
+// tab 2
 function updateSelectionEvent1() {
   let shape = document.getElementById("shape1").value;
   // let container = document.getElementById("selectionEvent");
@@ -1376,18 +1382,18 @@ document.getElementById("func2")?.addEventListener("change", async function () {
 document.getElementById("time")?.addEventListener("change", async function () {
   await loadAllComparisonSpringConstants();
   await autoLoadSavedSpring();
-  calculate();
+  await calculate(1);
 });
 
 document.getElementById("time1")?.addEventListener("change", async function () {
-  calculate1();
+  await calculate1(1);
 });
 
 // for tab 3
 document.getElementById("time2")?.addEventListener("change", async function () {
   await loadAllComparisonSpringConstants2();
   await autoLoadSavedSpring2();
-  calculate2();
+  await calculate2(1);
 });
 
 // radio buttons tab 1
@@ -1401,6 +1407,7 @@ document.querySelectorAll('input[name="kmode1"]').forEach((r) => {
   // alert("hiiiii....");
 });
 
+// tab 1
 async function loadComparisonTime() {
   let response = await fetch("/get_comparison_time", {
     method: "POST",
@@ -1877,7 +1884,7 @@ function markInvalid(id) {
 
 // Main Logic to call backend and calculate forces
 // tab 1
-async function calculate() {
+async function calculate(mKey) {
   //   console.log("✅ Working calculate function called");
   //   console.trace("✅ calculate called from");
   console.log("✅ Working calculate function called");
@@ -1991,15 +1998,18 @@ async function calculate() {
   //   loadAllSpringConstants();
   // loadAllComparisonSpringConstants();
   // loadAllComparisonSpringConstants2();
-  // downloadGraphExcel(2);
-  setTimeout(() => {
-    downloadGraphExcel(2);
-  }, 1500);
+  if (mKey == 1) {
+    setTimeout(async () => {
+      await downloadGraphExcel(2);
+    }, 1500);
+  }
+  // await sleep(1500);
+  // await downloadGraphExcel(2);
 }
 // =============== END Calculate() ==============
 
 // tab 3
-async function calculate2() {
+async function calculate2(mKey) {
   console.log("✅ Working calculate tab 3 function called");
   // 🔥 VALIDATION FIRST
   // alert("Validation started");
@@ -2103,14 +2113,18 @@ async function calculate2() {
   // downloadGraphExcel(2);
 
   // for temp comment
-  setTimeout(() => {
-    downloadGraphExcel2(2);
-  }, 1500);
+  if (mKey == 1) {
+    setTimeout(async () => {
+      await downloadGraphExcel2(2);
+    }, 1500);
+  }
+  // await sleep(1500);
+  // await downloadGraphExcel2(2);
 }
 
 // =============== End calculate2() ============
 
-async function calculate1() {
+async function calculate1(mKey) {
   //   console.log("✅ Working calculate1 function called");
   console.log("✅ Working calculate_1 function called");
   // 🔥 VALIDATION FIRST
@@ -2167,7 +2181,6 @@ async function calculate1() {
   // ================= GRAPH API =================
   let graphResponse = await fetch("/comparison_data1", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
@@ -2176,27 +2189,26 @@ async function calculate1() {
   });
 
   let graphResult = await graphResponse.json();
-
   let k_common = graphResult.result.map((x) => x.k_common);
-
   let forces = graphResult.result.map((x) => x.force);
-
   createBarChart1(k_common, forces);
 
   // change to updateGraphTable for comparison chart
   //   updateGraphTable(graphResult.time, graphResult.force);
   updateGraphTable1(k_common, forces);
-
   execTime.innerText = graphResult.execution_time_us;
   execTime2.innerText = (graphResult.execution_time_us / 1000).toFixed(3);
   loader.style.display = "none";
   //   loadAllSpringConstants();
   // loadAllComparisonSpringConstants();
   // downloadGraphExcel(2);
-
-  setTimeout(() => {
-    downloadGraphExcel1(2);
-  }, 1500);
+  if (mKey == 1) {
+    setTimeout(() => {
+      downloadGraphExcel1(2);
+    }, 1500);
+  }
+  // await sleep(1500);
+  // await downloadGraphExcel1(2);
 }
 // ============= END calculate1() ==========
 // ============================= New ===============
@@ -2770,6 +2782,7 @@ function drawComparisonChart(data) {
   });
 }
 
+// Tab 1
 async function downloadGraphExcel(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
   let tableData = [];
@@ -2792,6 +2805,8 @@ async function downloadGraphExcel(mStatus) {
     return;
   }
   let graphImage = document.getElementById("forceChart").toDataURL("image/png");
+  // console.log("graphImage:", graphImage);
+  // console.log("graphImage length:", graphImage?.length);
   let payload = {
     func: document.getElementById("func").value,
     // alert("sss" + localStorage.getItem("pno") || "0")
@@ -2836,7 +2851,17 @@ async function downloadGraphExcel(mStatus) {
     //Save to localStorage for Merging Excel
     const result = await response.json();
     if (result.status === "success") {
-      addGeneratedFile(result.filename, "Compare_Chart");
+      // addGeneratedFile(result.filename, "Compare_Chart");
+      // call function
+      addGeneratedFile(
+        document.getElementById("shape")?.value || "",
+        "",
+        document.getElementById("time")?.value || "",
+        document.getElementById("func")?.value || "",
+        "Compare_Chart1",
+        result.filename,
+        "Compare_Chart",
+      );
       console.log(result.message, "mStatus:", mStatus);
       // console.table(localStorage);
       console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
@@ -2869,7 +2894,7 @@ async function downloadGraphExcel(mStatus) {
     a.click();
   }
 }
-
+// Tab 3
 async function downloadGraphExcel2(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody2 tr");
   let tableData = [];
@@ -2894,6 +2919,8 @@ async function downloadGraphExcel2(mStatus) {
   let graphImage = document
     .getElementById("forceChart2")
     .toDataURL("image/png");
+  // console.log("graphImage2:", graphImage);
+  // console.log("graphImage2 length:", graphImage?.length);
   let payload = {
     func: document.getElementById("func2").value,
     // alert("sss" + localStorage.getItem("pno") || "0")
@@ -2938,7 +2965,17 @@ async function downloadGraphExcel2(mStatus) {
     //Save to localStorage for Merging Excel
     const result = await response.json();
     if (result.status === "success") {
-      addGeneratedFile(result.filename, "Compare_Chart");
+      // addGeneratedFile(result.filename, "Compare_Chart");
+      // call function
+      addGeneratedFile(
+        "",
+        document.getElementById("material2")?.value || "",
+        document.getElementById("time2")?.value || "",
+        document.getElementById("func2")?.value || "",
+        "Compare_Chart3",
+        result.filename,
+        "Compare_Chart",
+      );
       console.log(result.message, "mStatus:", mStatus);
       // console.table(localStorage);
       console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
@@ -2972,14 +3009,13 @@ async function downloadGraphExcel2(mStatus) {
   }
 }
 
+// Tab 2
 async function downloadGraphExcel1(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody1 tr");
-
   let tableData = [];
 
   tableRows.forEach((row) => {
     let cols = row.querySelectorAll("td");
-
     let forceValue = cols[1].innerText.trim();
 
     // skip empty rows
@@ -2989,18 +3025,18 @@ async function downloadGraphExcel1(mStatus) {
 
     tableData.push({
       time: cols[0].innerText,
-
       force: forceValue,
     });
   });
   if (tableData.length === 0) {
     alert("Please generate graph first.");
-
     return;
   }
   let graphImage = document
     .getElementById("forceChart1")
     .toDataURL("image/png");
+  // console.log("graphImage1:", graphImage);
+  // console.log("graphImage1 length:", graphImage?.length);
   let payload = {
     func: document.getElementById("func1").value,
     // alert("sss" + localStorage.getItem("pno") || "0")
@@ -3021,7 +3057,6 @@ async function downloadGraphExcel1(mStatus) {
 
     // graphImage: document.getElementById("chartImage").value,
     graphImage: graphImage,
-
     tableData: tableData,
     mStatus: mStatus,
     tab: 2,
@@ -3041,7 +3076,17 @@ async function downloadGraphExcel1(mStatus) {
     //Save to localStorage for Merging Excel
     const result = await response.json();
     if (result.status === "success") {
-      addGeneratedFile(result.filename, "Compare_Chart");
+      // addGeneratedFile(result.filename, "Compare_Chart");
+      // call function
+      addGeneratedFile(
+        document.getElementById("shape1")?.value || "",
+        document.getElementById("material1")?.value || "",
+        document.getElementById("time1")?.value || "",
+        document.getElementById("func1")?.value || "",
+        "Compare_Chart2",
+        result.filename,
+        "Compare_Chart",
+      );
       console.log(result.message, "mStatus:", mStatus);
       // console.table(localStorage);
       console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
@@ -3058,42 +3103,151 @@ async function downloadGraphExcel1(mStatus) {
     }
 
     let blob = await response.blob();
-
     console.log("Blob Size:", blob.size);
-
     let url = window.URL.createObjectURL(blob);
-
     let a = document.createElement("a");
-
     a.href = url;
 
     // a.download = "Graph_Report.xlsx";
     let disposition = response.headers.get("Content-Disposition");
-
     let filename = "Graph_Report.xlsx";
-
     if (disposition && disposition.includes("filename=")) {
       filename = disposition.split("filename=")[1].replace(/"/g, "");
     }
 
     a.download = filename;
-
     a.click();
   }
 }
 
-function addGeneratedFile(filename, narration) {
+function addGeneratedFile(
+  shape_name,
+  material,
+  time,
+  func,
+  page,
+  filename,
+  narration,
+) {
   let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
-  files.push({
-    filename: filename,
-    created_at: new Date().toLocaleString(),
-    narration: narration,
-  });
+  const index = files.findIndex(
+    (f) =>
+      f.shape == shape_name &&
+      f.material == material &&
+      f.time == time &&
+      f.func == func &&
+      f.page == page,
+  );
+
+  if (index >= 0) {
+    files[index].filename = filename;
+    files[index].created_at = new Date().toLocaleString();
+    files[index].narration = narration;
+  } else {
+    files.push({
+      shape: shape_name,
+      material: material,
+      time: time,
+      func: func,
+      page: page,
+      filename: filename,
+      created_at: new Date().toLocaleString(),
+      narration: narration,
+    });
+  }
 
   localStorage.setItem("generatedFiles", JSON.stringify(files));
   updateDirtyState();
 }
+
+// Tab 1
+async function loadLastInputValues() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  // Get latest Input record
+  const lastInput = [...files]
+    .reverse()
+    .find((f) => f.page === "Compare_Chart1");
+
+  if (!lastInput) return;
+
+  // Set values
+  document.getElementById("shape").value = lastInput.shape;
+  updateSelectionEvent();
+  // document.getElementById("material").value = lastInput.material;
+  document.getElementById("func").value = lastInput.func;
+  await loadComparisonTime();
+  document.getElementById("time").value = lastInput.time;
+
+  // console.log("Restored:", lastInput);
+  await autoLoadSavedSpring();
+  await calculate(2);
+}
+
+// Tab 2
+async function loadLastInputValues1() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  // Get latest Input record
+  const lastInput = [...files]
+    .reverse()
+    .find((f) => f.page === "Compare_Chart2");
+
+  if (!lastInput) return;
+
+  // Set values
+  document.getElementById("shape1").value = lastInput.shape;
+  updateSelectionEvent1();
+  document.getElementById("material1").value = lastInput.material;
+  document.getElementById("func1").value = lastInput.func;
+  await loadComparisonTime1();
+  document.getElementById("time1").value = lastInput.time;
+  // console.log("Restored:", lastInput);
+
+  await calculate1(2);
+}
+
+// Tab 3
+async function loadLastInputValues2() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  // Get latest Input record
+  const lastInput = [...files]
+    .reverse()
+    .find((f) => f.page === "Compare_Chart3");
+
+  if (!lastInput) return;
+
+  // Set values
+  // document.getElementById("shape1").value = lastInput.shape;
+  // updateSelectionEvent1();
+  document.getElementById("material2").value = lastInput.material;
+  document.getElementById("func2").value = lastInput.func;
+  await loadComparisonTime2();
+  document.getElementById("time2").value = lastInput.time;
+
+  // console.log("Restored:", lastInput);
+
+  await autoLoadSavedSpring2();
+  await calculate2(2);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+// function addGeneratedFile(filename, narration) {
+//   let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+//   files.push({
+//     filename: filename,
+//     created_at: new Date().toLocaleString(),
+//     narration: narration,
+//   });
+
+//   localStorage.setItem("generatedFiles", JSON.stringify(files));
+//   updateDirtyState();
+// }
 
 async function downloadGraphPdf() {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
@@ -3763,6 +3917,14 @@ async function mergedAllExcels() {
     btnLoader.style.display = "none";
     localStorage.removeItem("generatedFiles");
     updateDirtyState();
+    // New 24-06-26
+    const response = await fetch("/clear_generated_files", {
+      method: "POST",
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      console.error(result.message);
+    }
   }
 }
 

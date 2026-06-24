@@ -222,11 +222,8 @@ function updateSpringFields() {
 async function autoLoadSavedSpring() {
   let gripper = getCurrentGripper();
   let shape = document.getElementById("shape").value;
-
   let material = document.getElementById("material").value;
-
   let func = document.getElementById("func").value;
-
   let mode = document.querySelector('input[name="kmode"]:checked')?.value;
 
   // fixed graph page time
@@ -235,32 +232,25 @@ async function autoLoadSavedSpring() {
   // validation
   if (!shape || !material || !func || !mode) {
     clearSpringInputs();
-
     return;
   }
 
   let response = await fetch("/get_saved_data_graph", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json",
     },
 
     body: JSON.stringify({
       gripper: gripper,
-
       shape: shape,
-
       material: material,
-
       func: func,
-
       mode: mode,
     }),
   });
 
   let result = await response.json();
-
   console.log(result);
 
   // =========================
@@ -640,7 +630,7 @@ function addFunctionToDropdown(funcStr) {
   dropdown.value = option.value;
 }
 /* default load */
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   document.getElementById("twoTerms").checked = true;
 
   toggleTerms(2);
@@ -653,6 +643,7 @@ window.addEventListener("load", () => {
     reloadDropdown();
     renderFunctionTable();
   });
+  await loadLastInputValues();
 });
 
 function reloadDropdown() {
@@ -1323,12 +1314,10 @@ function updateGraphTable(timeData, forceData) {
 
 async function downloadGraphExcel(mStatus) {
   let tableRows = document.querySelectorAll("#graphTableBody tr");
-
   let tableData = [];
 
   tableRows.forEach((row) => {
     let cols = row.querySelectorAll("td");
-
     let forceValue = cols[1].innerText.trim();
 
     // skip empty rows
@@ -1338,13 +1327,11 @@ async function downloadGraphExcel(mStatus) {
 
     tableData.push({
       time: cols[0].innerText,
-
       force: forceValue,
     });
   });
   if (tableData.length === 0) {
     alert("Please generate graph first.");
-
     return;
   }
   let graphImage = document.getElementById("forceChart").toDataURL("image/png");
@@ -1374,7 +1361,6 @@ async function downloadGraphExcel(mStatus) {
 
     // graphImage: document.getElementById("chartImage").value,
     graphImage: graphImage,
-
     tableData: tableData,
     mStatus: mStatus,
   };
@@ -1400,7 +1386,17 @@ async function downloadGraphExcel(mStatus) {
     //Save to localStorage for Merging Excel
     const result = await response.json();
     if (result.status === "success") {
-      addGeneratedFile(result.filename, "Bar_Chart");
+      // addGeneratedFile(result.filename, "Bar_Chart");
+      // call function
+      addGeneratedFile(
+        document.getElementById("shape")?.value || "",
+        document.getElementById("material")?.value || "",
+        document.getElementById("func")?.value || "",
+        "Bar_Chart",
+        result.filename,
+        "Bar_Chart",
+      );
+
       console.log(result.message, "mStatus:", mStatus);
       // console.table(localStorage);
       console.table(JSON.parse(localStorage.getItem("generatedFiles") || "[]"));
@@ -1417,41 +1413,77 @@ async function downloadGraphExcel(mStatus) {
     }
 
     let blob = await response.blob();
-
     console.log("Blob Size:", blob.size);
-
     let url = window.URL.createObjectURL(blob);
-
     let a = document.createElement("a");
-
     a.href = url;
-
     // a.download = "Graph_Report.xlsx";
     let disposition = response.headers.get("Content-Disposition");
-
     let filename = "Graph_Report.xlsx";
-
     if (disposition && disposition.includes("filename=")) {
       filename = disposition.split("filename=")[1].replace(/"/g, "");
     }
-
     a.download = filename;
-
     a.click();
   }
 }
 
-function addGeneratedFile(filename, narration) {
+function addGeneratedFile(
+  shape_name,
+  material,
+  func,
+  page,
+  filename,
+  narration,
+) {
   let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
 
-  files.push({
-    filename: filename,
-    created_at: new Date().toLocaleString(),
-    narration: narration,
-  });
+  const index = files.findIndex(
+    (f) =>
+      f.shape == shape_name &&
+      f.material == material &&
+      f.func == func &&
+      f.page == page,
+  );
+
+  if (index >= 0) {
+    files[index].filename = filename;
+    files[index].created_at = new Date().toLocaleString();
+    files[index].narration = narration;
+  } else {
+    files.push({
+      shape: shape_name,
+      material: material,
+      time: "-",
+      func: func,
+      page: page,
+      filename: filename,
+      created_at: new Date().toLocaleString(),
+      narration: narration,
+    });
+  }
 
   localStorage.setItem("generatedFiles", JSON.stringify(files));
   updateDirtyState();
+}
+
+async function loadLastInputValues() {
+  let files = JSON.parse(localStorage.getItem("generatedFiles")) || [];
+
+  // Get latest Input record
+  const lastInput = [...files].reverse().find((f) => f.page === "Bar_Chart");
+
+  if (!lastInput) return;
+
+  // Set values
+  document.getElementById("shape").value = lastInput.shape;
+  updateSelectionEvent();
+  document.getElementById("material").value = lastInput.material;
+  // document.getElementById("time").value = lastInput.time;
+  document.getElementById("func").value = lastInput.func;
+  // console.log("Restored:", lastInput);
+  // await getSavedData();
+  await autoLoadSavedSpring();
 }
 
 async function downloadGraphPdf() {

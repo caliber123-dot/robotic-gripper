@@ -690,116 +690,8 @@
                 font-weight: 600;
             }
         </style>
-        <div id="page_window1" class="hero-ai-bg" style="
-          border-radius: 10px;
-          padding: 10px;
-          text-align: center;
-          color: white;
-          display: none;
-        ">
-            <div class="particles">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <h2 style="padding: 5px">Spring Structural Model of Robotic Gripper</h2>
-            <h4>According to this equation:</h4>
-            <img src="static/img/formula_14.png" alt="" height="80" />
-            <!-- Formula Details -->
-            <div class="w-100 text-center d-flex justify-content-center">
-                <div class="formula-details-container mt-3">
-                    <div class="formula-details collapsed1" id="formulaDetails">
-                        <div class="detail-item">
-                            <i class="bi bi-box-seam formula-icon"></i>
-                            <b>m</b> = mass of the object
-                        </div>
+        <div id="page_window1" class="hero-ai-bg" style="display: none;">
 
-                        <div class="detail-item">
-                            <i class="bi bi-globe2 formula-icon"></i>
-                            <b>g</b> = acceleration due to gravity = 9.8 m/s²
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-arrows-angle-expand formula-icon"></i>
-                            <b>r</b> = distance of finger from joint to contact point
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-compass formula-icon"></i>
-                            <b>θ</b> = angle of contact
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-diagram-3 formula-icon"></i>
-                            <b>k</b> = spring constant
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-graph-up-arrow formula-icon"></i>
-                            <b>dθ/dt</b> = first derivative angle of contact with respective
-                            to time
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-activity formula-icon"></i>
-                            <b>d²θ/dt²</b> = second derivative angle of contact with
-                            respective to time
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-arrow-left-right formula-icon"></i>
-                            <b>r sinθ</b> = linear deflection
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-calculator formula-icon"></i>
-                            <b>(θ - θ³/3! + θ⁵/5! + ...)</b> = Taylor series expansion of
-                            sin
-                        </div>
-
-                        <div class="detail-item">
-                            <i class="bi bi-hand-index-thumb formula-icon"></i>
-                            <b>Fᵢ(t)</b> = Grasp Force
-                        </div>
-                    </div>
-
-                    <button class="formula-toggle-btn mt-2" id="toggleFormulaBtn" onclick="toggleFormulaDetails()"
-                        style="display: none">
-                        <span>
-                            <i class="bi bi-journal-richtext me-1"></i>
-                            More Details
-                        </span>
-                        <i class="bi bi-chevron-down arrow-icon" id="formulaArrow"></i>
-                    </button>
-                    <div class="row w-75" style="border: #121212; border-width: 0px; border-style: solid">
-                        <div class="col-md-6">
-                            <button class="btn btn-primary mt-2" id="btnpage_window1" title="4 Finger gripper"
-                                onclick="hidePages(1)">
-                                <span>
-                                    <i class="bi bi-journal-richtext me-1"></i>
-                                    Start 4 Fingers Gripper
-                                </span>
-                                <i class="bi bi-arrow-right arrow-icon"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-6">
-                            <button class="btn btn-primary mt-2" id="btnpage_window2" title="3 Fingers + 1 Thumb"
-                                tag="2" onclick="hidePages(2)">
-                                <span>
-                                    <i class="bi bi-journal-richtext me-1"></i>
-                                    Start 3 Fingers + 1 Thumb
-                                </span>
-                                <i class="bi bi-arrow-right arrow-icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div id="page_window2" style="display: none">
@@ -823,14 +715,6 @@
                             </option>
                         </select>
                     </div>
-
-                    <!-- <button class="btn btn-primary mt-3 w-100 bold600 mt-2" id="btnpage_window2" onclick="hidePages2()">
-                        <span>
-                            <i class="bi bi-robot me-1"></i>
-                            Go to Gripper System
-                        </span>
-                        <i class="bi bi-arrow-right arrow-icon"></i>
-                    </button> -->
                     <hr />
                 </div>
                 <div class="col-md-4 p-0"></div>
